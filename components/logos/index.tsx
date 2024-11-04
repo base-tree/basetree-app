@@ -87,6 +87,7 @@ import {
   PiStairs,
   PiStairsFill,
 } from "react-icons/pi";
+
 import { SiEtsy, SiSubstack } from "react-icons/si";
 import { NftFill, NftLine } from "./NFT";
 import Polygon from "./Polygon";
@@ -109,12 +110,14 @@ import Base from "./Base";
 import Monad from "./Monad";
 import Soneium from "./Soneium";
 import Linktree from "./Linktree";
+import Farcaster from "./Farcaster";
 
 interface LinkIconProps {
   type: string;
   line?: boolean;
   color?: string;
   size?: any;
+  opacity?: number;
   rounded?: string;
 }
 
@@ -123,6 +126,7 @@ const LinkIcon = ({
   line,
   color,
   size = "28px",
+  opacity = 1,
   rounded,
 }: LinkIconProps) => {
   switch (type) {
@@ -161,6 +165,12 @@ const LinkIcon = ({
         <Icons.RiEarthLine size={size} color={color ? color : undefined} />
       ) : (
         <Icons.RiEarthFill size={size} color={color ? color : undefined} />
+      );
+    case "add":
+      return line ? (
+        <Icons.RiAddLine size={size} color={color ? color : undefined} />
+      ) : (
+        <Icons.RiAddFill size={size} color={color ? color : undefined} />
       );
     case "ps":
     case "psn":
@@ -298,6 +308,13 @@ const LinkIcon = ({
         <RiInstagramLine size={size} color={color ? color : undefined} />
       ) : (
         <RiInstagramFill size={size} color={color ? color : undefined} />
+      );
+
+    case "threads":
+      return line ? (
+        <Icons.RiThreadsLine size={size} color={color ? color : undefined} />
+      ) : (
+        <Icons.RiThreadsFill size={size} color={color ? color : undefined} />
       );
     case "snapchat":
       return line ? (
@@ -550,11 +567,19 @@ const LinkIcon = ({
       );
     case "linktree":
       return <Linktree color={color ? color : undefined} size={size} />;
+    case "farcaster":
+      return <Farcaster color={color ? color : undefined} size={size} />;
     default:
       //// console.log('here : ', type);
       if (type.indexOf("Ri") === 0) {
         const SelectedIcon = Icons[type as keyof typeof Icons];
-        return <SelectedIcon size={size} color={color ? color : undefined} />;
+        return (
+          <SelectedIcon
+            size={size}
+            color={color ? color : undefined}
+            opacity={opacity}
+          />
+        );
       } else if (
         type.indexOf(IPFS_IMAGE_URI) === 0 ||
         type.indexOf(IMAGE_URI) === 0

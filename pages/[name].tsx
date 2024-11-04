@@ -107,7 +107,7 @@ interface LinkPageProps {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { query } = context;
   let _name = query.name ? String(query.name) : "";
-  const name = _name.toLowerCase();
+  const name = _name.toLowerCase().includes(`.${TLD}`) ? _name.toLowerCase() : `${_name.toLowerCase()}.${TLD}`;
 
   const subgraphRecords: any = await viemClient.getSubgraphRecords({
     name: name,

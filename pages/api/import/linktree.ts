@@ -61,7 +61,7 @@ async function scrapeLinktree(url: string) {
         links.push({
           title: linkTitle,
           url: linkUrl,
-          styles: { icon: linkImage, size : "md" },
+          styles: { icon: linkImage, size : linkTitle.length > 25 ? "lg" : "md" },
           type: linkType,
           image: '', content: ''
         });

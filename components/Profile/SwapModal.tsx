@@ -66,21 +66,7 @@ export default function SwapModal({ title, url, type, styles, icon }: Props) {
               overflow={"hidden"}
               key={`embed-box-${title.replaceAll(" ", "-")}-${embedType}`}
             >
-              <IframeResizer
-                src={url}
-                license="GPLv3"
-                title={title}
-                scrolling="omit"
-                style={{
-                  borderRadius: round === "none" ? 0 : round === "md" ? 8 : 16,
-                  backgroundColor: lightMode ? "white" : "black",
-                  width: "340px",
-                  minWidth: "100%",
-                  minHeight: styles?.size === "lg" ? "80vh" : styles?.size === "md" ? "50vh" : "25vh",
-                }}
-                checkOrigin={true}
-                inPageLinks
-              />
+              <SwapWidget />
             </Flex>
           )}
         </Flex>

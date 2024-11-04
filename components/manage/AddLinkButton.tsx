@@ -49,6 +49,7 @@ import {
   addLinkUrlAtom,
   addressAtom,
   btcAtom,
+  connectedAccountAtom,
   ethAtom,
   linksArrayAtom,
   linksAtom,
@@ -97,7 +98,7 @@ export default function AddLinkButton() {
   const _url = useAtomValue(addLinkUrlAtom);
   const _content = useAtomValue(addLinkContentAtom);
   const _styles = useAtomValue(addLinkStylesAtom);
-  const ethAddress = useAtomValue(ethAtom);
+  const connectedAccount = useAtomValue(connectedAccountAtom);
   const btcAddress = useAtomValue(btcAtom);
   const { colorMode } = useColorMode();
   const [links, setLinks] = useAtom(linksAtom);
@@ -198,10 +199,11 @@ export default function AddLinkButton() {
       setImage("");
 
       switch (item.type) {
-        case "donate":
-        case "pay":
+        case "donate button":
+        case "payment button":
           setStyles({
             size: "md",
+            eth: connectedAccount
           });
           break;
 

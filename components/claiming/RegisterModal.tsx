@@ -331,7 +331,7 @@ export default function RegisterModal() {
                   justify={"center"}
                 >
                   <Text>
-                    {name}.{TLD}
+                    {name}
                   </Text>
                 </Flex>
                 <Flex gap={2} align={"center"}>
@@ -426,12 +426,12 @@ export default function RegisterModal() {
                   <Flex justify={"space-between"} w={"100%"}>
                     <Stack>
                       <Text fontSize={"xl"} fontWeight={"bold"}>
-                        Set As Primary
+                        Set As Profile
                       </Text>
                       <Text fontSize={"small"}>
-                        This links your address to this name, allowing dApps to
+                        This links your address to this page, allowing dApps to
                         display it as your profile when connected to them. You
-                        can only have one primary name per address.
+                        can only have one profile page per address.
                       </Text>
                     </Stack>
                     <Switch
@@ -575,7 +575,7 @@ export default function RegisterModal() {
                         <Flex justify={"space-between"} w={"100%"}>
                           <Text fontWeight={"bold"}>Name</Text>
 
-                          <Text>{`${name}.bst`} </Text>
+                          <Text>{`${name}`} </Text>
                         </Flex>
                         <Flex justify={"space-between"} w={"100%"}>
                           <Text fontWeight={"bold"}>Duration</Text>
@@ -688,7 +688,7 @@ export default function RegisterModal() {
                       </Box>
                       <Center flexDirection={"column"} gap={4}>
                         <Text fontSize={"xl"} fontWeight={"bold"}>
-                          Name Registered!
+                          Page Registered!
                         </Text>
                         <Image
                           w={["100%", "xs"]}
@@ -697,7 +697,7 @@ export default function RegisterModal() {
                           alt={name+'-tree-avatar-image'}
                         />
                         <Text fontSize={"xl"} fontWeight={"bold"}>
-                          {name}.bst
+                          {name}
                         </Text>
                         {/* <Button
                           w={["100%", "xs"]}
@@ -720,20 +720,20 @@ export default function RegisterModal() {
                         <Button
                           w={["100%", "xs"]}
                           as={Link}
-                          href={SITE_PROFILE_URL + name + ".bst"}
+                          href={SITE_PROFILE_URL + name}
                           target="_blank"
                           size={"lg"}
                         >
-                          View Name
+                          View Page
                         </Button>
                         <Button
                           w={["100%", "xs"]}
                           as={Link}
-                          href={SITE_MANAGE_SINGLE_URL + name + ".bst"}
+                          href={SITE_MANAGE_SINGLE_URL + name }
                           target="_blank"
                           size={"lg"}
                         >
-                          Manage Name
+                          Manage Page
                         </Button>
                       </Center>
                     </>
@@ -814,7 +814,7 @@ export default function RegisterModal() {
                 >
                   {recordsData && recordsData.length > 0
                     ? "Next"
-                    : "Skip Profile"}
+                    : "Setup Later"}
                 </Button>
               )}
               {step === 3 && (

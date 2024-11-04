@@ -50,7 +50,7 @@ export const ROADMAP_URL = "https://docs.basetree.xyz/overview/roadmap";
 export const GUIDES_URL = "https://docs.basetree.xyz/guides/overview";
 export const EMAIL_URL = "mailto:info@basetree.xyz";
 export const MEDIUM_URL = "https://medium.com/@basetree";
-export const YLIDE_URL = "";
+export const FARCASTER_URL = "https://warpcast.com/basetree";
 export const YOUTUBE_URL = "https://www.youtube.com/@basetree";
 export const OPENSEA_URL =
   "https://testnets.opensea.io/assets/arbitrum-sepolia/0x955357e06046c91186cf4571f4dd729157bfbcfb/";
@@ -158,6 +158,7 @@ export const AVAILABLE_LINKS: LinkType[] = [
 
 export const EXAMPLE_SOCIAL_URLS: any = {
   twitter: "https://twitter.com/exampleuser",
+  farcaster: "https://warpcast.com/exampleuser",
   x: "https://x.com/exampleuser",
   linkedin: "https://www.linkedin.com/in/exampleuser/",
   github: "https://github.com/exampleuser",
@@ -219,13 +220,14 @@ export const EXAMPLE_WALLETS: any = {
 
 export const SOCIALS = [
   { key: "Twitter", value: "com.twitter", color: "#000000" },
-  { key: "X", value: "com.twitter", color: "#000000" },
+  { key: "Farcaster", value: "com.farcaster", color: "#000000" },
   { key: "Discord", value: "com.discord", color: "#5865F2" },
   { key: "Medium", value: "com.medium", color: "#000000" },
   { key: "Opensea", value: "com.opensea", color: "#2081E2" },
   { key: "Telegram", value: "org.telegram", color: "#0088CC" },
   { key: "Github", value: "com.github", color: "#181717" },
   { key: "Instagram", value: "com.instagram", color: "#E4405F" },
+  { key: "Threads", value: "com.instagram.threads", color: "#000000" },
   { key: "Youtube", value: "com.google.youtube", color: "#FF0000" },
   { key: "Galxe", value: "com.galxe", color: "#101010" }, // Estimated brand color
   { key: "Facebook", value: "com.facebook", color: "#1877F2" },
@@ -253,6 +255,7 @@ export const SOCIALS = [
   { key: "Slack", value: "com.slack", color: "#4A154B" },
   { key: "Reddit", value: "org.reddit", color: "#FF4500" },
   { key: "Whatsapp", value: "com.whatsapp", color: "#25D366" },
+  { key: "X", value: "com.twitter", color: "#000000" },
 ];
 
 // Function to get the color of a social media platform by name
@@ -435,333 +438,6 @@ export const FONTS = [
   "Black Ops One",
 ];
 
-export const VARIATIONS = [
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/pun.bst.svg",
-    avatarShape: "hex",
-    bg: BG_IMAGES[7].bg,
-    lightMode: BG_IMAGES[7].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[2],
-    round: BUTTON_ROUNDS[1],
-    font: FONTS[0],
-    title: "Jonathan",
-    WalletButtons: true,
-    subtitle: "Investigator",
-    vid: "jonathan.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/sam.bst.svg",
-    avatarShape: "circle",
-    bg: BG_IMAGES[1].bg,
-    lightMode: BG_IMAGES[3].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[1],
-    round: BUTTON_ROUNDS[2],
-    font: FONTS[3],
-    WalletButtons: true,
-    title: "Crypto Explorer",
-    vid: "samoel.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/anony.bst.svg",
-    avatarShape: "circle",
-    bg: BG_IMAGES[6].bg,
-    lightMode: BG_IMAGES[8].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[5],
-    round: BUTTON_ROUNDS[2],
-    font: FONTS[0],
-    title: "Joe",
-    WalletButtons: true,
-    subtitle: "Community Mod",
-    vid: "mod.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/anon.bst.svg",
-    avatarShape: "hex",
-    bg: BG_COLORS[0].color,
-    lightMode: BG_COLORS[0].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[2],
-    round: BUTTON_ROUNDS[1],
-    font: FONTS[2],
-    title: "0xLuc",
-    subtitle: "Crypto Enthusiast",
-    WalletButtons: true,
-    socialButtons: false,
-    vid: "0xluc.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/rain.bst.svg",
-    avatarShape: "round",
-    bg: BG_COLORS[7].color,
-    lightMode: BG_COLORS[7].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[3],
-    round: BUTTON_ROUNDS[0],
-    font: FONTS[2],
-    title: "Jack",
-    subtitle: "Blockchain Dev",
-    vid: "jack.bst",
-    WalletButtons: true,
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/col.bst.svg",
-    avatarShape: "round",
-    bg: BG_IMAGES[4].bg,
-    lightMode: BG_IMAGES[4].lightMode,
-    buttonBg: BUTTON_BG_COLORS[1],
-    variant: BUTTON_VARIANTS[0],
-    round: BUTTON_ROUNDS[1],
-    font: FONTS[0],
-    title: "Alice",
-    subtitle: "Domains on Base",
-    WalletButtons: true,
-    vid: "alice.bst",
-  },
-];
-
-export const VARIATIONS_VIDS = [
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/anon.bst.svg",
-    vid: "boo.bst",
-    address: "0xD2D....001CE",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/luc.bst.svg",
-    address: "0xD2D....01ED2",
-    vid: "luc.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/john.bst.svg",
-    address: "0xD2D....01ECE",
-    vid: "john.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/anony.bst.svg",
-    address: "0xD2D....00101C",
-    vid: "alice.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/dark.bst.svg",
-    address: "0xD2D....001CE",
-    vid: "alex.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/col.bst.svg",
-    address: "0xD2D....00112",
-    vid: "sara.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/pun.bst.svg",
-    address: "0xD2D....D212E",
-    vid: "mary.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/joe.bst.svg",
-    address: "0xD2D....D2D12",
-    vid: "joe.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/dark.bst.svg",
-    address: "0xD2D....001CE",
-    vid: "dark.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmNpdhihDxWCykpci1EJPA4VJTo7TTKH4NnZJStbN1MVqC/sam.bst.svg",
-    address: "0xD2D....D21CE",
-    vid: "jack.bst",
-  },
-  {
-    avatar:
-      "https://ipfs.io/ipfs/QmTQqf3ge2SvpgeBAucDtfxExE3zMci6hfMrqZmLJXVCm6/ben.bst.svg",
-    address: "0xD2D....D2EF3",
-    vid: "ben.bst",
-  },
-];
-
-export const LINK_VARIATIONS = [
-  [
-    {
-      type: "tweet",
-      title: "tweet",
-      styles: {
-        size: "sm",
-      },
-      url: "https://x.com/monad_xyz/status/1819352362198118522",
-    },
-  ],
-  [
-    {
-      type: "donate button",
-      title: "buy me a coffee",
-      styles: {
-        size: "sm",
-        eth: "0xBFd210db795A9Ac48D0C3be2a74232BE44144E84",
-      },
-      url: "https://soundcloud.com/sam-walters-715497925/sets/trippy",
-    },
-  ],
-  [
-    {
-      type: "simple link",
-      title: "Youtube Channel",
-      url: "https://www.youtube.com/@basetree",
-      styles: {
-        icon: "RiYoutubeFill",
-        size: "md",
-      },
-    },
-  ],
-  [
-    {
-      type: "simple link",
-      title: "Telegram Bot",
-      url: "https://t.me/@monid_xyz_bot",
-      styles: {
-        icon: "RiTelegramFill",
-        size: "md",
-      },
-    },
-  ],
-  [
-    {
-      type: "donate button",
-      title: "buy me a coffee",
-      styles: {
-        size: "sm",
-        eth: "0xBFd210db795A9Ac48D0C3be2a74232BE44144E84",
-      },
-      url: "https://soundcloud.com/sam-walters-715497925/sets/trippy",
-    },
-    {
-      type: "tweet",
-      title: "tweet",
-      styles: {
-        size: "sm",
-      },
-      url: "https://x.com/monad_xyz/status/1819352362198118522",
-    },
-    {
-      type: "pdf document",
-      title: "My Old CV",
-      url: "",
-      image:
-        "https://ipfs.io/ipfs/QmUeSvTQtZiBoa344JvfA8ekeKFH8pRMk8sY3tBjDEG3d9/CV.pdf",
-      content: "",
-      styles: {
-        size: "sm",
-      },
-    },
-    {
-      type: "nft link",
-      title: "Bear Market Builder NFT",
-      url: "https://opensea.io/assets/polygon/0x3C29F6B19bcbeB85d26460bB2f7Bd4cd065cE28E/0",
-      image:
-        "https://nft-cdn.alchemy.com/matic-mainnet/2e664665ea294c94798de67894c608ac",
-      content:
-        '{"address":"0x3C29F6B19bcbeB85d26460bB2f7Bd4cd065cE28E/0","metadata":{"image":"ipfs://QmTNi5umYXWV2THy65WDUMszTdHvuQRsZ9RuUmR7GEJyFx/bear-market-builder.png","external_url":"","animation_url":"ipfs://QmTNi5umYXWV2THy65WDUMszTdHvuQRsZ9RuUmR7GEJyFx/bear-market-builder.mp4","background_color":"","name":"Bear Market Builder NFT","description":"","attributes":[{"value":"common","trait_type":"rarity"}],"supply":"98477"}}',
-      styles: {
-        size: "sm",
-        scanLink: false,
-        network: "polygon",
-        type: "complex",
-      },
-    },
-  ],
-  [
-    {
-      type: "soundcloud track",
-      title: "music",
-      styles: {
-        size: "sm",
-      },
-      url: "https://soundcloud.com/sam-walters-715497925/sets/trippy",
-    },
-  ],
-];
-
-export const SOCIALS_VARIATIONS = [
-  {
-    "com.discord": "#",
-    email: "#",
-    "com.twitter": "#",
-    "org.telegram": "#",
-    "com.whatsapp": "#",
-  },
-  {
-    "com.twitter": "https://twitter.com/basetree",
-    "com.ylide": "",
-    "com.medium": "https://medium.com/@basetree",
-    "com.zealy": "https://zealy.io/c/#",
-    "org.telegram": "https://t.me/basetree",
-  },
-  {
-    "com.soundcloud": "#",
-    "com.opensea": "#",
-    "com.patreon": "#",
-    "com.twitter": "#",
-    "com.spotify": "#",
-  },
-  {
-    "org.telegram": "https://t.me/basetree",
-    "com.zealy": "https://zealy.io/c/#",
-    "com.github": "https://github.com/sam-shariat/basetree",
-    "com.google.youtube": "#",
-  },
-  {
-    "com.facebook": "#",
-    "tv.twitch": "#",
-    "com.snapchat": "#",
-    "com.tiktok": "#",
-  },
-  {
-    "com.pinterest": "#",
-    "com.slack": "#",
-    "com.skype": "#",
-    "com.dribbble": "#",
-    "com.twitter": "#",
-  },
-];
-
-export const WALLETS_VARIATIONS = [
-  {
-    btc: "tb1qshvfpzfa0p46gztp00jwccf0c4kdfac72lmuz7",
-  },
-  {
-    eth: "0xBFd210db795A9Ac48D0C3be2a74232BE44144E84",
-  },
-  {
-    sol: "BfiZDeHXzuz8pz5EGM6eUv1B1hLsGJQPRoxqYsBRKW3i",
-  },
-  {
-    arb1: "0x424c939664F9e007aaF30180fD2f1824a44334D7",
-  },
-  {
-    trx: "TR22H7PLMm1BUaGfhmfnPY7VLEhG2U6y3t",
-  },
-  {
-    bnb: "0xCDbab7630551d069DBdF0050E4a53D8C5ED2482b",
-  },
-];
-
 export const TOUR_STEPS = [
   {
     element: ".title",
@@ -888,12 +564,14 @@ export const RAFFLE_IMAGES2 = [
 
 export const SOCIAL_URLS: any = {
   twitter: "twitter.com/",
+  farcaster: "warpcast.com/",
   x: "x.com/",
   linkedin: "linkedin.com/in/",
   github: "github.com/",
   medium: "medium.com/",
   youtube: "youtube.com/",
   instagram: "instagram.com/",
+  threads: "threads.net/",
   tiktok: "tiktok.com/",
   twitch: "twitch.tv/",
   snapchat: "snapchat.com/add/",

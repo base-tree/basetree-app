@@ -78,7 +78,7 @@ export default function TokenChartModal({
                 ])}
                 changeMode={tokenChart.changeMode}
                 backgroundColor={styles?.bg}
-                height={
+                height={styles?.height ? Number(styles.height) * 10 :
                   styles?.size === "lg"
                     ? "600"
                     : styles?.size === "md"
@@ -112,7 +112,7 @@ export default function TokenChartModal({
                 ])}
                 changeMode={tokenChart.changeMode}
                 backgroundColor={styles?.bg}
-                height={
+                height={styles?.height ? Number(styles.height) * 10 :
                   styles?.size === "lg"
                     ? "600"
                     : styles?.size === "md"

@@ -36,14 +36,14 @@ export default function Socials({ json, color, onlyIcons, title }: Props) {
 
   return (
     <>
-      <Flex flexDirection={_onlyIcons ? 'row' : 'column'} gap={3}>
+      <Flex flexDirection={_onlyIcons ? 'row' : 'column'} gap={3} key={`social-${title}-links-${_onlyIcons ? 'icons' : 'buttons'}-box`}>
         {(title ? json.socials : socialsArray).map(
           //@ts-ignore
           (item,ind) =>
             item.key && (
               <AnimateScale delay={(ind * 0.2) + 1}>
               <SocialLink
-                key={`item-${item.key}-${title}`}
+                key={`item-${item.key}-${title}-${ind}`}
                 title={title ? item.key : String(getSocialTitle(item.key))}
                 onlyIcon={_onlyIcons}
                 color={color ? color : undefined}

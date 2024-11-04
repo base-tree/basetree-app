@@ -17,6 +17,7 @@ import IconPicker from "./IconPicker";
 import ManageUpload from "./ManageUpload";
 import SelectSlider from "./SelectSlider";
 import SettingsButton from "./SettingButton";
+import SelectColor from "./SelectColor";
 
 interface Props {
   type: string;
@@ -106,6 +107,13 @@ export default function ManageImageLink({
         value={Number(styles?.height)}
         setValue={(e: any) => setStyles({ ...styles, height: e })}
         title="Height"
+      />
+
+      <SelectColor
+        value={String(styles?.bg)}
+        setValue={(e: any) => setStyles({ ...styles, bg: e })}
+        title={`Overlay Color`}
+        options={{gradient: false}}
       />
 
       {height !== "auto" && (

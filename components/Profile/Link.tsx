@@ -271,7 +271,7 @@ export default function Link({
                 : "400px"
             }
             style={{
-              borderRadius: round === "none" ? 0 : round === "md" ? 8 : 16,
+              borderRadius: round === "none" ? 0 : round === "md" ? 6 : 12,
             }}
           />{" "}
         </Box>

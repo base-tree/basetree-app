@@ -99,7 +99,7 @@ const terms: Terms = {
     en: 'manage',
   },
   yourVids: {
-    en: 'My Names',
+    en: 'My Pages',
   },
   contributer: {
     en: 'be a major contributor',

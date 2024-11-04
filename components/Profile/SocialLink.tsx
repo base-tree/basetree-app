@@ -108,6 +108,8 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
               }>
               {title}
             </Text>
+            <LinkIcon type="RiExternalLinkLine" size={22} opacity={0.5} />
+
           </Button>
         </ChakraLink>
       )}

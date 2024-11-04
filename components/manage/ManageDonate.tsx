@@ -31,17 +31,7 @@ export default function ManageDonate({
   return (
     <>
       <>
-        <WalletInput
-          title="Ethereum"
-          value={styles?.eth ?? ""}
-          setValue={(e: any) => setStyles({ ...styles, eth: e })}
-        />
-        <WalletInput
-          title="Bitcoin"
-          value={styles?.btc ?? ""}
-          setValue={(e: any) => setStyles({ ...styles, btc: e })}
-        />
-        <Text>Thank you note</Text>
+        <Text>Thank you note to show after payment</Text>
         <Textarea
           minWidth="xs"
           title="Thank you note"

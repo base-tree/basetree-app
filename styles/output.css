@@ -971,3 +971,20 @@ body {
     transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0));
   }
 }
+
+.blocks-swiper {
+  .swiper-pagination-bullet {
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    color: transparent;
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .swiper-pagination-bullet-active {
+    color: transparent;
+    background: #ffffff;
+  }
+}

@@ -6,6 +6,7 @@ import "@blocknote/mantine/style.css";
 import { upload } from "thirdweb/storage";
 import { client } from 'components/walletConnect';
 import { IPFS_IO_URL, MAX_FILE_UPLOAD } from "@/core/utils/constants";
+import SelectColor from "./SelectColor";
 
 export default function ManageBlock({
   type,
@@ -41,6 +42,16 @@ export default function ManageBlock({
 
   return (
     <>
+      <SelectColor
+        value={String(styles?.bg)}
+        setValue={(e) => setStyles({ ...styles, bg: e })}
+        title={`BG Color`}
+        defaultMode="solid"
+        top
+        bottom
+        options={{gradient: false}}
+      />
+
       <BlockNoteView
         editor={editor}
         onChange={() => {

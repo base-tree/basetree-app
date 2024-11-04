@@ -9,9 +9,10 @@ export const config = {
 
 const OgImageHandler = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
-  const name = searchParams.get('name') || 'Base User';
-  const title = searchParams.get('title') || 'BaseTree';
-  const subtitle = searchParams.get('subtitle') || 'BaseTree';
+  const _name = searchParams.get('name') || 'Base User';
+  const name = _name.includes(".bst") ? _name : _name + ".bst";
+  const title = searchParams.get('title');
+  const subtitle = searchParams.get('subtitle');
   const avatar = searchParams.get('avatar');
   const bg = searchParams.get('bg');  
   const lightMode = searchParams.get('lightmode') || false;
@@ -70,23 +71,12 @@ const OgImageHandler = async (req: NextRequest) => {
             style={{
               fontSize: 30,
               lineHeight: 1.1,
-              color: lightMode === "true" ? '#00000077' : '#ffffff77',
+              color: lightMode === "true" ? '#00000099' : '#ffffff99',
               maxWidth: 450,
               textAlign: 'left'
             }}>
             {subtitle}
-          </p>}
-          <p
-            style={{
-              fontSize: 36,
-              lineHeight: 1.1,
-              maxWidth: 450,
-              color: lightMode === "true" ? '#161618' : '#f5f5f5',
-              textAlign: 'left'
-            }}>
-            {name}
-          </p>
-          
+          </p>}          
         </div>
       </div>
     ),

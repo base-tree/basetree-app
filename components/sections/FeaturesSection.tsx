@@ -33,6 +33,8 @@ import IconCloud from "../ui/icon-cloud";
 import HyperText from "../ui/hyper-text";
 import { MatrixText } from "../ui/MatrixText";
 import CanvasLightEffect from "../ui/CanvasLightEffect";
+import { BlocksSlider } from "../ui/BlocksSlider";
+import Footer from "../Layout/Footer";
 
 export default function FeaturesSection() {
   const { t } = useTranslate();
@@ -61,9 +63,10 @@ export default function FeaturesSection() {
             bg={"blackAlpha.400"}
             gap={8}
             align={"center"}
-            h={"100vh"}
+            minH={"100vh"}
             w={"100%"}
             px={6}
+            py={36}
           >
             
             <AnimateOnScroll delay={0.1}>
@@ -83,8 +86,18 @@ export default function FeaturesSection() {
                 Bring your own vibe
               </Text>
             </AnimateOnScroll>
-
-            <AnimateOnScroll delay={0.5}>
+            <Center rounded={"2xl"} p={[0, 4]}>
+                <Flex w={["90vw", "sm", "md", "lg"]} position={"relative"}>
+                  <AnimateOnScroll
+                    delay={0.5}
+                    y={-50}
+                    styles={{ width: "100%", overflow: "visible" }}
+                  >
+                    <PreviewSlider />
+                  </AnimateOnScroll>
+                </Flex>
+              </Center>
+            <AnimateOnScroll delay={0.8}>
               <Text
                 textAlign={"center"}
                 fontSize={["lg", "lg", "2xl"]}
@@ -92,10 +105,10 @@ export default function FeaturesSection() {
                 px={4}
               >
                 Whether showcasing NFTs or integrating crypto payments, Basetree
-                gives you full control over your digital identity
+                gives you full control over your digital profile
               </Text>
             </AnimateOnScroll>
-            <AnimateOnScroll delay={0.8}>
+            <AnimateOnScroll delay={1}>
               <Center flexDirection={["column", "column", "row"]} gap={6}>
                 <Button
                   size={"lg"}
@@ -105,7 +118,7 @@ export default function FeaturesSection() {
                   passHref
                   href={DOCS_URL}
                 >
-                  {t("Developer Docs (soon)")}
+                  {t("Templates (soon)")}
                 </Button>
                 <Button
                   as={NextLink}
@@ -120,77 +133,28 @@ export default function FeaturesSection() {
             </AnimateOnScroll>
           </Flex>
           <Stack w={"100%"} gap={0} id="components">
+            
             <Flex
               flexDir={["column", "column", "column", "row"]}
               justify={"center"}
               align={"center"}
               h={"100vh"}
-              w={"100vw"}
-            >
-              <Center rounded={"2xl"} p={[4, 4, 12]}>
-                <Flex w={["100%", "100%", "lg"]} position={"relative"}>
-                  <AnimateOnScroll
-                    delay={0.3}
-                    x={-200}
-                    y={0}
-                    styles={{ width: "100%", overflow: "visible" }}
-                  >
-                    <PreviewSlider />
-                  </AnimateOnScroll>
-                </Flex>
-              </Center>
-              <Center rounded={"2xl"} p={[4, 4, 12]} flexDir={"column"}>
-                <AnimateOnScroll
-                  delay={0.5}
-                  x={notMobile ? 200 : 0}
-                  y={notMobile ? 0 : 50}
-                >
-                  <Text
-                    textAlign={"center"}
-                    fontWeight="bold"
-                    fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
-                  >
-                    {t("Shareable")}
-                  </Text>
-                </AnimateOnScroll>
-                <AnimateOnScroll
-                  delay={0.7}
-                  x={notMobile ? 200 : 0}
-                  y={notMobile ? 0 : 50}
-                >
-                  <Text
-                    textAlign={"center"}
-                    fontWeight="bold"
-                    fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
-                  >
-                    {t("Web URL")}
-                  </Text>
-                </AnimateOnScroll>
-              </Center>
-            </Flex>
-            <Flex
-              flexDir={["column", "column", "column", "row"]}
-              justify={"center"}
-              align={"center"}
-              h={"100vh"}
-              bg={"blackAlpha.400"}
+              bg={"whitwAlpha.200"}
               w={"100vw"}
             >
               <Center rounded={"2xl"} p={[4, 4, 12]} flexDir={"column"}>
                 <AnimateOnScroll
                   delay={0.3}
-                  x={-200}
-                  y={0}
                   styles={{ width: "100%", overflow: "visible" }}
                 >
                   <Center gap={4}>
-                    <LinkIcon type="psn" size={notMobile ? "60px" : "40px"} />
+                    <LinkIcon type="add" size={notMobile ? "60px" : "40px"} />
                     <Text
                       textAlign={"center"}
                       fontWeight="bold"
                       fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
                     >
-                      {t("PSN")}
+                      {t("Add")}
                     </Text>
                   </Center>
                 </AnimateOnScroll>
@@ -200,63 +164,24 @@ export default function FeaturesSection() {
                     fontWeight="bold"
                     fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
                   >
-                    {t("Profile")}
+                    {t("Blocks")}
                   </Text>
                 </AnimateOnScroll>
               </Center>
-              <Center rounded={"2xl"} p={[4, 4, 12]}>
+              <Center rounded={"2xl"} p={[0, 4, 12]} py={4}>
                 <Flex w={["100%", "100%", "lg"]} position={"relative"}>
                   {" "}
                   <AnimateOnScroll
                     delay={0.7}
-                    x={notMobile ? 200 : 0}
-                    y={notMobile ? 0 : 50}
                     styles={{ width: "100%", overflow: "visible" }}
                   >
-                    <PSNProfile
-                      styles={{
-                        bg: "linear-gradient(0deg, #b9b9b9 10%, #eef2f3 90%)",
-                        size: "lg",
-                      }}
-                      title="PSN User"
-                      content={JSON.stringify({
-                        username: "PSN Username",
-                        level: "22",
-                        levelProgress: "75",
-                        trophies: {
-                          total: 52,
-                          platinum: 0,
-                          gold: 5,
-                          silver: 10,
-                          bronze: 37,
-                        },
-                        stats: {
-                          gamesPlayed: 13,
-                          completedGames: 0,
-                          completionRate: "18.01%",
-                          unearnedTrophies: 279,
-                          trophiesPerDay: "0.02",
-                          views: 20,
-                          worldRank: "4,227,357",
-                          countryRank: "1,369,417",
-                        },
-                        trophyMilestones: [
-                          {
-                            name: "Tinkerer",
-                            game: "Rocket League",
-                            milestone: "First Trophy",
-                            timeAgo: "7 years ago",
-                            imageUrl:
-                              "https://i.psnprofiles.com/games/13f789/trophies/33S4347c5.png",
-                          },
-                        ],
-                      })}
-                    />
+                    <BlocksSlider />
+                    
                   </AnimateOnScroll>
                 </Flex>
               </Center>
             </Flex>
-            <Flex
+            {/* <Flex
               flexDir={["column", "column", "column", "row"]}
               justify={"center"}
               align={"center"}
@@ -268,8 +193,6 @@ export default function FeaturesSection() {
               <Center rounded={"2xl"} gap={10} p={12} flexDir={"column"}>
                 <AnimateOnScroll
                   delay={0.2}
-                  x={notMobile ? 200 : 0}
-                  y={notMobile ? 0 : 50}
                 >
                   <Text
                     fontWeight="black"
@@ -281,8 +204,6 @@ export default function FeaturesSection() {
                 </AnimateOnScroll>
                 <AnimateOnScroll
                   delay={0.3}
-                  x={-200}
-                  y={0}
                   styles={{ width: "100%", overflow: "visible" }}
                 >
                   <Flex w={["100%", "100%", "lg"]} position={"relative"}>
@@ -291,21 +212,11 @@ export default function FeaturesSection() {
                         iconSlugs={SOCIALS.map((s) => s.key.toLowerCase())}
                       />
                     </div>
-                    {/* <SocialMediaOrbit
-                      iconSize={"24px"}
-                      iconBgSize={["40px"]}
-                      centralElement={<Logo w={"50px"} h={"50px"} />}
-                      names={SOCIALS.slice(0, 20).map((s) =>
-                        s.key.toLowerCase()
-                      )}
-                      resetTime={1000}
-                      props={{ h: "300px" }}
-                    /> */}
                   </Flex>
                 </AnimateOnScroll>
               </Center>
             </Flex>
-            <Flex
+           <Flex
               flexDir={["column", "column", "column", "row"]}
               justify={"center"}
               align={"center"}
@@ -344,7 +255,7 @@ export default function FeaturesSection() {
                   </AnimateOnScroll>
                 </Flex>
               </Center>
-            </Flex>
+            </Flex> 
             <Flex
               flexDir={["column", "column", "column", "row"]}
               justify={"center"}
@@ -355,8 +266,9 @@ export default function FeaturesSection() {
             >
               <Center rounded={"2xl"} p={[4, 4, 12]}>
                 <Flex
-                  w={["400px", "420px", "lg", "xl", "2xl"]}
+                  w={["90vw", "420px", "lg", "xl", "2xl"]}
                   position={"relative"}
+                  overflow={'hidden'}
                 >
                   <AnimateOnScroll
                     delay={0.3}
@@ -416,18 +328,18 @@ export default function FeaturesSection() {
                   </Text>
                 </AnimateOnScroll>
               </Center>
-            </Flex>
+            </Flex>*/}
             <CanvasLightEffect bgColor={["#0063cc", "#001325"]}>
             <Flex
               flexDir={["column", "column", "column", "row"]}
               justify={"center"}
               align={"center"}
               h={"100vh"}
-              w={"100vw"}
+              w={"100%"}
             >
               <Center
                 rounded={"2xl"}
-                p={[4, 4, 12]}
+                p={[4, 8, 12]}
                 flexDir={"column"}
                 gap={12}
               >
@@ -439,38 +351,20 @@ export default function FeaturesSection() {
                       fontSize={["4xl", "4xl", "5xl", "5xl"]}
                       textAlign={["center", "center", "center"]}
                     >
-                      Get Your BaseTree Today
+                      Get Your Basetree
                     </Heading>
                   </Flex>
                 </AnimateOnScroll>
                 <AnimateOnScroll delay={0.5}>
-                  <Text fontSize={["xl", "xl", "2xl"]} textAlign={"center"}>
-                    Join the growing community and take control of your
-                    blockchain identity.
+                  <Text fontSize={["xl", "xl", "2xl"]} textAlign={"center"} maxW={['xs','sm','100%']}>
+                    Join the growing community and start building your
+                    profile.
                   </Text>
                 </AnimateOnScroll>
-                <Center gap={6} flexDir={["column", "column", "column", "row"]}>
+                <Center gap={6} flexDir={["column", "column", "column"]}>
+                 
                   <AnimateOnScroll
                     delay={0.7}
-                    styles={{ width: notMobile ? "320px" : "100%" , overflow: 'visible'}}
-                  >
-                    <Button
-                      h={"54px"}
-                      size={"lg"}
-                      rounded={"full"}
-                      colorScheme="light"
-                      variant={'pop'}
-                      w={["100%", "xs"]}
-                      minW={"320px"}
-                      as={NextLink}
-                      href={TWITTER_FOLLOW_URL}
-                      target="_blank"
-                    >
-                      {t("Join X Community")}
-                    </Button>
-                  </AnimateOnScroll>
-                  <AnimateOnScroll
-                    delay={0.9}
                     styles={{ width: notMobile ? "inherit" : "100%" , overflow: 'visible'}}
                   >
                     <Button
@@ -487,6 +381,12 @@ export default function FeaturesSection() {
                     >
                       {t("Get Started")}
                     </Button>
+                  </AnimateOnScroll>
+                  <AnimateOnScroll
+                    delay={0.9}
+                    styles={{ width: notMobile ? "320px" : "100%" , overflow: 'visible'}}
+                  >
+                   <Footer />
                   </AnimateOnScroll>
                 </Center>
               </Center>

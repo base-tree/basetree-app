@@ -29,6 +29,7 @@ import {
   SITE_LOGO_URL,
   SITE_TITLE,
   SITE_URL,
+  TLD,
 } from "core/utils/constants";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -144,31 +145,38 @@ export default function ConnectWalletButton({
 
   async function getEthPrimary() {
     try {
+      if(!connectedAccount || primaryName) return;
       //@ts-ignore
       const _primary = await getName(viemClient, {
         address: connectedAccount as `0x${string}`,
       })
-      console.log(_primary)
-      const _node: any = await node({
-        contract: getContract({
-          client: client,
-          address: addresses.ReverseRegistrar,
-          chain: baseSepolia,
-        }),
-        addr: connectedAccount as `0x${string}`,
-      });
+      if(_primary){
 
-      const _name: any = await name({
-        contract: getContract({
-          client: client,
-          address: addresses.PublicResolver,
-          chain: baseSepolia,
-        }),
-        node: _node as `0x${string}`,
-      });
-      console.log(_name);
+        if(_primary.match){
+          setPrimary(_primary.name.replace(".bst",""));
+        } 
+      } else {
+        const _node: any = await node({
+          contract: getContract({
+            client: client,
+            address: addresses.ReverseRegistrar,
+            chain: baseSepolia,
+          }),
+          addr: connectedAccount as `0x${string}`,
+        });
 
-      setPrimary(_name);
+        const _name: any = await name({
+          contract: getContract({
+            client: client,
+            address: addresses.PublicResolver,
+            chain: baseSepolia,
+          }),
+          node: _node as `0x${string}`,
+        });
+        console.log(_name);
+        setPrimary(_name.replace(".bst",""));
+      };
+
     } catch {
       (e: any) => {
         console.log("error in eth primary", e);
@@ -194,7 +202,7 @@ export default function ConnectWalletButton({
   return (
     <>
       <Box
-        w={
+        w={style?.width ? style?.width :
           title !== "Connect"
             ? ["100%", "100%", "fit-content"]
             : ["168px", "192px"]
@@ -227,9 +235,8 @@ export default function ConnectWalletButton({
                 rounded={"full"}
                 w={["168px", "192px"]}
                 px={0}
-                colorScheme={lightMode ? "whiteAlpha" : "dark"}
-                bgColor={lightMode ? "whiteAlpha.900" : "var(--dark)"}
-                variant={lightMode ? "solid" : "outline"}
+                colorScheme={lightMode ? "whiteAlpha" : "gray"}
+                bgColor={lightMode ? "whiteAlpha.900" : "whiteAlpha.100"}
               >
                 <Flex
                   gap={2}
@@ -248,7 +255,7 @@ export default function ConnectWalletButton({
                       }
                       bgColor={!lightMode ? "var(--base0)" : "var(--base0)"}
                       rounded={"full"}
-                      src={AVATAR_API_URL + primaryName}
+                      src={AVATAR_API_URL + primaryName + '.' + TLD}
                       size={["md"]}
                     />
                   ) : (
@@ -260,7 +267,7 @@ export default function ConnectWalletButton({
                     fontWeight={"semibold"}
                     textAlign={"left"}
                     fontSize={["md", "lg"]}
-                    color={"#777777"}
+                    color={"#ffffff"}
                     my={"0 !important"}
                   >
                     {primaryName && primaryName !== ""
@@ -276,12 +283,12 @@ export default function ConnectWalletButton({
                 width={320}
                 mt={1}
                 py={2}
-                border={lightMode ? "none" : "1px #77777750 solid"}
+                border={lightMode ? "none" : "1px #77777733 solid"}
                 shadow={lightMode ? "md" : "none"}
                 position={"relative"}
                 zIndex={1500}
                 rounded={"2xl"}
-                bg={lightMode ? "var(--white)" : "var(--dark0)"}
+                bg={lightMode ? "var(--white)" : "blackAlpha.700"}
               >
                 <Flex
                   p={5}
@@ -301,7 +308,7 @@ export default function ConnectWalletButton({
                       }
                       bgColor={!lightMode ? "var(--base0)" : "var(--base0)"}
                       rounded={"full"}
-                      src={AVATAR_API_URL + primaryName}
+                      src={AVATAR_API_URL + primaryName + "." + TLD}
                       size={["md"]}
                     />
                   ) : (
@@ -377,9 +384,7 @@ export default function ConnectWalletButton({
                     <LinkBox px={5}>
                       <Link href={"name/" + primaryName} passHref>
                         <Button
-                          borderColor={"gray.800"}
                           gap={2}
-                          variant="outline"
                           width={"100%"}
                           size="md"
                         >
@@ -405,16 +410,14 @@ export default function ConnectWalletButton({
                   <LinkBox px={5}>
                     <Button
                       as={NextLink}
-                      borderColor={"gray.800"}
                       gap={2}
                       href={"/names"}
                       passHref
-                      variant="outline"
                       width={"100%"}
                       size="md"
                     >
                       <LinkIcon type="RiApps2Line" size={24} />
-                      My Names
+                      My Pages
                     </Button>
                   </LinkBox>
                 </Stack>

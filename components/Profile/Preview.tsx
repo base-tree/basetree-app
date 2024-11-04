@@ -71,8 +71,10 @@ const Preview = ({ json, w, isStatic }: Props) => {
   const [horizontalSocial, setHorizontalSocial] = useAtom(horizontalSocialAtom);
   //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
-  const [walletButtons, setWalletButtons] = useAtom(walletButtonsAtom);
-  const bgColor = useAtomValue(bgColorAtom);
+  const walletButtons = isStatic
+    ? json.styles.walletButtons
+    : useAtomValue(walletButtonsAtom);
+  const bgColor = isStatic ? json.styles.bgColor : useAtomValue(bgColorAtom);
   const setIsStyled = useSetAtom(isStyledAtom);
   const wallet = useActiveWallet();
   const avatarShape = useAtomValue(avatarShapeAtom);
@@ -81,9 +83,11 @@ const Preview = ({ json, w, isStatic }: Props) => {
   const avatar = useAtomValue(avatarAtom);
   const title = useAtomValue(titleAtom);
   const name = useAtomValue(nameAtom);
-  const bio = useAtomValue(bioAtom);
+  const bio = isStatic ? json.bio : useAtomValue(bioAtom);
   const subtitle = useAtomValue(subtitleAtom);
-  const lightMode = useAtomValue(lightModeAtom);
+  const lightMode = isStatic
+    ? json.styles.lightMode
+    : useAtomValue(lightModeAtom);
   const showDomain = useAtomValue(showDomainAtom);
   const headerMode = useAtomValue(headerModeAtom);
   const [colorM, setColorM] = useAtom(colorModeAtom);
@@ -115,16 +119,16 @@ const Preview = ({ json, w, isStatic }: Props) => {
         bgSize={"cover"}
         bgRepeat={"no-repeat"}
         w={"100%"}
-        rounded={isStatic ? '2xl' : 'none'}
+        rounded={isStatic ? "2xl" : "none"}
         bgPosition={"center"}
         justify={"center"}
-        minH={"100vh"}
+        minH={isStatic ? "auto" : "100vh"}
         color={lightMode ? "var(--dark1)" : "white"}
       >
         <Flex my={0}>
           <>
             <Container
-              width={w ? w : mobileView ? "380px" : "lg"}
+              width={isStatic ? ['90vw','sm','md','lg'] : w ? w : mobileView ? "sm" : "lg"}
               key={`basetree-preview-main-${lightMode}`}
               display="flex"
               flexDir={"column"}
@@ -156,6 +160,7 @@ const Preview = ({ json, w, isStatic }: Props) => {
                       <Socials
                         json={json}
                         onlyIcons
+                        color={isStatic ? !lightMode ? '#f5f5f5' : '#121212' : undefined}
                         key={`social-icons-${socials.length}`}
                       />
                     )}
@@ -168,6 +173,8 @@ const Preview = ({ json, w, isStatic }: Props) => {
                             ? "var(--chakra-colors-gray-100)"
                             : "var(--chakra-colors-gray-800)"
                         }
+                        key={`social-icons-${json.name}`}
+
                       />
                     )}
 
@@ -195,12 +202,16 @@ const Preview = ({ json, w, isStatic }: Props) => {
                             ? "var(--chakra-colors-gray-100)"
                             : "var(--chakra-colors-gray-800)"
                         }
+                        title={isStatic ? "preview links" : undefined}
+                        key={`preview-links-${json.title}`}
+
                       />
 
                       {socialButtons && (
                         <Socials
                           json={json}
                           key={`social-buttons-${socials.length}`}
+                          title={isStatic ? "preview socials" : undefined}
                         />
                       )}
                     </Stack>

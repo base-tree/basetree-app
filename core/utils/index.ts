@@ -1,6 +1,11 @@
 import axios from "axios";
 import { truncAddress } from "./stringUtils";
-import { IPFS_URLS, MAX_NAME_LENGTH, MIN_NAME_LENGTH, SOCIAL_URLS } from "./constants";
+import {
+  IPFS_URLS,
+  MAX_NAME_LENGTH,
+  MIN_NAME_LENGTH,
+  SOCIAL_URLS,
+} from "./constants";
 import { CustomLink, Game } from "types";
 //import crypto from 'crypto';
 
@@ -94,7 +99,6 @@ function isValidSignHash(signature: string, date: number) {
     return false;
   }
 }
-
 
 function base64ToBlob(
   b64Data: string,
@@ -282,11 +286,14 @@ const getIconInButtonColor = (
 };
 
 const getUrl = (type: string, url: string): string => {
+  const _url = url.split("/")[3] ? url.split("/")[3].split("?")[0] : url;
   switch (type) {
     case "email":
     case "phone":
     case "skype":
-      return url.includes(SOCIAL_URLS[type]) ? url : SOCIAL_URLS[type] + url.split("/")[3].split("?")[0];;
+      return url.includes(SOCIAL_URLS[type])
+        ? url
+        : SOCIAL_URLS[type] + _url;
 
     case "substack":
     case "slack":
@@ -294,10 +301,14 @@ const getUrl = (type: string, url: string): string => {
         ? withHttps(url)
         : withHttps(url + "." + SOCIAL_URLS[type]);
 
+    case undefined:
+    case "undefined":
+      return withHttps(url);
+
     default:
       return url.includes(SOCIAL_URLS[type].slice(0, -1))
         ? withHttps(url)
-        : withHttps(SOCIAL_URLS[type]) + url.split("/")[3].split("?")[0];
+        : withHttps(SOCIAL_URLS[type]) + _url;
   }
 };
 
@@ -412,7 +423,7 @@ function getMimeType(url: string) {
   };
 
   // Extract the file extension from the URL
-  const extension = url.split(".").pop()?.split("?")[0].toLowerCase() 
+  const extension = url.split(".").pop()?.split("?")[0].toLowerCase();
 
   // Return the corresponding MIME type or 'unknown' if not found
   return mimeTypes[extension!] || "unknown";
@@ -423,7 +434,8 @@ function checkGradientBrightness(input: string) {
   const hexColorRegex: any = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g;
 
   // Regular expression to match rgb color values
-  const rgbColorRegex: any = /rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)/g;
+  const rgbColorRegex: any =
+    /rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)/g;
 
   // Check if the input is a solid hex color
   const isSolidColor = input.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
@@ -438,16 +450,21 @@ function checkGradientBrightness(input: string) {
   const rgbColors: any = [...input.matchAll(rgbColorRegex)];
 
   // @ts-ignore
-  rgbColors.forEach(match => {
+  rgbColors.forEach((match) => {
     const r = parseInt(match[1]);
     const g = parseInt(match[2]);
     const b = parseInt(match[3]);
-    const rgbHex: any = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+    const rgbHex: any = `#${((1 << 24) + (r << 16) + (g << 8) + b)
+      .toString(16)
+      .slice(1)
+      .toUpperCase()}`;
     hexColors.push(rgbHex);
   });
 
   // @ts-ignore
-  const brightnessValues = hexColors.map(color => getBrightnessFromHex(color));
+  const brightnessValues = hexColors.map((color) =>
+    getBrightnessFromHex(color)
+  );
 
   // @ts-ignore
   const averageBrightness = brightnessValues.reduce((a, b) => a + b, 0) / brightnessValues.length;
@@ -459,34 +476,46 @@ function checkGradientBrightness(input: string) {
 // Function to calculate brightness from a hex color
 function getBrightnessFromHex(hex: string): number {
   // Remove the hash at the start if it's there
-  hex = hex.replace(/^#/, '');
+  hex = hex.replace(/^#/, "");
   // Parse the r, g, b values
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
   // Calculate brightness
-  return (r * 0.299 + g * 0.587 + b * 0.114);
+  return r * 0.299 + g * 0.587 + b * 0.114;
 }
 
 function generateColorVariations(baseColor: string): string[] {
-  const hexToRgb = (hex: string) => hex.match(/\w\w/g)!.map(h => parseInt(h, 16));
+  const hexToRgb = (hex: string) =>
+    hex.match(/\w\w/g)!.map((h) => parseInt(h, 16));
   const rgbToHsl = ([r, g, b]: number[]) => {
-    r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h: number, s: number, l = (max + min) / 2;
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h: number,
+      s: number,
+      l = (max + min) / 2;
 
     if (max === min) h = s = 0;
     else {
       const d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      h =
+        max === r
+          ? (g - b) / d + (g < b ? 6 : 0)
+          : max === g
+          ? (b - r) / d + 2
+          : (r - g) / d + 4;
       h /= 6;
     }
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
   };
 
   const hslToRgb = (h: number, s: number, l: number): number[] => {
-    s /= 100; l /= 100;
+    s /= 100;
+    l /= 100;
     const a = s * Math.min(l, 1 - l);
     const f = (n: number) => {
       const k = (n + h / 30) % 12;
@@ -499,17 +528,22 @@ function generateColorVariations(baseColor: string): string[] {
   const rgb = hexToRgb(baseColor);
   const [h, s, l] = rgbToHsl(rgb);
   return [
-    `#${hslToRgb(h, s * 0.8, l * 0.6).map(c => c.toString(16).padStart(2, '0')).join('')}`,
-    `#${hslToRgb(h, s * 0.5, l * 0.4).map(c => c.toString(16).padStart(2, '0')).join('')}`,
-    `#${hslToRgb(h, s, l * 1.55).map(c => c.toString(16).padStart(2, '0')).join('')}`
+    `#${hslToRgb(h, s * 0.8, l * 0.6)
+      .map((c) => c.toString(16).padStart(2, "0"))
+      .join("")}`,
+    `#${hslToRgb(h, s * 0.5, l * 0.4)
+      .map((c) => c.toString(16).padStart(2, "0"))
+      .join("")}`,
+    `#${hslToRgb(h, s, l * 1.55)
+      .map((c) => c.toString(16).padStart(2, "0"))
+      .join("")}`,
   ];
 }
 
-
-const ipfsCheckedUrl = (url :string) => {
-  if(!url) return "";
-  return url.includes('ipfs://') ? IPFS_URLS[0] + url.slice(7) : url
-}
+const ipfsCheckedUrl = (url: string) => {
+  if (!url) return "";
+  return url.includes("ipfs://") ? IPFS_URLS[0] + url.slice(7) : url;
+};
 
 const detectTextChanges = (oldProfileData: any, newProfileData: any) => {
   let changedRecords: { key: string; value: string }[] = [];
@@ -537,8 +571,14 @@ const detectTextChanges = (oldProfileData: any, newProfileData: any) => {
     changedRecords.push({ key: "avatar", value: newProfileData.avatar });
   }
 
-  if (JSON.stringify(oldProfileData.styles) !== JSON.stringify(newProfileData.styles)) {
-    changedRecords.push({ key: "styles", value: JSON.stringify(newProfileData.styles) });
+  if (
+    JSON.stringify(oldProfileData.styles) !==
+    JSON.stringify(newProfileData.styles)
+  ) {
+    changedRecords.push({
+      key: "styles",
+      value: JSON.stringify(newProfileData.styles),
+    });
   }
 
   // Compare wallets (oldProfileData.wallets is an object, newProfileData.wallets is also an object)
@@ -615,9 +655,9 @@ const detectCoinChanges = (oldCoins: any, newCoins: any) => {
 
 function getColorSchemeName(color: string): string {
   // Predefined color values in RGB format
-  const colors : any = {
-    dark: { r: 0, g: 0, b: 0 },         // Previously Black
-    light: { r: 255, g: 255, b: 255 },   // Previously White
+  const colors: any = {
+    dark: { r: 0, g: 0, b: 0 }, // Previously Black
+    light: { r: 255, g: 255, b: 255 }, // Previously White
     gray: { r: 128, g: 128, b: 128 },
     red: { r: 255, g: 0, b: 0 },
     orange: { r: 255, g: 165, b: 0 },
@@ -673,7 +713,6 @@ function getColorSchemeName(color: string): string {
   } else if (color.startsWith("rgb")) {
     inputColor = parseRgb(color);
   } else {
-    
     return color; // Invalid color format, return the input as is
   }
 
@@ -701,39 +740,40 @@ const sortCustomLinksByOrder = (links: CustomLink[]): CustomLink[] => {
 };
 
 const setOrderInCustomLinks = (links: CustomLink[]): CustomLink[] => {
-  
   return sortCustomLinksByOrder(links).map((link, index) => ({
     ...link,
     styles: {
-      ...(link.styles || {}),  // Ensure styles is defined
-      order: index,            // Set the order based on the index
+      ...(link.styles || {}), // Ensure styles is defined
+      order: index, // Set the order based on the index
     },
   }));
 };
 
-function sortGames(games: Game[], criterion: 'completion' | 'rank' | 'trophiesTotal'): Game[] {
+function sortGames(
+  games: Game[],
+  criterion: "completion" | "rank" | "trophiesTotal"
+): Game[] {
   const rankOrder: { [key: string]: number } = {
-    'A': 1,
-    'B': 2,
-    'C': 3,
-    'D': 4,
-    'F': 5,
+    A: 1,
+    B: 2,
+    C: 3,
+    D: 4,
+    F: 5,
   };
 
   return games.sort((a, b) => {
     switch (criterion) {
-      case 'completion':
+      case "completion":
         return parseFloat(a.completion) - parseFloat(b.completion); // Assuming completion is a percentage in string form like '85.4%'
-      case 'rank':
+      case "rank":
         return rankOrder[a.rank] - rankOrder[b.rank]; // Sorting based on custom rank order
-      case 'trophiesTotal':
+      case "trophiesTotal":
         return b.trophies.total - a.trophies.total; // Sort by trophies total in descending order
       default:
         return 0;
     }
   });
 }
-
 
 export {
   sortGames,

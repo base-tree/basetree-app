@@ -112,7 +112,7 @@ const CanvasLightEffect: React.FC<CanvasLightEffectProps> = ({
           zIndex: 0,
         }}
       />
-      <div style={{ position: "relative", zIndex: 1, padding: "20px" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
         {children}
       </div>
     </div>

@@ -38,13 +38,13 @@ const Privacy: NextPage = () => {
               </Heading>
               <Text>
                 Information Collection: BaseTree does not collect any personal information from
-                users. When you register a domain on BaseTree and create a profile, your public
+                users. When you register on BaseTree and create a profile, your public
                 information will be stored on IPFS servers and made accessible to the public.
               </Text>
               <Text>
                 Use of Information: The information you choose to include in your BaseTree profile
                 will be publicly available and visible to anyone who visits your profile page. This
-                includes your chosen domain name, profile picture, bio, and any virtual assets you
+                includes your chosen name, profile picture, bio, and any virtual assets you
                 decide to showcase.
               </Text>
               <Text>

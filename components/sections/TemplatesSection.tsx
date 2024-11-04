@@ -12,9 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useTranslate } from "core/lib/hooks/use-translate";
 import NextLink from "next/link";
-import {
-  openModalAtom,
-} from "core/atoms";
+import { openModalAtom } from "core/atoms";
 import { useAtom, useSetAtom } from "jotai";
 import { motion } from "framer-motion";
 import { LinkIcon, Logo, LogoIcon } from "components/logos";
@@ -38,39 +36,47 @@ export default function TemplatesSection() {
         placeContent="center"
         placeItems="center"
         id="templates"
+        px={[2,4,8]}
+        py={20}
         minH="100vh"
-      ><Center flexDir={'column'} gap={8}>
-        <AnimateOnScroll delay={0.1}>
-                <Heading
-                  as={"h2"}
-                  fontWeight="bold"
-                  fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
-                  textAlign={["center", "center", "center"]}
-                >
-                  {t("Basetree Templates")}
-                </Heading>
-              </AnimateOnScroll>
-              <AnimateOnScroll delay={0.1}>
-                <Heading
-                  as={"h3"}
-                  fontWeight="bold"
-                  fontSize={["4xl", "4xl"]}
-                  textAlign={["center", "center", "center"]}
-                >
-                  {t("Choose from Ready-Made Templates")}
-                </Heading>
-              </AnimateOnScroll></Center>
+      >
+        <Center flexDir={"column"} gap={8}>
+          <AnimateOnScroll delay={0.1}>
+            <Heading
+              as={"h2"}
+              fontWeight="bold"
+              fontSize={["4xl", "4xl", "5xl", "5xl", "6xl"]}
+              textAlign={["center", "center", "center"]}
+            >
+              {t("Basetree Templates")}
+            </Heading>
+          </AnimateOnScroll>
+          <AnimateOnScroll delay={0.1}>
+            <Heading
+              as={"h3"}
+              fontWeight="bold"
+              fontSize={["4xl", "4xl"]}
+              textAlign={["center", "center", "center"]}
+            >
+              {t("Choose from Ready-Made Templates")}
+            </Heading>
+          </AnimateOnScroll>
+        </Center>
         <SimpleGrid columns={[1, 2]} gap={10} py={16}>
           <GridItem>
-            <Preview json={TEMPLATES[2]} isStatic/>
+            <Preview json={TEMPLATES[0]} isStatic />
           </GridItem>
           <GridItem>
-            <Preview json={TEMPLATES[2]} isStatic/>
+            <Preview json={TEMPLATES[1]} isStatic />
           </GridItem>
-          
+          {/* <GridItem>
+            <Preview json={TEMPLATES[2]} isStatic />
+          </GridItem>
+          <GridItem>
+            <Preview json={TEMPLATES[3]} isStatic />
+          </GridItem> */}
         </SimpleGrid>
       </Container>
-      
     </motion.div>
   );
 }

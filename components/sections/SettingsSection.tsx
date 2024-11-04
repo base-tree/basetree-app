@@ -125,13 +125,13 @@ function SettingsSection() {
                 ? primaryName
                 : truncAddress(String(connectedAccount))}
             </Text>
-            <Text>Primary Name</Text>
+            <Text>Profle</Text>
             </Stack>
             
             {/* </Stack> */}
           </Flex>
           <Button isDisabled gap={2}>
-              Select Primary Name
+              Select Profile
               <Badge p={1} colorScheme='blue'>Soon</Badge>
             </Button>
         </Stack>

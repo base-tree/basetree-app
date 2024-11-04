@@ -95,7 +95,7 @@ export default function HeroSection() {
                   fontWeight={"bolder"}
                   textAlign={"center"}
                 >
-                  Unlock Your Web3 Identity with Basetree
+                  Unlock Your Web3 Profile with Basetree
                 </Heading>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.3}>
@@ -119,7 +119,7 @@ export default function HeroSection() {
                   href={"/app"}
                   passHref
                 >
-                  {t("Access Testnet Alpha")}
+                  {t("Testnet App")}
                 </Button>
                 <Button
                   as={NextLink}

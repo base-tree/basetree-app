@@ -5,7 +5,7 @@ import { SITE_DESCRIPTION, SITE_URL, SITE_TITLE } from 'core/utils/constants';
 import { Seo } from 'components/Layout/Seo';
 
 const Manage: NextPage = () => {
-  const title = "My Names";
+  const title = "My Pages";
   const des = "Manage BaseTree";
   return (
     <>

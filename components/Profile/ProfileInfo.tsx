@@ -62,7 +62,7 @@ export default function ProfileInfo({
 }: Props) {
   const { colorMode } = useColorMode();
   const headerMode = _headerMode ?? _styles ? _styles?.headerMode : useAtomValue(headerModeAtom);
-  const headerColor = _headerColor ?? _styles ? _styles?.headerMode : useAtomValue(headerColorAtom);
+  const headerColor = _headerColor ?? _styles ? _styles?.headerColor : useAtomValue(headerColorAtom);
   const avatar = _avatar ?? useAtomValue(avatarAtom);
   const title = _title ?? useAtomValue(titleAtom);
   const subtitle = _subtitle ?? useAtomValue(subtitleAtom);
@@ -135,7 +135,7 @@ export default function ProfileInfo({
             styles={{ overflow: "visible", width: "100%" }}
           >
             <Heading fontWeight="bold" fontSize="lg" fontFamily={font} opacity={0.7} my={1}>
-              {username}
+              {username.replace(".bst","")}
             </Heading>
           </AnimateOnScroll>
         )}

@@ -206,3 +206,30 @@ export const evmCoinTypeToNameMap: CoinInfo = {
     }
     return capFirstLetter(coinName);
   }
+
+  
+  export const PAYMENT_COINS = [
+    {
+      name: 'ETH',
+      chainId: 1,
+      image: 'https://raw.githubusercontent.com/ensdomains/ens-app-v3/ed4af2c6821d13eae5a83873daa9f4ecaca066f2/src/assets/address/EthIcon.svg'
+    }, 
+    {
+      name: 'USDC',
+      chainId: 1,
+      image: 'https://static.cx.metamask.io/api/v1/tokenIcons/1/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
+      address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+    },
+    {
+      name: 'ETH',
+      image: 'https://raw.githubusercontent.com/ensdomains/ens-app-v3/ed4af2c6821d13eae5a83873daa9f4ecaca066f2/src/assets/address/EthIcon.svg',
+      chainId: 8453
+    }, 
+    {
+      name: 'USDC',
+      image: `https://static.cx.metamask.io/api/v1/tokenIcons/8453/0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.png`,
+      chainId: 8453,
+      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+    }, 
+  ];
+  

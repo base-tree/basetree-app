@@ -169,6 +169,7 @@ const PreviewModal = ({ json, onSave }: Props) => {
             <>
               <Preview
                 json={json}
+                key={`preview-modal-${json.name}`}
                 w={mobileView ? "md" : ["sm", "sm", "lg", "lg", "xl", "2xl"]}
               />
               <Flex

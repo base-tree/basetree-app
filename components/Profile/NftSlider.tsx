@@ -28,7 +28,13 @@ import {
   roundAtom,
   variantAtom,
 } from "core/atoms";
-import { capFirstLetter, getColor, getMimeType, sleep, truncAddress } from "core/utils";
+import {
+  capFirstLetter,
+  getColor,
+  getMimeType,
+  sleep,
+  truncAddress,
+} from "core/utils";
 import { LinkIcon } from "components/logos";
 import {
   AVATAR_API_URL,
@@ -42,10 +48,16 @@ import { ThirdwebNftMedia } from "@thirdweb-dev/react";
 import { Styles } from "types";
 import ReactPlayer from "react-player";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {EffectCards, Autoplay, EffectCoverflow, EffectCreative, Navigation, EffectFlip} from "swiper/modules";
+import {
+  EffectCards,
+  Autoplay,
+  EffectCoverflow,
+  EffectCreative,
+  Navigation,
+  EffectFlip,
+} from "swiper/modules";
 
-import 'swiper/css/bundle';
-
+import "swiper/css/bundle";
 
 interface Props {
   title: string;
@@ -65,7 +77,7 @@ export default function NftSlider({
   styles,
   color,
   buttonTitle,
-  onButtonClick
+  onButtonClick,
 }: Props) {
   const { colorMode } = useColorMode();
   const [notMobile] = useMediaQuery("(min-width: 800px)");
@@ -82,11 +94,12 @@ export default function NftSlider({
   const isPortfolio = styles?.type === "My Portfolio";
   const address = String(styles?.eth);
   const size = String(styles?.size);
+  const height = styles?.height ? Number(styles.height) * 10 : undefined;
   const slides = styles?.slides;
   const effect = styles?.effect;
   const imageColor = styles?.color;
   const bgColor = styles?.bg;
-  const position = styles?.position ?? 'cover';
+  const position = styles?.position ?? "cover";
   const navigation = styles?.nav;
   const autoplay = styles?.auto;
   const navigationColor = styles?.navColor;
@@ -102,9 +115,9 @@ export default function NftSlider({
 
   const getApiUrl = (chain: string, _address: string) => {
     if (isPortfolio) {
-      return `https://api.opensea.io/api/v2/chain/${chain}/account/${_address}/nfts`
+      return `https://api.opensea.io/api/v2/chain/${chain}/account/${_address}/nfts`;
     } else {
-      return `https://api.opensea.io/api/v2/chain/${chain}/contract/${_address}/nfts`
+      return `https://api.opensea.io/api/v2/chain/${chain}/contract/${_address}/nfts`;
     }
   };
 
@@ -116,40 +129,38 @@ export default function NftSlider({
 
       const options = {
         method: "GET",
-        headers: { accept: "application/json" , "x-api-key": String(process.env.NEXT_PUBLIC_OPENSEA_API) },
+        headers: {
+          accept: "application/json",
+          "x-api-key": String(process.env.NEXT_PUBLIC_OPENSEA_API),
+        },
       };
 
-      await fetch(
-        getApiUrl(network,address),
-        options
-      )
+      await fetch(getApiUrl(network, address), options)
         .then((response) => response.json())
         .then((response) => {
           // console.log(response);
-          (response?.nfts).map(
-            (nft: any) => {
-              const _nftJson = {
-                name: nft.name,
-                tokenId: nft.identifier,
-                description: nft.description,
-                address: nft.contract,
-                network: network,
-                metadata: nft.metadata_url,
-                preview: {
-                  source: nft.display_image_url,
+          (response?.nfts).map((nft: any) => {
+            const _nftJson = {
+              name: nft.name,
+              tokenId: nft.identifier,
+              description: nft.description,
+              address: nft.contract,
+              network: network,
+              metadata: nft.metadata_url,
+              preview: {
+                source: nft.display_image_url,
+                mimetype: getMimeType(nft.image_url),
+              },
+              files: [
+                {
+                  source: nft.image_url,
                   mimetype: getMimeType(nft.image_url),
                 },
-                files: [
-                  {
-                    source: nft.image_url,
-                    mimetype: getMimeType(nft.image_url),
-                  },
-                ],
-              };
-              nft.name !== null &&
-                setNftJsons((nfts) => [...(nfts ? nfts : []), _nftJson]);
-            }
-          );
+              ],
+            };
+            nft.name !== null &&
+              setNftJsons((nfts) => [...(nfts ? nfts : []), _nftJson]);
+          });
         })
         .catch((err) => console.error(err));
 
@@ -170,91 +181,145 @@ export default function NftSlider({
   }, [network]);
 
   return (
-    <><Flex flexDirection={'column'} gap={0} bgColor={bgColor} pb={4} rounded={round === 'none' ? round : 'lg'} overflow={'hidden'}>
-      <Flex justify={buttonTitle ? 'space-between' : 'center'} align={'center'} p={4}><Text fontSize={['lg','xl']}>{title}</Text>{buttonTitle && <Button rounded={round} onClick={onButtonClick}>{buttonTitle}</Button>}</Flex><Flex gap={4} flexDirection="column" width={'100%'} p={4} overflow={'hidden'} key={`nft-swiper-${title.replaceAll(' ','-')}-${nftjsons?.length}-${effect}`}>
-      <Swiper
-        className="nft-swiper"
-        loop
-        grabCursor
-        effect={effect}
-        autoplay={autoplay}
-        creativeEffect={{
-          prev: {
-            shadow: true,
-            translate: [0, 0, -400],
-          },
-          next: {
-            translate: ['100%', 0, 0],
-          },
-        }}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          scale:1.2,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        //direction={vertical ? 'vertical' : 'horizontal'}
-        navigation={navigation}
-        modules={[Navigation,EffectCoverflow,EffectCards,EffectCreative,Autoplay,EffectFlip]}
-        centeredSlides={centered}
-        spaceBetween={'24px'}
-        slidesPerView={slides}
-        style={{
-          //@ts-ignore
-          '--swiper-navigation-color': navigationColor,
-        }}
-        
+    <>
+      <Flex
+        flexDirection={"column"}
+        gap={0}
+        bgColor={bgColor}
+        pb={4}
+        rounded={round === "none" ? round : "lg"}
+        overflow={"hidden"}
       >
-        {nftjsons?.map((nft, index) => (
-          <SwiperSlide key={`swiper-slide-${index}`}>
-          <Box
-            onClick={() => fullScreen(index)}
-            key={"nft-" + index}
-            borderRadius={12}
-            bg={imageColor ?? 'transparent'}
-            width={'100%'}
-            h={ size === 'sm' ? 180 : size === 'md' ? 280 : size === 'full' ? 600 : 360}
+        {title.length > 0 && (
+          <Flex
+            justify={buttonTitle ? "space-between" : "center"}
+            align={"center"}
+            p={4}
           >
-            {String(nft.preview?.mimetype).includes("mp4") ? (
-              <Center>
-                <ReactPlayer
-                  url={ nft.files && nft.files[0]?.source !== ""
-                    ? String(nft.files[0]?.source)
-                    : String(nft.preview?.source)}
-                  
-                  width={"100%"}
-                  loop
-                  style={{borderRadius : '25px'}}
-                  muted
-                  playing
-                  height={'100%'}
-                />
-              </Center>
-            ) : (
-              <Center w={'100%'} h={'100%'}>
-              <Image
-                rounded={'lg'}
-                width={"100%"}
-                bgPosition={'center'}
-                bgSize={position}
-                //@ts-ignore
-                objectFit={position}
-                h={ size === 'sm' ? 180 : size === 'md' ? 280 : size === 'full' ? 600 : 360}
-                transition={"ease"}
-                transitionDuration={"1000"}
-                alt={nft.name}
-                textAlign={"center"}
-                src={String(nft.preview?.source)}
-              />
-              </Center>
+            <Text fontSize={["lg", "xl"]}>{title}</Text>
+            {buttonTitle && (
+              <Button rounded={round} onClick={onButtonClick}>
+                {buttonTitle}
+              </Button>
             )}
-          </Box>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      </Flex>
+          </Flex>
+        )}
+        <Flex
+          gap={4}
+          flexDirection="column"
+          width={"100%"}
+          p={4}
+          overflow={"hidden"}
+          key={`nft-swiper-${title.replaceAll(" ", "-")}-${
+            nftjsons?.length
+          }-${effect}`}
+        >
+          <Swiper
+            className="nft-swiper"
+            loop
+            grabCursor
+            effect={effect}
+            autoplay={autoplay}
+            creativeEffect={{
+              prev: {
+                shadow: true,
+                translate: [0, 0, -400],
+              },
+              next: {
+                translate: ["100%", 0, 0],
+              },
+            }}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              scale: 1.2,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            //direction={vertical ? 'vertical' : 'horizontal'}
+            navigation={navigation}
+            modules={[
+              Navigation,
+              EffectCoverflow,
+              EffectCards,
+              EffectCreative,
+              Autoplay,
+              EffectFlip,
+            ]}
+            centeredSlides={centered}
+            spaceBetween={"24px"}
+            slidesPerView={slides}
+            style={{
+              //@ts-ignore
+              "--swiper-navigation-color": navigationColor,
+            }}
+          >
+            {nftjsons?.map((nft, index) => (
+              <SwiperSlide key={`swiper-slide-${index}`}>
+                <Box
+                  onClick={() => fullScreen(index)}
+                  key={"nft-" + index}
+                  borderRadius={12}
+                  bg={imageColor ?? "transparent"}
+                  width={"100%"}
+                  h={height ? `${height}px` : 
+                    size === "sm"
+                      ? 180
+                      : size === "md"
+                      ? 280
+                      : size === "full"
+                      ? 600
+                      : 360
+                  }
+                >
+                  {String(nft.preview?.mimetype).includes("mp4") ? (
+                    <Center>
+                      <ReactPlayer
+                        url={
+                          nft.files && nft.files[0]?.source !== ""
+                            ? String(nft.files[0]?.source)
+                            : String(nft.preview?.source)
+                        }
+                        width={"100%"}
+                        loop
+                        style={{ borderRadius: "25px" }}
+                        muted
+                        playing
+                        height={"100%"}
+                      />
+                    </Center>
+                  ) : (
+                    <Center w={"100%"} h={"100%"}>
+                      <Image
+                        rounded={"lg"}
+                        width={"100%"}
+                        bgPosition={"center"}
+                        bgSize={position}
+                        //@ts-ignore
+                        objectFit={position}
+                        h={height ? `${height}px` : 
+                          size === "sm"
+                            ? 180
+                            : size === "md"
+                            ? 280
+                            : size === "full"
+                            ? 600
+                            : 360
+                        }
+                        transition={"ease"}
+                        transitionDuration={"1000"}
+                        alt={nft.name}
+                        textAlign={"center"}
+                        src={String(nft.preview?.source)}
+                      />
+                    </Center>
+                  )}
+                </Box>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Flex>
       </Flex>
       <Modal isOpen={isModalOpen} onClose={onModalClose} size={"full"}>
         <ModalOverlay
@@ -288,15 +353,14 @@ export default function NftSlider({
                       <ReactPlayer
                         url={
                           nftjson?.files && nftjson?.files[0]?.source !== ""
-                             ? String(nftjson?.files[0]?.source)
-                             : String(nftjson?.preview?.source)
-                         }
+                            ? String(nftjson?.files[0]?.source)
+                            : String(nftjson?.preview?.source)
+                        }
                         width={"100%"}
                         loop
                         muted
                         playing
                         height={notMobile ? "80vh" : "auto"}
-
                       />
                     </Center>
                   ) : (
@@ -308,7 +372,7 @@ export default function NftSlider({
                       alt={nftjson?.name}
                       textAlign={"center"}
                       src={
-                       nftjson?.files && nftjson?.files[0]?.source !== ""
+                        nftjson?.files && nftjson?.files[0]?.source !== ""
                           ? String(nftjson?.files[0]?.source)
                           : String(nftjson?.preview?.source)
                       }
@@ -365,7 +429,6 @@ export default function NftSlider({
           <ModalFooter />
         </ModalContent>
       </Modal>
-      
     </>
   );
 }

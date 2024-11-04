@@ -25,6 +25,8 @@ const ImageLink = ({ url, title, styles, alt, loading }: Props) => {
     styles?.height && styles?.height !== "0"
       ? `${Number(styles?.height) * 10}px`
       : "auto";
+  const bg =
+    styles?.bg ? styles.bg : "#000000";
   const objectFit =
     styles?.position && height !== "auto" ? styles?.position : "cover";
   return (
@@ -49,14 +51,13 @@ const ImageLink = ({ url, title, styles, alt, loading }: Props) => {
               left={0}
               right={0}
               height="100%" // Adjusted to make the overlay smaller
-              bgGradient="linear(to-t, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.001) 50%)"
+              bgGradient={`linear(to-t, ${bg}cc, rgba(0, 0, 0, 0.001) 50%)`}
               borderRadius={round === "none" ? 0 : round === "md" ? 8 : 16}
               zIndex={1}
               transition="all 0.3s ease" // Smooth transition for hover effect
               _hover={{
                 transition: "all 0.3s ease",
-                bgGradient:
-                  "linear(to-t, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.001) 50%)",
+                bgGradient: `linear(to-t, ${bg}dd, rgba(0, 0, 0, 0.001) 50%)`,
               }} // Darker on hover
             />
           )}

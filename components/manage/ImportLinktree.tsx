@@ -132,7 +132,7 @@ export default function ImportLinktree() {
 
       return { title, bio, avatar, links, socials };
     } catch (error: any) {
-      console.error(`Error scraping Linktree page: ${error.message}`);
+      console.error(`Error scraping Linktree page:`,error);
       return { title: "", bio: "", avatar: "", links: [], socials: [] };
     }
   }
@@ -140,10 +140,12 @@ export default function ImportLinktree() {
   const importLinktree = async () => {
     setLoading(true);
     const name = username.split("/")[3].split("?")[0];
-    const data = await scrapeLinktree(name);
+    const _data = await importLinktreeAccount(name);
+    console.log(_data.data)
+    //const data = await scrapeLinktree(name);
 
-    if (data) {
-      const user = data;
+    if (_data.status === 200) {
+      const user = _data.data;
       setData(user);
       console.log(user);
     }

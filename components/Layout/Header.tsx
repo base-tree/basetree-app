@@ -105,7 +105,7 @@ export default function Header() {
                     gap={2}
                   >
                     <LinkIcon type="RiApps2Line" size={24} />
-                    {notMobile && <Text>{t("My Names")}</Text>}
+                    {notMobile && <Text>{t("My Pages")}</Text>}
                   </Button>
                 </NextLink>
               )} */}
@@ -177,7 +177,7 @@ export default function Header() {
                             width="100%"
                             justifyContent="left"
                           >
-                            {t("My Names")}
+                            {t("My Pages")}
                           </Button>
                           </NextLink>
                         }
@@ -235,9 +235,9 @@ export default function Header() {
                   </DrawerContent>
               </Drawer>
 
-              {dashboard || app ? (
+              {/* {dashboard || app ? ( */}
                 <ConnectWalletButton />
-              ) : (
+              {/* ) : (
                 <NextLink href={"/app"} passHref>
                   <Button
                     rounded={"full"}
@@ -250,7 +250,7 @@ export default function Header() {
                     {t("Alpha Access")}
                   </Button>
                 </NextLink>
-              )}
+              )} */}
               <IconButton
                 aria-label="basetree-mobile-menu"
                 variant="ghost"

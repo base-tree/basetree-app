@@ -166,7 +166,7 @@ const ManagePage: NextPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const router = useRouter();
-  const domainName = String(router.query.name);
+  const domainName = String(router.query.name).includes(`.${TLD}`) ? String(router.query.name) : String(router.query.name) + `.${TLD}`;
   const [nftContract, setNftContract] = useAtom(nftContractAtom);
   const { colorMode } = useColorMode();
   const [mobileView, setMobileView] = useAtom(mobileViewAtom);
@@ -862,7 +862,6 @@ const ManagePage: NextPage = () => {
                           </ButtonGroup>
                           <ShareButton
                             name={name}
-                            type={"gray"}
                             url={SITE_URL + name}
                           />
                           <Tooltip
@@ -901,6 +900,7 @@ const ManagePage: NextPage = () => {
                           <Preview
                             json={getJson()}
                             key={lastChange}
+                            
                           />
                         </DeviceFrameset>
                       </Flex>

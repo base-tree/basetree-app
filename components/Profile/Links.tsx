@@ -18,7 +18,6 @@ interface Props {
 
 export default function Links({ json, color, title }: Props) {
   const [linksArray, setLinksArray] = useAtom(linksArrayAtom);
-
   useEffect(() => {
     let _links: CustomLink[] = [];
     if (json?.links) {

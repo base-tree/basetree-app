@@ -45,13 +45,13 @@ export default function TweetLink({ title, icon, url, styles, type }: Props) {
           tweetId={String(url.match(reg)?.at(2))}
           onLoad={() => setIsLoading(false)}
           options={{
-            theme: lightMode ? "light" : "dark",
+            theme: styles?.color ? styles.color : lightMode ? "light" : "dark",
             width: "100%",
             height: styles?.size === "sm" ? "300px" : styles?.size === "md" ? "480px" : "720px",
           }}
         />
         {isLoading && (
-          <Skeleton width={"100%"} rounded={"lg"} height={"200px"} />
+          <Skeleton width={"100%"} rounded={"lg"} height={styles?.size === "sm" ? "300px" : styles?.size === "md" ? "480px" : "720px"} />
         )}
       </Box>
     </Center>

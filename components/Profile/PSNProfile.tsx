@@ -94,7 +94,7 @@ export default function PSNProfile({
               ? "100px"
               : styles?.size === "md"
               ? "200px"
-              : "300px"
+              : "320px"
           }
           flexDir={"column"}
           minW={"100%"}

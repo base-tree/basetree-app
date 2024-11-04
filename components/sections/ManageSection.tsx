@@ -44,6 +44,7 @@ import {
   AVATAR_PREVIEW_URL,
   ETHERSCAN_ADDRESS,
   SITE_PROFILE_URL,
+  TLD,
 } from "core/utils/constants";
 import { RiMoreFill, RiRestartLine } from "react-icons/ri";
 import { MdOutlinePreview, MdOutlineVisibility } from "react-icons/md";
@@ -119,7 +120,8 @@ function ManageSection() {
             let _avatar = `${AVATAR_API_URL}${nft.labelName}.${nft.parentName}`;
             const options = { year: "numeric", month: "short", day: "numeric" };
             let _nftJson: any = {
-              name: nft.labelName + "." + nft.parentName,
+              name: nft.labelName , //+ "." + nft.parentName,
+              labelName: nft.labelName,
               avatar: _avatar ?? "",
               address: nft.id,
               init_time: nft.registrationDate.date,
@@ -128,8 +130,8 @@ function ManageSection() {
                 options as Intl.DateTimeFormatOptions
               ),
             };
-            _nftJson.external_url = SITE_PROFILE_URL + _nftJson.name;
-            _nftJson.manageUrl = "/name/" + _nftJson.name;
+            _nftJson.external_url = SITE_PROFILE_URL + _nftJson.labelName;
+            _nftJson.manageUrl = "/name/" + _nftJson.labelName;
             console.log(_nftJson);
             if (nft.wrappedOwner !== connectedAccount) return {};
             return _nftJson;
@@ -201,7 +203,7 @@ function ManageSection() {
               fontSize={notMobile ? "4xl" : "2xl"}
               my={notMobile ? 6 : 4}
             >
-              My Names
+              My Pages
             </Text>
             <Flex
               minWidth={["350px", "420px", "580px", "800px"]}
@@ -319,7 +321,7 @@ function ManageSection() {
                       noanimate
                       onError={({ currentTarget }: any) => {
                         currentTarget.onerror = null; // prevents looping
-                        currentTarget.src = AVATAR_PREVIEW_URL + nft.name;
+                        currentTarget.src = AVATAR_PREVIEW_URL + nft.name + "." + TLD;
                       }}
                       nodrag
                       alt={nft.name}
@@ -351,7 +353,7 @@ function ManageSection() {
                   {primaryName === nft.name && (
                     <Tooltip
                       borderRadius={4}
-                      label={<Text p={2}>Primary Name</Text>}
+                      label={<Text p={2}>Profile</Text>}
                       color="white"
                       bgColor={"black"}
                       hasArrow
@@ -408,7 +410,7 @@ function ManageSection() {
                           borderBottomRadius={0}
                         >
                           <LinkIcon type="RiSettings4Line" size={24} />{" "}
-                          Customize
+                          Manage
                         </MenuItem>
                         {primaryName !== nft.name && (
                           <TransactionButton
@@ -457,7 +459,7 @@ function ManageSection() {
                           >
                             <Flex gap={2} align={"center"}>
                               <LinkIcon type="RiUserStarLine" size={"24px"} />
-                              <Text>Set As Primary</Text>
+                              <Text>Set As Profile</Text>
                             </Flex>
                           </TransactionButton>
                         )}
@@ -485,7 +487,7 @@ function ManageSection() {
                           target="_blank"
                           icon={<MdOutlineVisibility size={24} />}
                         >
-                          View Profile
+                          View Page
                         </MenuItem>
 
                         <MenuItem

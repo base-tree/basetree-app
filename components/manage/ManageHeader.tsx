@@ -26,7 +26,7 @@ export default function ManageHeader() {
       <NextLink href="/names" passHref>
         <Button fontWeight="bold" p={2} gap={[0, 0, 0, 2]} size={"lg"}>
           <LinkIcon type="RiArrowLeftLine" />
-          <Text>{notMobile ? "My Names" : ""}</Text>
+          <Text>{notMobile ? "My Pages" : ""}</Text>
         </Button>
       </NextLink>
       {/* <IconButton
@@ -55,7 +55,7 @@ export default function ManageHeader() {
           fontSize={"xl"}
           fontWeight={"bold"}
         >
-          {name}
+          {name.replace(".bst","")}
         </Heading>
       </Button>
     </Flex>

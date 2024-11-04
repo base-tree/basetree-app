@@ -7,10 +7,10 @@ import { LinkIcon } from "components/logos";
 
 export const LinksSlider = () => {
   return (
-    <Flex px={12} minW={"340px"} w={"100%"}>
+    <Flex w={"100%"}>
       <Swiper
         className="button-swiper"
-        style={{ height: "260px", width: "100%" }}
+        style={{ height: "340px", width: "100%" }}
         loop
         grabCursor
         effect={"coverflow"}
@@ -25,7 +25,7 @@ export const LinksSlider = () => {
         direction={"vertical"}
         modules={[EffectCoverflow, Autoplay]}
         centeredSlides
-        spaceBetween={"10px"}
+        spaceBetween={"20px"}
         slidesPerView={3}
       >
         <SwiperSlide style={{ height: "80px" }}>
@@ -42,12 +42,15 @@ export const LinksSlider = () => {
           <Link
             type="simple link"
             title="Whitepaper"
-            url="#"
+            url="https://images.template.net/wp-content/uploads/2022/07/White-Papers-PDF.pdf"
             styles={{
               size: "lg",
               variant: "solid",
               bg: "yellow",
               font: "Lato",
+              popup: true,
+              type: 'modal'
+              
             }}
             icon={<LinkIcon type={"whitepaper"} size={"40px"} />}
           />
@@ -55,7 +58,7 @@ export const LinksSlider = () => {
         <SwiperSlide style={{ height: "80px" }}>
           <Link
             type="payment button"
-            title="Pay Me Ethereum"
+            title="Pay Me"
             url="#"
             styles={{
               size: "lg",
@@ -79,6 +82,22 @@ export const LinksSlider = () => {
               font: "DM Sans",
             }}
             icon={<LinkIcon type={"discord"} size={"40px"} />}
+          />
+        </SwiperSlide>
+        <SwiperSlide style={{ height: "80px" }}>
+          <Link
+            type="simple link"
+            title="onCyber Space"
+            url="https://oncyber.io/the-garage"
+            styles={{
+              size: "lg",
+              variant: "solid",
+              popup: true,
+              type: 'modal',
+              bg: "orange",
+              font: "Space Mono",
+            }}
+            icon={<LinkIcon type={"RiBox3Line"} size={"40px"} />}
           />
         </SwiperSlide>
         <SwiperSlide style={{ height: "80px" }}>
@@ -112,26 +131,13 @@ export const LinksSlider = () => {
             icon={<LinkIcon type={"RiCupFill"} size={"40px"} />}
           />
         </SwiperSlide>
-        <SwiperSlide style={{ height: "80px" }}>
-          <Link
-            type="simple link"
-            title="Limited Offer"
-            url="#"
-            styles={{
-              size: "lg",
-              variant: "solid",
-              bg: "orange",
-              font: "Space Mono",
-            }}
-            icon={<LinkIcon type={"RiCalendarEventFill"} size={"40px"} />}
-          />
-        </SwiperSlide>
+        
 
         <SwiperSlide style={{ height: "80px" }}>
           <Link
             type="embed"
             title="Submit Form"
-            url="https://fz9yr1hrjv9.typeform.com/to/ZfBeoCGT"
+            url="https://docs.google.com/forms/d/e/1FAIpQLSfXuEzmiAzRhie_z9raFCF1BXweXgVt18o-DvBuRRgyTygL2A/viewform"
             styles={{
               size: "lg",
               variant: "solid",
@@ -144,12 +150,11 @@ export const LinksSlider = () => {
         </SwiperSlide>
         <SwiperSlide style={{ height: "80px" }}>
           <Link
-            type="embed"
+            type="simple link"
             title="Opensea"
             url="https://opensea.io/collection/cryptopunks"
             styles={{
               size: "lg",
-              type:'modal',
               variant: "solid",
               bg: "blue",
               font: "Pixelify Sans",

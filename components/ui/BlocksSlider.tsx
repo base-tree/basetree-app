@@ -78,8 +78,14 @@ export const BlocksSlider = () => {
           />
         </SwiperSlide>
         <SwiperSlide style={{ height: "340px", width: "100%" }}>
-          <Link title="block" type="block" url="" content="ipfs://QmZ4uPaFWDyKtLn1wnbrVWCXqQAkWvN1Bj7GA7Eq4vNXD9/block" styles={{size: "md",bg: "#086faa"}}/>
-         </SwiperSlide>
+          <Link
+            title="block"
+            type="block"
+            url=""
+            content="ipfs://QmZ4uPaFWDyKtLn1wnbrVWCXqQAkWvN1Bj7GA7Eq4vNXD9/block"
+            styles={{ size: "md", bg: "#086faa" }}
+          />
+        </SwiperSlide>
         <SwiperSlide
           style={{ height: "340px", width: notMobile ? "100%" : "300px" }}
         >
@@ -100,7 +106,7 @@ export const BlocksSlider = () => {
             url="https://youtu.be/khZrWdAOirw?si=QY7RefMq8CWDRe68"
           />
         </SwiperSlide>
-        <SwiperSlide style={{ height: "340px", width: "100%" }}>
+        {/* <SwiperSlide style={{ height: "340px", width: "100%" }}>
           <PSNProfile
             styles={{
               bg: "linear-gradient(0deg, #f5f5f5 0.00%,#fff8e2 90.00%)",
@@ -521,8 +527,8 @@ export const BlocksSlider = () => {
               ],
             })}
           />
-        </SwiperSlide>
-        
+        </SwiperSlide> */}
+
         {/* <SwiperSlide
           style={{
             height: "330px",
@@ -575,5 +581,3 @@ export const BlocksSlider = () => {
     </Flex>
   );
 };
-
-

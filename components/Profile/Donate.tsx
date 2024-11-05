@@ -97,82 +97,90 @@ export default function Donate({ title, content, style, icon, type }: Props) {
     value.indexOf(" ")
   )}&label=donation`;
 
-  const DonatePanel = ()=> {
-    return (<>
-      {donateSuccessful && !isDonating && (
-        <Center minH={246} w={"100%"} flexDir={"column"} gap={6}>
-          <Text fontSize={"xl"} py={10}>
-            {`Sent ${value} ETH to ${truncAddress(String(eth))}`}
-          </Text>
-          <Text fontSize={"2xl"} px={4}>
-            {success.length > 0 ? success : "Done. Thanks!"}
-          </Text>
-          <Box position={"fixed"} top={-100} zIndex={1000}>
-            {!animated && (
-              //@ts-ignore
-              <Lottie
-                options={{
-                  loop: false,
-                  autoplay: true,
-                  animationData: animationData,
-                  rendererSettings: {
-                    preserveAspectRatio: "xMidYMid slice",
-                  },
-                }}
-                height={800}
-                width={800}
-                eventListeners={[
-                  {
-                    eventName: "complete",
-                    callback: () => setAnimated(true),
-                  },
-                ]}
-              />
-            )}
-          </Box>
-        </Center>
-      )}
+  const DonatePanel = () => {
+    return (
+      <>
+        {donateSuccessful && !isDonating && (
+          <Center minH={246} w={"100%"} flexDir={"column"} gap={6}>
+            <Text fontSize={"xl"} py={10}>
+              {`Sent ${value} ETH to ${truncAddress(String(eth))}`}
+            </Text>
+            <Text fontSize={"2xl"} px={4}>
+              {success.length > 0 ? success : "Done. Thanks!"}
+            </Text>
+            <Button onClick={() => setDonateSuccessful(false)} gap={2}>
+              <LinkIcon type="RiRestartLine" size={"24px"} />
+              Again
+            </Button>
+            <Box position={"fixed"} top={-100} zIndex={1000}>
+              {!animated && (
+                //@ts-ignore
+                <Lottie
+                  options={{
+                    loop: false,
+                    autoplay: true,
+                    animationData: animationData,
+                    rendererSettings: {
+                      preserveAspectRatio: "xMidYMid slice",
+                    },
+                  }}
+                  height={800}
+                  width={800}
+                  eventListeners={[
+                    {
+                      eventName: "complete",
+                      callback: () => setAnimated(true),
+                    },
+                  ]}
+                />
+              )}
+            </Box>
+          </Center>
+        )}
 
-      {isDonating && (
-        <Center minH={246} flexDirection={"column"} gap={6}>
-          <Text fontSize={"xl"} fontWeight={"bold"} textAlign={"center"}>
-            {`Sending ${value} ETH to ${name} (${truncAddress(String(eth))})`}
-          </Text>
-          <Text fontSize={"xl"} fontWeight={"bold"} textAlign={"center"}>
-            {`Please Confirm in your Wallet`}
-          </Text>
-          <Spinner size={"xl"} />
-        </Center>
-      )}
+        {isDonating && (
+          <Center minH={246} flexDirection={"column"} gap={6}>
+            <Text fontSize={"xl"} fontWeight={"bold"} textAlign={"center"}>
+              {`Sending ${value} ETH to ${name} (${truncAddress(String(eth))})`}
+            </Text>
+            <Text fontSize={"xl"} fontWeight={"bold"} textAlign={"center"}>
+              {`Please Confirm in your Wallet`}
+            </Text>
+            <Spinner size={"xl"} />
+          </Center>
+        )}
 
-      {!donateSuccessful && !isDonating && (
-       <>
+        {!donateSuccessful && !isDonating && (
+          <>
             {eth && (
-                <Center flexDir={'column'} gap={4} p={4}>
-                  <Text>
-                      Send {value} ETH to {name} ({truncAddress(eth)})
-                    </Text>
-                    {DONATE_VALUES["ethereum"].map((val: string) => (
-                      <Button
-                        leftIcon={
-                          val === value ? <RiCheckLine /> : undefined
-                        }
-                        w={'100%'}
-                        onClick={() => setValue(val)}
-                        isActive={val === value}
-                        size="lg"
-                        rounded={round}
-                        key={"donate-value-eth-" + val}
-                        variant={variant}
-                        colorScheme={buttonBg}
-                        color={getColor(variant, buttonBg, lightMode)}
-                      >
-                        {val} ETH
-                      </Button>
-                    ))}
+              <Center flexDir={"column"} gap={4} p={4}>
+                <Text>
+                  Send {value} ETH to {name} ({truncAddress(eth)})
+                </Text>
+                {DONATE_VALUES["ethereum"].map((val: string) => (
+                  <Button
+                    leftIcon={val === value ? <RiCheckLine /> : undefined}
+                    w={"100%"}
+                    onClick={() => setValue(val)}
+                    isActive={val === value}
+                    size="lg"
+                    rounded={round}
+                    key={"donate-value-eth-" + val}
+                    variant={variant}
+                    colorScheme={buttonBg}
+                    color={getColor(variant, buttonBg, lightMode)}
+                  >
+                    {val} ETH
+                  </Button>
+                ))}
 
-                  {isConnected ? <TransactionButton
-                    style={{ borderRadius: "54px", fontSize: 'large' , width : '100%'}}
+                {isConnected ? (
+                  <TransactionButton
+                    style={{
+                      borderRadius: "54px",
+                      fontSize: "large",
+                      width: "100%",
+                    }}
                     transaction={async () => {
                       const tx = prepareContractCall({
                         contract: getContract({
@@ -180,8 +188,7 @@ export default function Donate({ title, content, style, icon, type }: Props) {
                           address: eth,
                           chain: wallet?.getChain()!,
                         }),
-                        method:
-                          "function transfer(address to, uint256 value)",
+                        method: "function transfer(address to, uint256 value)",
                         params: [eth, toWei(value)],
                         value: toWei(value),
                       });
@@ -214,14 +221,20 @@ export default function Donate({ title, content, style, icon, type }: Props) {
                     }}
                   >
                     {title}
-                    </TransactionButton> : <ConnectWalletButton title="Connect wallet" style={{width : '100%'}} />}
-
-                </Center>
+                  </TransactionButton>
+                ) : (
+                  <ConnectWalletButton
+                    title="Connect wallet"
+                    style={{ width: "100%" }}
+                  />
+                )}
+              </Center>
             )}
           </>
-      )}
-      </>)
-  }
+        )}
+      </>
+    );
+  };
 
   return (
     <>

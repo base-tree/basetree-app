@@ -173,7 +173,7 @@ const ManagePage: NextPage = () => {
   const [lastChange, setLastChange] = useState(0);
   const toast = useToast();
   const account = useActiveAccount();
-  const { onCopy, hasCopied } = useClipboard(String(SITE_URL + name));
+  const { onCopy, hasCopied } = useClipboard(String(SITE_URL + name.replace(".bst","")));
 
   //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
 
@@ -848,7 +848,7 @@ const ManagePage: NextPage = () => {
                             </Tooltip>
                             <Button
                               as={NextLink}
-                              href={`${SITE_URL}${name}`}
+                              href={`${SITE_URL}${name.replace('.bst','')}`}
                               target="_blank"
                               bgColor={"dark.600"}
                               roundedLeft={0}
@@ -862,7 +862,7 @@ const ManagePage: NextPage = () => {
                           </ButtonGroup>
                           <ShareButton
                             name={name}
-                            url={SITE_URL + name}
+                            url={SITE_URL + name.replace(".bst","")}
                           />
                           <Tooltip
                             borderRadius={4}

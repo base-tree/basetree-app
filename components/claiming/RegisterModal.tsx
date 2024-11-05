@@ -82,6 +82,7 @@ import { generateRecordCallArray, namehash } from "@base-tree/js/utils";
 import Lottie from "react-lottie";
 import * as animationData from "assets/animations/congrats.json";
 import LoadingIcon from "components/ui/LoadingIcon";
+import NextLink from 'next/link';
 
 export default function RegisterModal() {
   const { colorMode } = useColorMode();
@@ -710,7 +711,7 @@ export default function RegisterModal() {
                         </Button> */}
                         <Button
                           w={["100%", "xs"]}
-                          as={Link}
+                          as={NextLink}
                           href={ETHERSCAN_ADDRESS + registeredTx}
                           target="_blank"
                           size={"lg"}
@@ -719,8 +720,8 @@ export default function RegisterModal() {
                         </Button>
                         <Button
                           w={["100%", "xs"]}
-                          as={Link}
-                          href={SITE_PROFILE_URL + name}
+                          as={NextLink}
+                          href={'/'+name}
                           target="_blank"
                           size={"lg"}
                         >
@@ -729,7 +730,7 @@ export default function RegisterModal() {
                         <Button
                           w={["100%", "xs"]}
                           as={Link}
-                          href={SITE_MANAGE_SINGLE_URL + name }
+                          href={'/name/'+ name }
                           target="_blank"
                           size={"lg"}
                         >

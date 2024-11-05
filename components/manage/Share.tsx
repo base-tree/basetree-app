@@ -30,7 +30,7 @@ export default function ShareButton({
 %0a%0a
 It’s now easier than ever to explore my links, projects, and more, all in one place. Check it out and let me know what you think! 👇
 
-%0a%0a get yours @basetree${social === "x" ? "_xyz" : ""}!%0a%0a`;
+%0a%0a get yours @basetree${social === "x" ? "_xyz" : ""}!`;
 
     let href = "";
 

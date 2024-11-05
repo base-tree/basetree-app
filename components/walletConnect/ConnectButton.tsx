@@ -288,7 +288,7 @@ export default function ConnectWalletButton({
                 position={"relative"}
                 zIndex={1500}
                 rounded={"2xl"}
-                bg={lightMode ? "var(--white)" : "blackAlpha.700"}
+                bg={lightMode ? "var(--white)" : "black"}
               >
                 <Flex
                   p={5}

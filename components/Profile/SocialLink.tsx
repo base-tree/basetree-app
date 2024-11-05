@@ -95,7 +95,7 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
                       ? getIconInButtonColor('pop', buttonBg, lightMode)
                       : getIconInButtonColor(variant, buttonBg, lightMode)
                 }
-                size={36}
+                size={'36px'}
               />
             <Text
               onMouseEnter={() => setHover(true)}
@@ -108,7 +108,7 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
               }>
               {title}
             </Text>
-            <LinkIcon type="RiExternalLinkLine" size={22} opacity={0.5} />
+            <LinkIcon type="RiExternalLinkLine" size={'22px'} opacity={0.5} />
 
           </Button>
         </ChakraLink>

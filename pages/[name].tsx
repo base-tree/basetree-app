@@ -162,7 +162,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     headerColor: "#ffffff11",
     socialIcons: true,
     walletButtons: true,
-    socialButtons: true,
+    socialButtons: false,
     buttonBgColor: BUTTON_BG_COLORS[0],
     showDomain: true,
     headerMode: false,

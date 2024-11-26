@@ -27,8 +27,6 @@ import IframeResizer from "@iframe-resizer/react";
 import { Styles } from "types";
 import Link from "./Link";
 import SimpleLink from "./SimpleLink";
-import { SwapWidget } from '@uniswap/widgets'
-import '@uniswap/widgets/fonts.css'
 
 interface Props {
   title: string;
@@ -66,7 +64,6 @@ export default function SwapModal({ title, url, type, styles, icon }: Props) {
               overflow={"hidden"}
               key={`embed-box-${title.replaceAll(" ", "-")}-${embedType}`}
             >
-              <SwapWidget />
             </Flex>
           )}
         </Flex>

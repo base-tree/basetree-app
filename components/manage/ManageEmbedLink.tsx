@@ -58,6 +58,8 @@ export default function ManageEmbedLink({
               value={String(styles?.bg)}
               setValue={(e: any) => setStyles({ ...styles, bg: e })}
               title="BG Color"
+              top
+              bottom
             />
 
           </>

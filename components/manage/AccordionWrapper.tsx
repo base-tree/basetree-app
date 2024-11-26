@@ -9,18 +9,30 @@ import {
   AccordionIcon,
   AccordionPanel,
   useColorMode,
+  Tooltip,
+  IconButton,
+  useMediaQuery,
+  Center,
 } from '@chakra-ui/react';
 import { LinkIcon } from '../logos';
+import { ReactElement } from 'react';
+import { useAtomValue } from 'jotai';
+import { fontAtom, lightModeAtom } from '@/core/atoms';
+import { Styles } from '@/types';
 
 interface Props {
-  title: string;
+  title: string | ReactElement
+  tooltip?: string | ReactElement
   defaultOpen?: boolean;
   icon?: string;
   children: JSX.Element;
+  styles?: Styles;
 }
 
-export default function AccordionWrapper({title, defaultOpen, icon, children}: Props) {
+export default function AccordionWrapper({title, defaultOpen, icon, children, tooltip, styles}: Props) {
   const { colorMode } = useColorMode();
+  const font = useAtomValue(fontAtom);
+  const lightMode = useAtomValue(lightModeAtom);
 
   return (
     <Accordion
@@ -37,12 +49,15 @@ export default function AccordionWrapper({title, defaultOpen, icon, children}: P
           minWidth={'100%'}
           as={Button}
           size="lg"
-          _expanded={{ bgColor: 'blackAlpha.50' }}>
+          height={'68px'}
+          bgColor={colorMode === 'dark' ? 'whiteAlpha.50' : 'blackAlpha.50'}
+          _hover={{bgColor : colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100'}}
+          _expanded={{ bgColor: colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100' }}>
           <Flex gap={2} alignItems={'center'} textAlign="left" width={'100%'}>
-            {icon && <LinkIcon type={icon} size={22}/>}
-            <Text fontWeight={'bold'} display={'flex'} flex={1} fontSize={'xl'}>
+            {icon && <LinkIcon type={icon} size={'26px'}/>}
+            <Flex fontWeight={'bold'} w={'100%'} fontSize={styles?.size ? styles.size : 'xl'} textAlign={'center'}>
               {title}
-            </Text>
+            </Flex>
             <AccordionIcon />
           </Flex>
         </AccordionButton>
@@ -51,6 +66,7 @@ export default function AccordionWrapper({title, defaultOpen, icon, children}: P
           <Stack gap={4}>
             {children}
           </Stack>
+          {tooltip && <Center pt={4}> {tooltip}</Center>}
         </AccordionPanel>
        </AccordionItem>
      </Accordion>

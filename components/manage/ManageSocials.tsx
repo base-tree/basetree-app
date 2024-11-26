@@ -88,7 +88,7 @@ export default function ManageSocials({ json }: Props) {
         backgroundColor={colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100'}
         display={'flex'}>
         <AccordionItem border={0} borderRadius={10} width={'100%'}>
-          <AccordionButton minWidth={'100%'} as={Button} size='lg' _expanded={{bgColor: 'blackAlpha.50'}}>
+          <AccordionButton minWidth={'100%'} as={Button} size='lg' height={'68px'} _expanded={{bgColor: 'blackAlpha.50'}}>
             <Flex
               gap={2}
               alignItems={'center'}

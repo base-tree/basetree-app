@@ -101,7 +101,7 @@ export default function Donate({ title, content, style, icon, type }: Props) {
     return (
       <>
         {donateSuccessful && !isDonating && (
-          <Center minH={246} w={"100%"} flexDir={"column"} gap={6}>
+          <Center minH={246} w={"100%"} flexDir={"column"} gap={6} p={4}>
             <Text fontSize={"xl"} py={10}>
               {`Sent ${value} ETH to ${truncAddress(String(eth))}`}
             </Text>
@@ -139,7 +139,7 @@ export default function Donate({ title, content, style, icon, type }: Props) {
         )}
 
         {isDonating && (
-          <Center minH={246} flexDirection={"column"} gap={6}>
+          <Center minH={246} flexDirection={"column"} gap={6} p={4}>
             <Text fontSize={"xl"} fontWeight={"bold"} textAlign={"center"}>
               {`Sending ${value} ETH to ${name} (${truncAddress(String(eth))})`}
             </Text>

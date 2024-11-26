@@ -25,6 +25,7 @@ import { LinkIcon } from "components/logos";
 import {
   AVATAR_API_URL,
   FAUCET_URL,
+  IPFS_URLS,
   SITE_DESCRIPTION,
   SITE_LOGO_URL,
   SITE_TITLE,
@@ -40,6 +41,7 @@ import {
 } from "react-icons/ri";
 import LogoIcon from "../logos/LogoIcon";
 import {
+  chainAtom,
   connectedAccountAtom,
   isConnectedAtom,
   networkAtom,
@@ -58,27 +60,26 @@ import {
   useWalletBalance,
 } from "thirdweb/react";
 import { createWallet, walletConnect, inAppWallet } from "thirdweb/wallets";
-import { client, viemClient } from ".";
+import { client, mainViemClient, viemClient } from ".";
 import { getName } from "@base-tree/js/public";
 import {
   addr,
   name,
-} from "contracts/421614/0x7016f6bafd4ae35a30dd264ce8eeca16ab417fad";
-import { node } from "contracts/421614/0xd05661277665e9fb85d5acb5cbb30de2d6076988";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { getContract } from "thirdweb";
-import { arbitrumSepolia, baseSepolia } from "thirdweb/chains";
+} from "@/contracts/8453/Resolver";
+import { node } from "contracts/8453/ReverseRegistrar"
+import { Chain, getContract } from "thirdweb";
+import { base, baseSepolia } from "thirdweb/chains";
 import { truncAddress } from "core/utils";
 import Link from "next/link";
-import { addresses } from "core/utils/contractAddresses";
+import { main_addresses, test_addresses } from "@/core/utils/contractAddresses";
 
 const wallets = [
   createWallet("io.metamask"),
-  //createWallet("com.coinbase.wallet"),
+  createWallet("com.coinbase.wallet"),
   walletConnect(),
   inAppWallet({
     auth: {
-      options: ["email", "google", "apple", "facebook", "phone"],
+      options: ["email", "google", "farcaster", "telegram", "discord", "phone"],
     },
   }),
   //createWallet("com.trustwallet.app"),
@@ -102,7 +103,10 @@ export default function ConnectWalletButton({
   const [small] = useMediaQuery("(min-width: 480px)");
   const lightMode = useColorMode().colorMode === "light";
   //const web3Name = createWeb3Name();
-  const [network, setNetwork] = useAtom(networkAtom);
+  const [chain, setChain] = useAtom(chainAtom);
+  const isMainnet = chain === base ;
+  const addresses = isMainnet ? main_addresses : test_addresses ;
+  const [avatar, setAvatar] = useState('');
   const [isConnected, setIsConnected] = useAtom(isConnectedAtom);
   const [connectedAccount, setConnectedAccount] = useAtom(connectedAccountAtom);
   const [primaryName, setPrimary] = useAtom(primaryNameAtom);
@@ -110,7 +114,7 @@ export default function ConnectWalletButton({
   const _connectedAccount = useActiveAccount()?.address;
   const { data, isLoading, isError } = useWalletBalance({
     client,
-    chain: baseSepolia,
+    chain: chain,
     address: _connectedAccount,
   });
   const { onCopy, hasCopied } = useClipboard(String(connectedAccount));
@@ -118,14 +122,14 @@ export default function ConnectWalletButton({
   const wallet = useActiveWallet();
 
   async function handleConnect() {
-    const wallet = await connect({ client }); // opens the connect modal
+    const wallet = await connect({ client, wallets: wallets }); // opens the connect modal
     console.log("connected to", wallet);
     setIsConnected(true);
     setConnectedAccount(wallet.getAccount()?.address!);
-    if (wallet.getChain() !== baseSepolia) {
-      wallet.switchChain(baseSepolia);
+    if (wallet.getChain() !== chain) {
+      await wallet.switchChain(chain);
     }
-    getEthPrimary();
+    await getEthPrimary();
     try {
       if (onConnect) {
         onConnect();
@@ -150,8 +154,8 @@ export default function ConnectWalletButton({
       const _primary = await getName(viemClient, {
         address: connectedAccount as `0x${string}`,
       })
-      if(_primary){
 
+      if(_primary){
         if(_primary.match){
           setPrimary(_primary.name.replace(".bst",""));
         } 
@@ -160,7 +164,7 @@ export default function ConnectWalletButton({
           contract: getContract({
             client: client,
             address: addresses.ReverseRegistrar,
-            chain: baseSepolia,
+            chain: chain,
           }),
           addr: connectedAccount as `0x${string}`,
         });
@@ -169,7 +173,7 @@ export default function ConnectWalletButton({
           contract: getContract({
             client: client,
             address: addresses.PublicResolver,
-            chain: baseSepolia,
+            chain: chain,
           }),
           node: _node as `0x${string}`,
         });
@@ -196,16 +200,42 @@ export default function ConnectWalletButton({
     setPrimary("");
   };
 
-  const switchNetwork = async (_network: string) => {
-    setNetwork(_network);
+  const switchNetwork = async (chain: Chain) => {
+    setChain(chain);
+    if (wallet && wallet.getChain() !== chain) {
+      await wallet.switchChain(chain);
+    }
+    setPrimary('');
+    getEthPrimary();
   };
+
+  useEffect(()=>{
+
+    async function getAvatar() {
+      if(isMainnet){
+        const _avatar = await mainViemClient.getEnsText({
+          name: primaryName,
+          key: 'avatar',
+          universalResolverAddress: addresses.PublicResolver as `0x${string}`,
+        });
+        setAvatar(_avatar ? IPFS_URLS[0] + _avatar.replace('ipfs://','') : '');
+      } else {
+        setAvatar(AVATAR_API_URL + primaryName + "." + TLD);
+      }
+    }
+
+    if(primaryName.length > 5){
+      getAvatar();
+    }
+  },[primaryName])
+
   return (
     <>
       <Box
         w={style?.width ? style?.width :
           title !== "Connect"
             ? ["100%", "100%", "fit-content"]
-            : ["168px", "192px"]
+            : ["168px", "fit-content"]
         }
       >
         <AutoConnect
@@ -214,8 +244,8 @@ export default function ConnectWalletButton({
           onConnect={(wallet) => {
             setIsConnected(true);
             setConnectedAccount(String(wallet.getAccount()?.address));
-            if (wallet.getChain() !== baseSepolia) {
-              wallet.switchChain(baseSepolia);
+            if (wallet.getChain() !== chain) {
+              wallet.switchChain(chain);
             }
             getEthPrimary();
           }}
@@ -233,13 +263,14 @@ export default function ConnectWalletButton({
                 as={Button}
                 size={"lg"}
                 rounded={"full"}
-                w={["168px", "192px"]}
+                w={'auto'}
                 px={0}
+                pr={3}
                 colorScheme={lightMode ? "whiteAlpha" : "gray"}
                 bgColor={lightMode ? "whiteAlpha.900" : "whiteAlpha.100"}
               >
                 <Flex
-                  gap={2}
+                  gap={3}
                   align={"center"}
                   key={
                     primaryName
@@ -255,7 +286,7 @@ export default function ConnectWalletButton({
                       }
                       bgColor={!lightMode ? "var(--base0)" : "var(--base0)"}
                       rounded={"full"}
-                      src={AVATAR_API_URL + primaryName + '.' + TLD}
+                      src={avatar}
                       size={["md"]}
                     />
                   ) : (
@@ -271,8 +302,8 @@ export default function ConnectWalletButton({
                     my={"0 !important"}
                   >
                     {primaryName && primaryName !== ""
-                      ? primaryName.length > (!small ? 8 : 10)
-                        ? primaryName?.slice(0, !small ? 8 : 10) + "..."
+                      ? primaryName.length > (!small ? 8 : 16)
+                        ? primaryName?.slice(0, !small ? 8 : 16) + "..."
                         : primaryName
                       : truncAddress(connectedAccount)}
                   </Text>
@@ -300,7 +331,7 @@ export default function ConnectWalletButton({
                       : "wallet-name-box"
                   }
                 >
-                  {primaryName !== "" ? (
+                  {/* {primaryName !== "" ? (
                     <Avatar
                       color={!lightMode ? "var(--base)" : "var(--base)"}
                       icon={
@@ -308,14 +339,14 @@ export default function ConnectWalletButton({
                       }
                       bgColor={!lightMode ? "var(--base0)" : "var(--base0)"}
                       rounded={"full"}
-                      src={AVATAR_API_URL + primaryName + "." + TLD}
+                      src={avatar}
                       size={["md"]}
                     />
                   ) : (
                     <Box p={3} rounded={"full"} border={"1px #77777750 solid"}>
                       <LinkIcon type="RiUserLine" size={22} color="#777777" />
                     </Box>
-                  )}
+                  )} */}
                   <Stack gap={0.5} mx={1} flexGrow={1}>
                     <Text
                       fontWeight={"semibold"}
@@ -362,7 +393,7 @@ export default function ConnectWalletButton({
                       )}
                     </IconButton>
                   </Tooltip>
-                  <Tooltip
+                  {/* <Tooltip
                     borderRadius={4}
                     label={<Text p={2}>Disconnect Wallet</Text>}
                     hasArrow
@@ -377,7 +408,7 @@ export default function ConnectWalletButton({
                     >
                       <RiLogoutBoxRLine size={22} />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
                 </Flex>
                 <Stack gap={2} my={4} justify={"center"}>
                   {primaryName && (
@@ -395,18 +426,6 @@ export default function ConnectWalletButton({
                     </LinkBox>
                   )}
 
-                  {/* <Box px={5}>
-                    <Button
-                      onClick={switchAccount}
-                      borderColor={"gray.800"}
-                      gap={2}
-                      variant="outline"
-                      width={"100%"}
-                    >
-                      <LinkIcon type="RiShuffleLine" size={22} />
-                      Switch Account
-                    </Button>
-                  </Box> */}
                   <LinkBox px={5}>
                     <Button
                       as={NextLink}
@@ -417,9 +436,21 @@ export default function ConnectWalletButton({
                       size="md"
                     >
                       <LinkIcon type="RiApps2Line" size={24} />
-                      My Pages
+                      {isMainnet ? 'My Basenames' : 'My Pages'}
                     </Button>
                   </LinkBox>
+
+                  {/* <Box px={5}>
+                    <Button
+                      onClick={()=> switchNetwork(isMainnet ? baseSepolia : base)}
+                      borderColor={"gray.800"}
+                      gap={2}
+                      width={"100%"}
+                    >
+                      <LinkIcon type="RiShuffleLine" size={22} />
+                      Switch to {isMainnet ? 'Testnet' : 'Mainnet'}
+                    </Button>
+                  </Box> */}
                 </Stack>
               </MenuList>
             </Menu>

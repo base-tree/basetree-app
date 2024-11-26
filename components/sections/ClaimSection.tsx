@@ -36,6 +36,7 @@ import {
   avatarAtom,
   titleAtom,
   subtitleAtom,
+  chainAtom,
 } from "core/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useTranslate } from "core/lib/hooks/use-translate";
@@ -45,13 +46,13 @@ import {
   MIN_NAME_LENGTH,
   TLD,
 } from "core/utils/constants";
-import { invalidUsernameMessage, isValidUsername, sleep } from "core/utils";
+import { invalidUsernameMessage, isValidUsername, openWindow, sleep } from "core/utils";
 import { LinkIcon, Logo, LogoIcon } from "components/logos";
 import Link from "next/link";
 import RegisterModal from "components/claiming/RegisterModal";
 import AnimateOpacity from "components/animate/AnimateOpacity";
-import { ETHRegistrarController } from "core/utils/contracts";
-import { available } from "contracts/421614/0x89c108a78ef261a9f9e977e566b310cb3518e714";
+import { ETHRegistrarController, MainETHRegistrarController } from "core/utils/contracts";
+import { available } from "contracts/8453/RegistrarController";
 import { bytesToString, namehash, stringToBytes } from "viem";
 import {
   BytesLike,
@@ -60,6 +61,7 @@ import {
 } from "ethers/lib/utils";
 import FloatingObjects from "components/ui/FloatingObjects";
 import { ConnectWalletButton } from "components/walletConnect";
+import { base } from "thirdweb/chains";
 
 interface Message {
   type: any;
@@ -95,7 +97,8 @@ const ClaimSection = () => {
   const setTitle = useSetAtom(titleAtom);
   const setSubtitle = useSetAtom(subtitleAtom);
   const setAvatar = useSetAtom(avatarAtom);
-
+  const [chain, setChain] = useAtom(chainAtom);
+  const isMainnet = chain === base;
   const [name, setName] = useAtom(claimingNameAtom);
   const [openRegister, setOpenRegister] = useAtom(openRegisterAtom);
   const [path, setPath] = useAtom(pathAtom);
@@ -132,11 +135,11 @@ const ClaimSection = () => {
         setTyping(false);
         toast.closeAll();
         //@ts-ignore: Unreachable code error
-        console.log("fetching");
+        console.log(path);
         try {
           // @ts-ignore: Unreachable code error
           const result = await available({
-            contract: ETHRegistrarController,
+            contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
             name: path,
           });
           console.log(result);
@@ -199,7 +202,11 @@ const ClaimSection = () => {
   }, [connectedAccount, reload]);
 
   const registerClicked = async () => {
-    setOpenRegister(true);
+    if(isMainnet){
+      openWindow(`https://www.base.org/names?claim=${name}`,null)
+    } else {
+      setOpenRegister(true);
+    };
   };
 
   const clear = () => {
@@ -384,10 +391,10 @@ const ClaimSection = () => {
                           <LinkIcon
                             type={
                               nameExists
-                                ? "RiCloseCircleLine"
-                                : "RiCheckboxCircleLine"
+                                ? "RiCloseCircleFill"
+                                : "RiCheckboxCircleFill"
                             }
-                            color={nameExists ? "var(--red)" : "green"}
+                            color={nameExists ? "var(--red)" : "var(--green)"}
                             size={64}
                           />
                           <Stack gap={0}>

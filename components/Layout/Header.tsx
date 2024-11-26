@@ -23,7 +23,7 @@ import {
   DrawerFooter,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { localeAtom, colorModeAtom, isConnectedAtom } from "core/atoms";
+import { localeAtom, colorModeAtom, isConnectedAtom, chainAtom } from "core/atoms";
 import { ConnectWalletButton } from "components/walletConnect";
 import { useAtom, useAtomValue } from "jotai";
 import { Locale } from "translations";
@@ -34,6 +34,7 @@ import { LinkIcon, Logo, Base } from "components/logos";
 import Footer from "./Footer";
 import LogoLink from "./LogoLink";
 import { DOCS_URL } from "core/utils/constants";
+import { base } from "thirdweb/chains";
 export default function Header() {
   const [colorM, setColorM] = useAtom(colorModeAtom);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -46,6 +47,8 @@ export default function Header() {
   const { t } = useTranslate();
   const isConnected = useAtomValue(isConnectedAtom);
   const dashboard = pathname === "/names" ? true : false;
+  const [chain, setChain] = useAtom(chainAtom);
+  const isMainnet = chain === base;
 
   useEffect(() => {
     if (!pathname.includes("nftAddress")) {
@@ -125,10 +128,13 @@ export default function Header() {
                       <Flex gap={3}>
                         <LinkIcon
                           type="base"
+                          size={'36px'}
                         />
+                        <Stack>
                         <Text fontWeight={"bold"} cursor={"default"} w={'100%'}>
-                          Base Sepolia
+                         {isMainnet ? 'Base Mainnet' : 'Base Sepolia'}
                         </Text>
+                        </Stack>
                       </Flex>
                       <IconButton
                         variant="ghost"
@@ -177,7 +183,7 @@ export default function Header() {
                             width="100%"
                             justifyContent="left"
                           >
-                            {t("My Pages")}
+                            {isMainnet ? 'My Basenames' : 'My Pages'}
                           </Button>
                           </NextLink>
                         }

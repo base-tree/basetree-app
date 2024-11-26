@@ -89,6 +89,7 @@ export default function ManageWallets({ json }: Props) {
           <AccordionButton
             minWidth={'100%'}
             as={Button}
+            height={'68px'}
             size="lg"
             _expanded={{ bgColor: 'blackAlpha.50' }}>
             <Flex

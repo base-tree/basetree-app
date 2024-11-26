@@ -26,7 +26,7 @@ export const BlocksSlider = () => {
         style={{
           height: "380px",
           width: notMobile ? "100%" : "300px",
-          borderRadius: "24px",
+          borderRadius: "12px",
           //@ts-ignore
           "--swiper-pagination-color": "#ffffff",
         }}
@@ -65,14 +65,13 @@ export const BlocksSlider = () => {
           <LinksSlider />
         </SwiperSlide>
         <SwiperSlide
-          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}
-        >
+          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}>
           <Link
             title="chart"
             type="token chart"
-            styles={{ size: "sm", type: "direct", bg: "#000000", height: "32" }}
+            styles={{ size: "sm", type: "direct", bg: "#f5f5f5", height: "32" }}
             content={
-              '{"symbols":[{"value":"COINBASE:ETHUSDT|1D","label":"ETHUSDT"}],"changeMode":"percent-only","type":"area"}'
+              '{"symbols":[{"value":"COINBASE:ETHUSDT|1M","label":"ETHUSDT"}],"changeMode":"percent-only","type":"area"}'
             }
             url=""
           />

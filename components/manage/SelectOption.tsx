@@ -18,11 +18,12 @@ import { useState } from "react";
 import { capFirstLetter } from "core/utils";
 interface Props {
   title?: string;
-  value: string | string[];
+  value: string | string[] | any;
   setValue: Function;
   options: string[] | any[];
   isMulti: boolean;
   size?: "sm" | "md" | "lg";
+  showTitle?: boolean;
 }
 export default function SelectOption({
   title,
@@ -30,7 +31,8 @@ export default function SelectOption({
   setValue,
   options,
   isMulti,
-  size = "lg"
+  size = "lg",
+  showTitle = true
 }: Props) {
   const { th } = useMultiStyleConfig("Table", {});
 
@@ -42,7 +44,7 @@ export default function SelectOption({
 
   return (
     <Flex gap={2} width={"100%"} alignItems={"center"} justify={"center"} w={'100%'}>
-      {title && <FormLabel fontWeight={"bold"} fontSize={"lg"}>
+      {showTitle && title && <FormLabel fontWeight={"bold"} fontSize={"lg"}>
         {title}
       </FormLabel>}
       <FormControl onChange={(e) => console.log(e)} w={'100%'}>

@@ -285,15 +285,35 @@ const getIconInButtonColor = (
   return colorString;
 };
 
+function areUrlsEquivalent(url1: string, url2: string): boolean {
+  try {
+    const normalizeUrl = (url: string): string => {
+      const parsedUrl = new URL(url.startsWith('http') ? url : `https://${url}`);
+
+      // Remove "www" prefix if present
+      const hostname = parsedUrl.hostname.replace(/^www\./, '');
+
+      // Ensure no trailing slashes in the path
+      const path = parsedUrl.pathname.replace(/\/$/, '');
+
+      return `${parsedUrl.protocol}//${hostname}${path}`;
+    };
+
+    // Normalize both URLs and compare
+    return normalizeUrl(url1) === normalizeUrl(url2);
+  } catch (error) {
+    console.error("Invalid URL(s) provided:", error);
+    return false;
+  }
+}
+
 const getUrl = (type: string, url: string): string => {
   const _url = url.split("/")[3] ? url.split("/")[3].split("?")[0] : url;
   switch (type) {
     case "email":
     case "phone":
     case "skype":
-      return url.includes(SOCIAL_URLS[type])
-        ? url
-        : SOCIAL_URLS[type] + _url;
+      return url.includes(SOCIAL_URLS[type]) ? url : SOCIAL_URLS[type] + _url;
 
     case "substack":
     case "slack":
@@ -304,6 +324,10 @@ const getUrl = (type: string, url: string): string => {
     case undefined:
     case "undefined":
       return withHttps(url);
+
+    case "x":
+    case "twitter":
+      return withHttps(SOCIAL_URLS['x']) + _url;
 
     default:
       return url.includes(SOCIAL_URLS[type].slice(0, -1))
@@ -567,6 +591,10 @@ const detectTextChanges = (oldProfileData: any, newProfileData: any) => {
     changedRecords.push({ key: "description", value: newProfileData.bio });
   }
 
+  if (oldProfileData.skills !== newProfileData.skills) {
+    changedRecords.push({ key: "keywords", value: newProfileData.skills });
+  }
+
   if (oldProfileData.avatar !== newProfileData.avatar) {
     changedRecords.push({ key: "avatar", value: newProfileData.avatar });
   }
@@ -576,24 +604,10 @@ const detectTextChanges = (oldProfileData: any, newProfileData: any) => {
     JSON.stringify(newProfileData.styles)
   ) {
     changedRecords.push({
-      key: "styles",
+      key: "xyz.basetree.styles",
       value: JSON.stringify(newProfileData.styles),
     });
   }
-
-  // Compare wallets (oldProfileData.wallets is an object, newProfileData.wallets is also an object)
-  Object.keys(newProfileData.wallets).forEach((key) => {
-    if (oldProfileData.wallets[key] !== newProfileData.wallets[key]) {
-      changedRecords.push({ key, value: newProfileData.wallets[key] });
-    }
-  });
-
-  // Detect deleted wallets
-  Object.keys(oldProfileData.wallets).forEach((key) => {
-    if (!newProfileData.wallets[key]) {
-      deletedRecords.push(key);
-    }
-  });
 
   // Compare socials (oldProfileData.socials and newProfileData.socials are both objects)
   Object.keys(newProfileData.socials).forEach((key) => {
@@ -605,27 +619,8 @@ const detectTextChanges = (oldProfileData: any, newProfileData: any) => {
   // Detect deleted socials
   Object.keys(oldProfileData.socials).forEach((key) => {
     if (!newProfileData.socials[key]) {
+      changedRecords.push({ key, value: "" });
       deletedRecords.push(key);
-    }
-  });
-
-  // Compare links (oldProfileData.links is an array, newProfileData.links is also an array)
-  const typeCounter: { [key: string]: number } = {};
-  newProfileData.links.forEach((link: any, index: number) => {
-    const oldLink = oldProfileData.links[index];
-    typeCounter[link.type] = (typeCounter[link.type] || 0) + 1;
-    if (!oldLink || JSON.stringify(link) !== JSON.stringify(oldLink)) {
-      changedRecords.push({
-        key: `${link.type.replace(" ", ".")}.${typeCounter[link.type]}`,
-        value: JSON.stringify(link),
-      });
-    }
-  });
-
-  // Detect deleted links
-  oldProfileData.links.forEach((oldLink: any, index: number) => {
-    if (!newProfileData.links[index]) {
-      deletedRecords.push(oldLink.type);
     }
   });
 
@@ -739,6 +734,32 @@ const sortCustomLinksByOrder = (links: CustomLink[]): CustomLink[] => {
   });
 };
 
+const sortCredentialsByScore = (credentials: any[]) => {
+  return credentials.sort((a, b) => {
+    const orderA = a.score ?? 0; // If order is undefined, default to 0
+    const orderB = b.score ?? 0;
+    return orderB - orderA;
+  });
+};
+
+const getTierByScore =(score: number): string => {
+  if (score < 0) {
+    return ("Unknown");
+  }
+
+  if (score <= 24) {
+    return "Newbie";
+  } else if (score <= 49) {
+    return "Beginner";
+  } else if (score <= 74) {
+    return "Competent";
+  } else if (score <= 99) {
+    return "Proficient";
+  } else {
+    return "Expert";
+  }
+}
+
 const setOrderInCustomLinks = (links: CustomLink[]): CustomLink[] => {
   return sortCustomLinksByOrder(links).map((link, index) => ({
     ...link,
@@ -792,6 +813,7 @@ export {
   base64ToBlob,
   truncAddress,
   sleep,
+  sortCredentialsByScore,
   isValidEmail,
   capFirstLetter,
   getUrl,
@@ -806,4 +828,6 @@ export {
   isValidSignHash,
   openWindow,
   sumUint128,
+  getTierByScore,
+  areUrlsEquivalent
 };

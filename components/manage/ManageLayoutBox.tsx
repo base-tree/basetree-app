@@ -9,6 +9,8 @@ import {
   horizontalSocialAtom,
   lightModeAtom,
   showDomainAtom,
+  showScoreAtom,
+  showSkillsAtom,
   socialButtonsAtom,
   walletButtonsAtom,
 } from "core/atoms";
@@ -20,6 +22,8 @@ export default function ManageLayoutBox() {
   const [showDomain, setShowDomain] = useAtom(showDomainAtom);
   const [headerMode, setHeaderMode] = useAtom(headerModeAtom);
   const [horizontalSocial, setHorizontalSocial] = useAtom(horizontalSocialAtom);
+  const [showSkills, setShowSkills] = useAtom(showSkillsAtom);
+  const [showScore, setShowScore] = useAtom(showScoreAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
   const [walletButtons, setWalletButtons] = useAtom(walletButtonsAtom);
   const [lightMode, setLightMode] = useAtom(lightModeAtom);
@@ -28,19 +32,27 @@ export default function ManageLayoutBox() {
 
   return (
     <Box gap={2}>
-      <Heading fontSize={'xl'} py={4}>General Layout</Heading>
-
-      <SettingsButton
-        title="Light Mode"
-        value={lightMode}
-        setValue={setLightMode}
-        top
-      />
+      <Heading fontSize={"xl"} py={4}>
+        General Layout
+      </Heading>
 
       <SettingsButton
         title="Show Username"
+        top
         value={showDomain}
         setValue={setShowDomain}
+      />
+
+      <SettingsButton
+        title="Show Builder Score"
+        value={showScore}
+        setValue={setShowScore}
+      />
+
+      <SettingsButton
+        title="Show Skills"
+        value={showSkills}
+        setValue={setShowSkills}
       />
 
       <SettingsButton
@@ -54,11 +66,12 @@ export default function ManageLayoutBox() {
         value={horizontalSocial}
         setValue={setHorizontalSocial}
       />
-      <SettingsButton
+
+      {/* <SettingsButton
         title="Wallet Buttons"
         value={walletButtons}
         setValue={setWalletButtons}
-      />
+      /> */}
       <SettingsButton
         title="Social Buttons"
         value={socialButtons}
@@ -66,26 +79,29 @@ export default function ManageLayoutBox() {
         bottom
       />
 
-      <Heading fontSize={'xl'} py={4} pt={8}>Avatar Layout</Heading>
+      <Heading fontSize={"xl"} py={4} pt={8}>
+        Avatar Layout
+      </Heading>
       <Stack gap={4} px={2}>
-      <SelectOptionButton
-        options={["sm", "md", "lg"]}
-        value={String(avatarSize)}
-        setValue={(e: any) => setAvatarSize(e)}
-        title="Size"
-      />
+        <SelectOptionButton
+          options={["sm", "md", "lg"]}
+          value={String(avatarSize)}
+          setValue={(e: any) => setAvatarSize(e)}
+          title="Size"
+        />
 
-      <SelectOption
-        options={["hex", "circle", "round", "none"].map((item) => ({
-          value: item,
-          label: capFirstLetter(item),
-        }))}
-        value={String(avatarShape)}
-        isMulti={false}
-        setValue={(e: any) => setAvatarShape(e)}
-        title="Shape"
-        size="md"
-      /></Stack>
+        <SelectOption
+          options={["hex", "circle", "round", "none"].map((item) => ({
+            value: item,
+            label: capFirstLetter(item),
+          }))}
+          value={String(avatarShape)}
+          isMulti={false}
+          setValue={(e: any) => setAvatarShape(e)}
+          title="Shape"
+          size="md"
+        />
+      </Stack>
     </Box>
   );
 }

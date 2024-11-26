@@ -80,7 +80,7 @@ export default function SelectColor({
         </Button>
       )}
       <Collapse startingHeight={0} in={withTitle ? isOpen : true}>
-        <Center>
+        <Center pt={2} pb={4}>
           <ReactGPicker
             value={value}
             defaultActiveTab={defaultMode}

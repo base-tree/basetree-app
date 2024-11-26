@@ -72,6 +72,8 @@ export default function BgPicker() {
               withTitle={false}
               value={bgColor}
               reff={isOpen}
+              top
+              bottom
               key={'select-color-'+isOpen}
               defaultMode="gradient"
               setValue={(color: any) => {

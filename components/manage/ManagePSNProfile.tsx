@@ -80,7 +80,8 @@ export default function ManagePSNProfile({
             value={String(styles?.bg)}
             setValue={(e: any) => setStyles({ ...styles, bg: e })}
             title={`${capFirstLetter(type)} BG Color`}
-            defaultMode="solid"
+            defaultMode="solid" top
+            bottom
           />
         </>
       )}

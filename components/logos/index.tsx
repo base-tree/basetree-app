@@ -111,6 +111,7 @@ import Monad from "./Monad";
 import Soneium from "./Soneium";
 import Linktree from "./Linktree";
 import Farcaster from "./Farcaster";
+import Talent from "./Talent";
 
 interface LinkIconProps {
   type: string;
@@ -499,6 +500,8 @@ const LinkIcon = ({
       return <Base color={color ? color : undefined} size={size} />;
     case "monad":
       return <Monad color={color ? color : undefined} size={size} />;
+    case "talent":
+      return <Talent color={color ? color : undefined} size={size} />;
     case "soneium":
       return <Base color={color ? color : undefined} size={size} />;
     case "basetree":

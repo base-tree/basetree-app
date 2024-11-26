@@ -49,7 +49,7 @@ export const TEMPLATES = [
       Polygon: "0xBFd210db795A9Ac48D0C3be2a74232BE44144E84",
     },
     socials: {
-      "com.farcaster": "https://farcaster.com/exampleuser",
+      "xyz.farcaster": "https://farcaster.com/exampleuser",
       "com.instagram": "https://www.instagram.com/exampleuser",
       "com.google.youtube": "https://www.youtube.com/@exampleuser",
       "com.twitter": "https://twitter.com/exampleuser",
@@ -114,7 +114,7 @@ export const TEMPLATES = [
     },
     socials: {
       "com.linkedin": "https://linkedin.com/in/exampleuser",
-      "com.farcaster": "https://farcaster.com/exampleuser",
+      "xyz.farcaster": "https://farcaster.com/exampleuser",
       "com.discord": "https://discord.gg/exampleuser",
       "org.telegram": "https://t.me/exampleuser",
     },
@@ -167,7 +167,7 @@ export const TEMPLATES = [
     socials: {
       "org.telegram": "https://t.me/exampleuser",
       "com.twitter": "https://twitter.com/exampleuser",
-      "com.farcaster": "https://farcaster.com/exampleuser",
+      "xyz.farcaster": "https://farcaster.com/exampleuser",
       "com.medium": "https://medium.com/@exampleuser",
     },
     styles: {
@@ -387,7 +387,7 @@ export const TEMPLATES = [
     socials: {
       "com.github": "https://github.com/exampleuser",
       "org.telegram": "https://t.me/exampleuser",
-      "com.farcaster": "https://farcaster.com/exampleuser",
+      "xyz.farcaster": "https://farcaster.com/exampleuser",
       "com.linkedin": "https://linkedin.com/in/exampleuser",
       "com.twitter": "https://twitter.com/exampleuser",
     },

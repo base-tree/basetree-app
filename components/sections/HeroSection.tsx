@@ -32,12 +32,17 @@ import AnimateOpacity from "components/animate/AnimateOpacity";
 import FloatingObjects from "components/ui/FloatingObjects";
 import AnimateOnScroll from "components/animate/AnimateOnScroll";
 import Canvas3DText from "../ui/Canvas";
+import { useAtomValue } from "jotai";
+import { chainAtom } from "@/core/atoms";
+import { base } from "thirdweb/chains";
 
 export default function HeroSection() {
   const { t } = useTranslate();
   const [notMobile] = useMediaQuery("(min-width: 1200px)");
   const { colorMode } = useColorMode();
   const lightMode = colorMode === "light";
+  const chain = useAtomValue(chainAtom);
+  const isMainnet = chain === base;
 
   return (
     <motion.div key={"hero"}>
@@ -104,8 +109,7 @@ export default function HeroSection() {
                   fontSize={["lg", "2xl"]}
                   textAlign={"center"}
                 >
-                  Seamlessly create, customize, and showcase your entire Web3
-                  presence!
+                  create, customize, and showcase your Web3 presence!
                 </Text>
               </AnimateOnScroll>
             </Center>
@@ -116,10 +120,10 @@ export default function HeroSection() {
                   colorScheme="light"
                   w={["100%", "xs"]}
                   as={NextLink}
-                  href={"/app"}
+                  href={isMainnet ? "/names" : "/app"}
                   passHref
                 >
-                  {t("Testnet App")}
+                  {t("Enter App")}
                 </Button>
                 <Button
                   as={NextLink}

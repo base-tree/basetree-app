@@ -110,7 +110,7 @@ export default function Pay({ title, content, style, icon, type }: Props) {
         as={lightMode ? LightMode : DarkMode}
         key={`pay-modal-box-${title.replaceAll(" ","-")}-${lightMode}`}
       >
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
           <ModalOverlay
             bg="blackAlpha.500"
             backdropFilter="auto"
@@ -134,7 +134,7 @@ export default function Pay({ title, content, style, icon, type }: Props) {
             <ModalCloseButton />
             <ModalBody>
               {paySuccessful && !isPaying && (
-                <Center minH={246} w={"100%"} flexDir={"column"} gap={6}>
+                <Center minH={246} w={"100%"} flexDir={"column"} gap={6} p={4}>
                   <Text fontSize={"xl"} py={10} textAlign={"center"} w={"100%"}>
                     {`Sent ${value} ETH to ${name} (${truncAddress(
                       String(eth)
@@ -174,7 +174,7 @@ export default function Pay({ title, content, style, icon, type }: Props) {
               )}
 
               {isPaying && (
-                <Center minH={246} flexDirection={"column"} gap={6}>
+                <Center minH={246} flexDirection={"column"} gap={6} p={4}>
                   <Text
                     fontSize={"xl"}
                     fontWeight={"bold"}

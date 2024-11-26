@@ -11,6 +11,7 @@ import SelectOption from "./SelectOption";
 import { capFirstLetter } from "@/core/utils";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import SelectSlider from "./SelectSlider";
 
 interface Props {
   title: string;
@@ -143,10 +144,18 @@ export default function ManageTokenChart({
           title="Show Changes"
         />
 
+        <SelectSlider
+          value={Number(styles?.height)}
+          setValue={(e: any) => setStyles({ ...styles, height: e })}
+          title="Height"
+        />
+
         <SelectColor
           value={String(styles?.bg)}
           setValue={(e: any) => setStyles({ ...styles, bg: e })}
           title="BG Color"
+          top
+          bottom
         />
       </>
       {preview && (

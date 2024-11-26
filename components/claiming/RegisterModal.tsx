@@ -25,6 +25,7 @@ import {
 import { LinkIcon, Logo } from "components/logos";
 import {
   avatarAtom,
+  chainAtom,
   claimingNameAtom,
   connectedAccountAtom,
   isConnectedAtom,
@@ -51,21 +52,20 @@ import React, { useEffect, useState } from "react";
 import { useTranslate } from "core/lib/hooks/use-translate";
 import {
   ETHRegistrarController,
+  MainETHRegistrarController,
+  MainPriceOracle,
   PriceOracle,
   Resolver,
 } from "core/utils/contracts";
-import {
-  estimateGasCost,
-  prepareContractCall,
-  toWei,
-} from "thirdweb";
+import { estimateGasCost, prepareContractCall, toWei } from "thirdweb";
 import {
   makeCommitment,
   rentPrice,
-} from "contracts/421614/0x89c108a78ef261a9f9e977e566b310cb3518e714";
+} from "contracts/8453/RegistrarController"
 import { toEther } from "thirdweb/utils";
-import { latestAnswer } from "contracts/421614/0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165";
+import { latestAnswer } from "contracts/8453/ETHUSDPrice"
 import {
+  BioTextInput,
   EditAvatar,
   ManageLinks,
   ManageSocials,
@@ -82,7 +82,10 @@ import { generateRecordCallArray, namehash } from "@base-tree/js/utils";
 import Lottie from "react-lottie";
 import * as animationData from "assets/animations/congrats.json";
 import LoadingIcon from "components/ui/LoadingIcon";
-import NextLink from 'next/link';
+import NextLink from "next/link";
+import AccordionWrapper from "../manage/AccordionWrapper";
+import { base } from "thirdweb/chains";
+import { main_addresses, test_addresses } from "@/core/utils/contractAddresses";
 
 export default function RegisterModal() {
   const { colorMode } = useColorMode();
@@ -123,6 +126,9 @@ export default function RegisterModal() {
   const linksArray = useAtomValue(linksArrayAtom);
   const display = useAtomValue(titleAtom);
   const location = useAtomValue(subtitleAtom);
+  const [chain, setChain] = useAtom(chainAtom);
+  const isMainnet = chain === base;
+  const addresses = isMainnet ? main_addresses : test_addresses;
 
   async function prepare() {
     const _secret = getRandomBytes32();
@@ -199,12 +205,12 @@ export default function RegisterModal() {
     console.log(data);
 
     const commitmentHash: any = await makeCommitment({
-      contract: ETHRegistrarController,
+      contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
       name: name,
       owner: address!,
       secret: _secret,
       duration: BigInt(365 * 24 * 60 * 60 * year),
-      resolver: Resolver.address,
+      resolver: addresses.PublicResolver,
       reverseRecord: isPrimary,
       fuses: 0,
       data: data,
@@ -216,7 +222,7 @@ export default function RegisterModal() {
     setCmHash(commitmentHash);
 
     const commitTx = prepareContractCall({
-      contract: ETHRegistrarController,
+      contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
       method: "commit",
       params: [commitmentHash],
     });
@@ -251,14 +257,14 @@ export default function RegisterModal() {
       const _fee: any = await rentPrice({
         name: name,
         duration: BigInt(365 * 24 * 60 * 60 * year),
-        contract: ETHRegistrarController,
+        contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
       });
 
       console.log(_fee);
 
       setFee(_fee.base);
 
-      const _ethPrice = await latestAnswer({ contract: PriceOracle });
+      const _ethPrice = await latestAnswer({ contract: isMainnet ? MainPriceOracle : PriceOracle });
       console.log(_ethPrice);
       const _usdFee =
         ((Number(toEther(_fee.base)) + Number(gas)) * Number(_ethPrice)) / 1e8;
@@ -331,9 +337,7 @@ export default function RegisterModal() {
                   gap={1}
                   justify={"center"}
                 >
-                  <Text>
-                    {name}
-                  </Text>
+                  <Text>{name}</Text>
                 </Flex>
                 <Flex gap={2} align={"center"}>
                   <Button
@@ -457,9 +461,14 @@ export default function RegisterModal() {
                 </Text>
 
                 <Flex gap={4} direction={"column"} justify={"center"}>
-                  <EditAvatar onClick={saveAvatar} />
-                  <CropAvatar />
-                  <TitleInput />
+                  <AccordionWrapper title="Profile Info" icon="RiProfileLine">
+                    <>
+                      <TitleInput />
+                      <EditAvatar />
+                      <CropAvatar />
+                      <BioTextInput />
+                    </>
+                  </AccordionWrapper>
                   <AddModal type="full" />
                   <ManageWallets json={{}} />
                   <ManageLinks json={{}} />
@@ -637,10 +646,15 @@ export default function RegisterModal() {
                               Wait 10 seconds and Complete the second
                               transaction
                             </Text>
-                            <LoadingIcon delay={10} icon={<Logo w={'44px'} h={'44px'} />} text="Waiting ..." onComplete={() => {
+                            <LoadingIcon
+                              delay={10}
+                              icon={<Logo w={"44px"} h={"44px"} />}
+                              text="Waiting ..."
+                              onComplete={() => {
                                 setTimerPassed(true);
                                 return { shouldRepeat: false, delay: 1 };
-                              }}/>
+                              }}
+                            />
                           </>
                         ) : (
                           <>
@@ -693,9 +707,13 @@ export default function RegisterModal() {
                         </Text>
                         <Image
                           w={["100%", "xs"]}
-                          src={avatar ? `${AVATAR_API_URL}${name}.bst` : `${AVATAR_PREVIEW_URL}${name}.bst`}
+                          src={
+                            avatar
+                              ? `${AVATAR_API_URL}${name}.bst`
+                              : `${AVATAR_PREVIEW_URL}${name}.bst`
+                          }
                           rounded={"xl"}
-                          alt={name+'-tree-avatar-image'}
+                          alt={name + "-tree-avatar-image"}
                         />
                         <Text fontSize={"xl"} fontWeight={"bold"}>
                           {name}
@@ -721,7 +739,7 @@ export default function RegisterModal() {
                         <Button
                           w={["100%", "xs"]}
                           as={NextLink}
-                          href={'/'+name}
+                          href={"/" + name}
                           target="_blank"
                           size={"lg"}
                         >
@@ -730,8 +748,7 @@ export default function RegisterModal() {
                         <Button
                           w={["100%", "xs"]}
                           as={Link}
-                          href={'/name/'+ name }
-                          target="_blank"
+                          href={"/name/" + name}
                           size={"lg"}
                         >
                           Manage Page
@@ -846,7 +863,7 @@ export default function RegisterModal() {
                   transaction={() => {
                     setLoadingText(t("confirmInWallet"));
                     const tx = prepareContractCall({
-                      contract: ETHRegistrarController,
+                      contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
                       method: "commit",
                       params: [cmHash],
                     });
@@ -888,7 +905,7 @@ export default function RegisterModal() {
                   transaction={() => {
                     setLoadingText(t("confirmInWallet"));
                     const tx = prepareContractCall({
-                      contract: ETHRegistrarController,
+                      contract: isMainnet ? MainETHRegistrarController : ETHRegistrarController,
                       method: "register",
                       value: toWei(String(totalFee! + totalFee! * 0.01)),
                       params: [
@@ -896,7 +913,7 @@ export default function RegisterModal() {
                         address!,
                         BigInt(365 * 24 * 60 * 60 * year),
                         secret,
-                        Resolver.address,
+                        addresses.PublicResolver,
                         recordsData ?? [],
                         isPrimary,
                         0,

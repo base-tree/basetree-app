@@ -114,6 +114,8 @@ export default function ManageImageLink({
         setValue={(e: any) => setStyles({ ...styles, bg: e })}
         title={`Overlay Color`}
         options={{gradient: false}}
+        top
+        bottom
       />
 
       {height !== "auto" && (

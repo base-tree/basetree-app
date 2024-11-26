@@ -70,13 +70,14 @@ export default function TokenChartModal({
               flexDirection="column"
               width={"100%"}
               overflow={"hidden"}
-              key={`embed-box-${title.replaceAll(" ", "-")}-${embedType}`}
+              key={`embed-box-${title.replaceAll(" ", "-")}-${embedType}-${styles?.bg}`}
             >
               <TVWidget
                 symbols={tokenChart.symbols.map((symbol: any) => [
                   symbol.value,
                 ])}
                 changeMode={tokenChart.changeMode}
+                key={`direct-token-chart-${tokenChart.symbols.toString().replaceAll(":","-")}-${embedType}-${styles?.bg}`}
                 backgroundColor={styles?.bg}
                 height={styles?.height ? Number(styles.height) * 10 :
                   styles?.size === "lg"
@@ -106,10 +107,11 @@ export default function TokenChartModal({
           <ModalCloseButton />
           <ModalBody justifyContent={"center"} alignContent={"center"}>
             <Flex direction="column" gap={2} w={"100%"}>
-              <TVWidget
+             {embedType === "modal" && <TVWidget
                 symbols={tokenChart.symbols.map((symbol: any) => [
                   symbol.value,
                 ])}
+                key={`modal-token-chart-${tokenChart.symbols.toString().replaceAll(":","-")}-${embedType}-${styles?.bg}`}
                 changeMode={tokenChart.changeMode}
                 backgroundColor={styles?.bg}
                 height={styles?.height ? Number(styles.height) * 10 :
@@ -119,7 +121,7 @@ export default function TokenChartModal({
                     ? "400"
                     : "250"
                 }
-              />
+              />}
             </Flex>
           </ModalBody>
           <ModalFooter />

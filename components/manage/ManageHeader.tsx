@@ -12,21 +12,21 @@ import {
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { LinkIcon, Logo } from "components/logos";
-import { colorModeAtom, nameAtom } from "core/atoms";
+import { chainAtom, colorModeAtom, nameAtom } from "core/atoms";
 import { useAtom, useAtomValue } from "jotai";
+import { base } from "thirdweb/chains";
 
 export default function ManageHeader() {
   const name = useAtomValue(nameAtom);
   const [notMobile] = useMediaQuery("(min-width: 992px)");
-  const [colorM, setColorM] = useAtom(colorModeAtom);
-  const { colorMode, toggleColorMode } = useColorMode();
-
+  const chain = useAtomValue(chainAtom);
+  const isMainnet = chain === base;
   return (
     <Flex gap={2} justify={"space-between"} align={"center"} mb={2}>
       <NextLink href="/names" passHref>
         <Button fontWeight="bold" p={2} gap={[0, 0, 0, 2]} size={"lg"}>
           <LinkIcon type="RiArrowLeftLine" />
-          <Text>{notMobile ? "My Pages" : ""}</Text>
+          <Text>{notMobile ? isMainnet ? 'My Basenames' : 'My Pages' : ""}</Text>
         </Button>
       </NextLink>
       {/* <IconButton

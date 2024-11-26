@@ -1,3 +1,4 @@
+import { PassportSocial } from "@/types";
 import {
   Button,
   Tooltip,
@@ -6,19 +7,32 @@ import {
   Text,
   Link as ChakraLink,
   useMediaQuery,
-} from '@chakra-ui/react';
-import { LinkIcon } from 'components/logos';
+  Flex,
+  Avatar,
+  Stack,
+  Center,
+  Box,
+} from "@chakra-ui/react";
+import { LinkIcon } from "components/logos";
 import {
   buttonBgColorAtom,
   fontAtom,
   lightModeAtom,
+  passportAtom,
   roundAtom,
+  showSocialProfilesAtom,
   useLineIconsAtom,
   variantAtom,
-} from 'core/atoms';
-import { getColor, getIconColor, getIconInButtonColor, getUrl } from 'core/utils';
-import { useAtomValue } from 'jotai';
-import { useState } from 'react';
+} from "core/atoms";
+import {
+  areUrlsEquivalent,
+  getColor,
+  getIconColor,
+  getIconInButtonColor,
+  getUrl,
+} from "core/utils";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 
 interface Props {
   title: string;
@@ -27,36 +41,97 @@ interface Props {
   color?: string;
 }
 
-
-
 export default function SocialLink({ title, url, onlyIcon, color }: Props) {
   const lightMode = useAtomValue(lightModeAtom);
   const lineMode = useAtomValue(useLineIconsAtom);
-  const [notMobile] = useMediaQuery('(min-width: 800px)');
+  const [notMobile] = useMediaQuery("(min-width: 800px)");
   const round = useAtomValue(roundAtom);
+  const showSocialProfiles = useAtomValue(showSocialProfilesAtom);
   const variant = useAtomValue(variantAtom);
   const buttonBg = useAtomValue(buttonBgColorAtom);
   const font = useAtomValue(fontAtom);
+  const passport = useAtomValue(passportAtom);
   const [hover, setHover] = useState(false);
-  const finalUrl = getUrl(title.toLowerCase(),url) ;
+  const [verified, setVerified] = useState<boolean>();
+  const [profile, setProfile] = useState<PassportSocial>();
+  const finalUrl = getUrl(title.toLowerCase(), url);
+
+  useEffect(() => {
+    if (!passport) return;
+    passport.passport_socials &&
+      passport.passport_socials.map((pass_social: any) => {
+        if (pass_social.source === title.toLowerCase()) {
+          if (
+            areUrlsEquivalent(
+              pass_social.profile_url.toLowerCase(),
+              finalUrl.toLowerCase()
+            )
+          ) {
+            setVerified(true);
+            setProfile(pass_social);
+          } else {
+            setVerified(false);
+          }
+        }
+      });
+  }, [passport]);
+
+  const getTooltip = () => {
+    if (profile && showSocialProfiles && profile.follower_count) {
+      return (
+        <Flex p={6} gap={6} w={'100%'} flexDir={'column'}>
+          <Flex gap={2} align={'center'}>
+          <LinkIcon type="RiVerifiedBadgeFill" />
+          <Stack gap={1}>
+          <Text fontWeight={'bold'} fontSize={'lg'}>{url}</Text>
+          {/* <Text>{profile.profile_bio}</Text> */}
+          </Stack>
+          </Flex>
+          <Center gap={6}>
+          <Stack>
+            <Text fontSize={'2xl'} fontWeight={'bold'}>{profile.follower_count}</Text>
+            <Text>Followers</Text>
+          </Stack>
+          <Stack>
+            <Text fontSize={'2xl'} fontWeight={'bold'}>{profile.following_count}</Text>
+            <Text>Followings</Text>
+          </Stack>
+          </Center>
+        </Flex>
+      );
+    } else {
+      return (
+        <Flex align={"center"} p={2} gap={2}>
+          <Text>{title}</Text>
+          {verified && <LinkIcon type="RiVerifiedBadgeFill" />}
+        </Flex>
+      );
+    }
+  };
 
   return (
     <>
       {onlyIcon ? (
-        <ChakraLink href={finalUrl} target="_blank" id={`Base-domains-${title}-link`}>
+        <ChakraLink
+          href={finalUrl}
+          target="_blank"
+          id={`Base-domains-${title}-link`}
+        >
           <Tooltip
             borderRadius={4}
-            label={<Text p={2}>{title}</Text>}
+            label={getTooltip()}
             color="white"
-            bgColor={'black'}
+            bgColor={"black"}
             fontFamily={font}
             placement="top"
-            hasArrow>
+            hasArrow
+          >
             <IconButton
               variant="outline"
               border={0}
-              aria-label={title + '-link'}
-              key={title + '-link' + (lightMode ? 'light' : 'dark')}>
+              aria-label={title + "-link"}
+              key={title + "-link" + (lightMode ? "light" : "dark")}
+            >
               <LinkIcon
                 line={lineMode ?? false}
                 type={title.toLowerCase()}
@@ -66,50 +141,57 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
           </Tooltip>
         </ChakraLink>
       ) : (
-        <ChakraLink href={finalUrl} target="_blank" id={`Base-domains-${title}-link`} _hover={{textDecoration:'none'}}>
+        <ChakraLink
+          href={finalUrl}
+          target="_blank"
+          id={`Base-domains-${title}-link`}
+          _hover={{ textDecoration: "none" }}
+        >
           <Button
-            size={'lg'}
-            fontSize={'lg'}
-            height={'64px'}
-            display={'flex'}
+            size={"lg"}
+            fontSize={"lg"}
+            height={"64px"}
+            display={"flex"}
             gap={2}
             rounded={round}
             variant={variant}
             colorScheme={buttonBg}
             color={
-              variant === 'fill' && hover
-                ? getColor('pop', buttonBg, lightMode)
+              variant === "fill" && hover
+                ? getColor("pop", buttonBg, lightMode)
                 : getColor(variant, buttonBg, lightMode)
             }
             onMouseEnter={() => setHover(true)}
             onMouseMove={() => setHover(true)}
             onMouseOut={() => setHover(false)}
             px={3}
-            w={'100%'}>
-            
-              <LinkIcon
-                line={lineMode ?? false}
-                type={title.toLowerCase()}
-                color={
-                  variant === 'fill' && hover
-                      ? getIconInButtonColor('pop', buttonBg, lightMode)
-                      : getIconInButtonColor(variant, buttonBg, lightMode)
-                }
-                size={'36px'}
-              />
-            <Text
-              onMouseEnter={() => setHover(true)}
-              w={'100%'} 
-              textAlign={'center'}
+            w={"100%"}
+          >
+            <LinkIcon
+              line={lineMode ?? false}
+              type={title.toLowerCase()}
               color={
-                variant === 'fill' && hover
-                  ? getColor('pop', buttonBg, lightMode)
+                variant === "fill" && hover
+                  ? getIconInButtonColor("pop", buttonBg, lightMode)
+                  : getIconInButtonColor(variant, buttonBg, lightMode)
+              }
+              size={"36px"}
+            />
+            <Center
+              onMouseEnter={() => setHover(true)}
+              w={"100%"}
+              gap={2}
+              textAlign={"center"}
+              color={
+                variant === "fill" && hover
+                  ? getColor("pop", buttonBg, lightMode)
                   : getColor(variant, buttonBg, lightMode)
-              }>
+              }
+            >
               {title}
-            </Text>
-            <LinkIcon type="RiExternalLinkLine" size={'22px'} opacity={0.5} />
-
+              {/* {verified && <LinkIcon type="RiVerifiedBadgeFill" size={'22px'} />} */}
+            </Center>
+            <LinkIcon type="RiExternalLinkLine" size={"22px"} opacity={0.5} />
           </Button>
         </ChakraLink>
       )}

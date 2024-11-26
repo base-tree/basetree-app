@@ -87,11 +87,12 @@
   --blue: #7b90ce;
   --blue2: #637ac0;
   --blue3: #405594;
-  --green0: #46f7df;
-  --green1: #38DEC8;
-  --green: #2bceb8;
-  --green2: #13a18e;
-  --green3: #0d8373;
+  --green00: #99f0c4;
+  --green0: #2bb673;
+  --green: #1d7c4e;
+  --green1: #27aa6b;
+  --green2: #239960;
+  --green3: #228a58;
   --bg1Gradient: url('/bgs/bg1.jpg') center;
   --bg1: #272727;
   --bg2Gradient: url('/bgs/bg2.jpg') center;
@@ -457,4 +458,8 @@ body {
     color: transparent;
     background: #ffffff;
   }
+}
+
+.r-vakc41 {
+  max-width: 800px !important;
 }

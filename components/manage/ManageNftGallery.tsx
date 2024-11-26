@@ -105,6 +105,8 @@ export default function ManageNftGallery({
               value={String(styles?.bg)}
               setValue={(e: any) => setStyles({ ...styles, bg: e })}
               title={`Button BG Color`}
+              top
+              bottom
             />
           </>
         )}

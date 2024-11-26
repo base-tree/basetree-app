@@ -33,12 +33,14 @@ import {
   nftTypeAtom,
   openAddLinkAtom,
   openAddNftAtom,
+  connectedAccountAtom,
 } from "core/atoms";
 import { LinkIcon } from "components/logos";
 import { MARKETPLACE_URLS, OPENSEA_URL } from "core/utils/constants";
 import NetworkModal from "./NetworkModal";
 import ReactPlayer from "react-player";
 import { useActiveAccount } from "thirdweb/react";
+import { getMimeType } from "@/core/utils";
 
 interface Props {
   defaultType: string;
@@ -68,7 +70,7 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
   const [avatarNft, setAvatarNft] = useAtom(avatarNftAtom);
   const [collection, setCollection] = useState<string>("");
 
-  const eth = useActiveAccount()?.address;
+  const connectedAccount = useAtomValue(connectedAccountAtom);
   const [avatar, setAvatar] = useAtom(avatarAtom);
 
   useEffect(() => {
@@ -85,13 +87,13 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
     if (!nftjsons) return;
     let nft = nftjsons[index];
     if (!nft) return;
-    if (nft.type === "contract") {
-      setLoaded(false);
-      setCollection(() => nft.address);
-      loadNFTs(nft.address);
-      return;
-    }
-    let avatarURL = nft.files ? nft.files[0]?.source : nft.preview?.source;
+    // if (nft.type === "contract") {
+    //   setLoaded(false);
+    //   setCollection(() => nft.address);
+    //   loadNFTs(nft.address);
+    //   return;
+    // }
+    let avatarURL = nft.image?.source;
 
     setAvatar(String(avatarURL));
     //setEditingAvatarFile(undefined);
@@ -103,18 +105,13 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
     if (!nftjsons) return;
     let nft = nftjsons[index];
     if (!nft) return;
-    if (nft.type === "contract") {
-      setLoaded(false);
-      setCollection(() => nft.address);
-      loadNFTs(nft.address);
-      return;
-    }
-    let avatarURL = nft.files
-      ? !nft?.files[0]?.mimetype.includes("metadata") ||
-        !nft?.files[0]?.mimetype.includes("json")
-        ? nft.files[0].source
-        : nft.preview?.source
-      : nft.preview?.source;
+    // if (nft.type === "contract") {
+    //   setLoaded(false);
+    //   setCollection(() => nft.address);
+    //   loadNFTs(nft.address);
+    //   return;
+    // }
+    let avatarURL = nft.image?.source;
 
     let _styleType;
 
@@ -134,32 +131,18 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
         metadata: nft.metadata,
       })
     );
-    if (
-      (nft.metadata && nft.metadata?.animation_url) ||
-      String(nft.preview?.mimetype).includes("mp4") ||
-      String(nft.preview?.mimetype).includes("mp3")
-    ) {
-      _styleType = "complex";
-    } else {
-      _styleType = "normal";
-    }
 
     _setStyles({
       size: "md",
       network: nft.network,
-      scanLink: false,
-      type: _styleType,
+      scanLink: false
     });
     _setAddLinkOpen(true);
     onClose();
   }
 
-  const getApiUrl = (chain: string, _collection: string) => {
-    if (_collection.length > 0) {
-      return `https://${chain}.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API}/getNFTsForOwner?contractAddresses[]=${_collection}&owner=`;
-    } else {
-      return `https://${chain}.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API}/getContractsForOwner?owner=`;
-    }
+  const getApiUrl = (chain: string) => {
+    return `https://api.opensea.io/api/v2/chain/${chain}/account/${connectedAccount}/nfts`;
   };
 
   const loadNFTs = async (_collection: string) => {
@@ -169,72 +152,85 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
       setIsLoading(true);
       setListIsEmpty(false);
 
-      const isContract = _collection === "";
+      //const isContract = _collection === "";
       const options = {
         method: "GET",
-        headers: { accept: "application/json" },
+        headers: {
+          accept: "application/json",
+          "x-api-key": String(process.env.NEXT_PUBLIC_OPENSEA_API),
+        },
       };
 
       // Helper function to process the response
-      const processNfts = (response: any, network: string) => {
-        const nfts =
-          (isContract ? response?.contracts : response?.ownedNfts) || [];
+      // const processNfts = (response: any, network: string) => {
+      //   const nfts =
+      //     (isContract ? response?.contracts : response?.ownedNfts) || [];
 
-        return nfts.map((nft: any) => {
-          const thumbnailUrl = nft.image.thumbnailUrl || nft.image.cachedUrl;
-          console.log(nft);
-          return {
-            name: isContract
-              ? nft.openSeaMetadata?.collectionName || nft.name
-              : nft.name,
-            type: isContract ? "contract" : "nft",
-            tokenId: nft.tokenId,
-            tokenCount: isContract ? nft.totalBalance : 1,
-            address: isContract ? nft.address : nft.contract.address,
-            network: network,
-            metadata: isContract ? "" : nft.raw?.metadata || {},
-            preview: {
-              source: thumbnailUrl,
-              mimetype: nft.image.contentType,
-            },
-            files: [
-              {
-                source: nft.image.cachedUrl,
-                mimetype: nft.image.contentType,
+      //   return nfts.map((nft: any) => {
+      //     const thumbnailUrl = nft.image.thumbnailUrl || nft.image.cachedUrl;
+      //     console.log(nft);
+      //     return {
+      //       name: isContract
+      //         ? nft.openSeaMetadata?.collectionName || nft.name
+      //         : nft.name,
+      //       type: isContract ? "contract" : "nft",
+      //       tokenId: nft.tokenId,
+      //       tokenCount: isContract ? nft.totalBalance : 1,
+      //       address: isContract ? nft.address : nft.contract.address,
+      //       network: network,
+      //       metadata: isContract ? "" : nft.raw?.metadata || {},
+      //       image: {
+      //         source: thumbnailUrl,
+      //         mimetype: nft.image.contentType,
+      //       },
+      //     };
+      //   });
+      // };
+
+      // // Fetch NFTs
+      // const baseResponse = await fetch(
+      //     getApiUrl("base", eth),
+      //     options
+      //   ).then((res) => res.json());
+
+      // // Process responses and combine NFTs from both networks
+      // const baseNfts = processNfts(baseResponse, "ethereum");
+      // setNftJsons(baseNfts);
+
+      // // If no NFTs were found, mark the list as empty
+      // if (baseNfts.length === 0) {
+      //   setListIsEmpty(true);
+      // }
+
+      await fetch(getApiUrl("base"), options)
+        .then((response) => response.json())
+        .then((response) => {
+          // console.log(response);
+          const _nfts: any[] = response?.nfts ;
+          _nfts.map((nft: any) => {
+            const _nftJson = {
+              name: nft.name,
+              tokenId: nft.identifier,
+              description: nft.description,
+              address: nft.contract,
+              network: network,
+              metadata: nft.metadata_url,
+              image: {
+                source: nft.display_image_url,
+                mimetype: getMimeType(nft.image_url),
               },
-            ],
-          };
-        });
-      };
-
-      // Fetch NFTs in parallel
-      const [ethResponse, arbResponse] = await Promise.all([
-        fetch(
-          getApiUrl("eth-mainnet", _collection) +
-            eth +
-            "&withMetadata=true&pageSize=100",
-          options
-        ).then((res) => res.json()),
-        fetch(
-          getApiUrl("base-mainnet", _collection) +
-            eth +
-            "&withMetadata=true&pageSize=100",
-          options
-        ).then((res) => res.json()),
-      ]);
-
-      // Process responses and combine NFTs from both networks
-      const ethNfts = processNfts(ethResponse, "ethereum");
-      const arbNfts = processNfts(arbResponse, "base");
-
-      // Update the NFT list state
-      const allNfts = [...ethNfts, ...arbNfts];
-      setNftJsons(allNfts);
-
-      // If no NFTs were found, mark the list as empty
-      if (allNfts.length === 0) {
-        setListIsEmpty(true);
-      }
+            };
+            nft.name !== null &&
+              setNftJsons((nfts) => [...(nfts ? nfts : []), _nftJson]);
+              
+          });
+          if(_nfts.length === 0){
+            setListIsEmpty(true);
+          } else {
+            setListIsEmpty(false);
+          }
+        })
+        .catch((err) => console.error(err));
 
       setLoaded(true);
       setIsLoading(false);
@@ -353,9 +349,9 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
                     borderRadius={12}
                   >
                     <Flex justify={"space-between"} gap={2} align={"center"}>
-                      <Box opacity={0.5}>
+                      {/* <Box opacity={0.5}>
                         <LinkIcon type={`No.${nft.tokenCount}`} size={"34px"}/>
-                      </Box>
+                      </Box> */}
                       <Text
                         w={"100%"}
                         fontWeight={"bold"}
@@ -378,7 +374,7 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
                           : String(nft.name)}
                       </Text>
                       <Box opacity={0.5}></Box>{" "}
-                      <LinkIcon type={String(nft.network)} line size={"24"}/>
+                      <LinkIcon type={String(nft.network)} line size={"24"} />
                     </Flex>
                     <Flex
                       key={nft.name + " name" + index}
@@ -389,10 +385,10 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
                       align={"center"}
                     >
                       <Box p={4}>
-                        {String(nft.preview?.mimetype).includes("mp4") ? (
+                        {String(nft.image?.mimetype).includes("mp4") ? (
                           <Center>
                             <ReactPlayer
-                              url={nft?.preview?.source}
+                              url={nft?.image?.source}
                               width={"100%"}
                               loop
                               muted
@@ -404,16 +400,12 @@ export default function AddNFTAvatar({ defaultType, key }: Props) {
                           <Image
                             borderRadius={12}
                             width={"100%"}
-                            height={'230px'}
+                            height={"230px"}
                             transition={"ease"}
                             transitionDuration={"1000"}
                             alt={nft.name}
                             textAlign={"center"}
-                            src={
-                              nft.files && nft.files[0]?.source !== ""
-                                ? String(nft.files[0]?.source)
-                                : String(nft.preview?.source)
-                            }
+                            src={nft.image?.source}
                           />
                         )}
                       </Box>

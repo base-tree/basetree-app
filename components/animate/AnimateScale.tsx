@@ -13,6 +13,7 @@ const AnimateScale = ({ children, delay }: AnimateOpacityProps) => (
       animate={{ opacity:1, scale: 1}}
       transition={{ duration: 0.5, delay, delayChildren: delay }}      
       exit={{ opacity: 0 }}
+      style={{width:'100%'}}
     >
       {children}
     </motion.div>

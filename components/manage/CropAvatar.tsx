@@ -150,7 +150,7 @@ export default function CropAvatar() {
 
         // });
         //setAvatar('https://ipfs.io/ipfs/' + uri.pin.cid);
-        setAvatar(IPFS_IO_URL + uris.toString().slice(7));
+        setAvatar(uris.toString());
         setIsLoading(false)
 
       } catch (error) {

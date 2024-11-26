@@ -6,74 +6,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ipfscdn.io',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'ipfs.io',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'gateway.ipfs.io',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cf-ipfs.com',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'gateway.pinata.cloud',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: '10.via0.com',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'ipfs.cf-ipfs.com',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'nft-cdn.alchemy.com',
-        port: '',
-        pathname: '*',
-      },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '*',
+        hostname: '**',
       },
     ],
-  },
-  experimental: {
-		optimizePackageImports: [
-			"@uniswap/widgets",
-			"@dex-swap/widgets"
-		],
-	},
-  webpack(config) {
-    config.output.webassemblyModuleFilename = './eversdk.node';
-    config.experiments = { asyncWebAssembly: true, layers: true };
-    config.externals.push("pino-pretty", "lokijs", "encoding");
-		config.resolve.fallback = {
-			fs: false,
-		};
-    return config;
   },
   async headers() {
     return [

@@ -4,6 +4,7 @@ import { capFirstLetter } from ".";
 export const MINT_OPEN = true;
 export const MINT_TOTAL_SUPPLY: number = 10000;
 export const TLD = "bst";
+export const MAIN_TLD = "base.eth";
 export const DOMAIN_REGISTER_FEE = 0.00001;
 export const MINT_DATE = "";
 export const MINT_MESSAGE = "Soon on Base Testnet";
@@ -13,7 +14,8 @@ export const SITE_OGS_URL = "https://basetree.xyz/ogs/";
 export const SITE_URL_SHORT = "basetree.xyz";
 export const SITE_TITLE = "BaseTree";
 export const SITE_DESCRIPTION = "Decentralized Link In Bio Tools";
-export const SITE_KEYWORDS = "BaseTree, Blockchain Domains, Decentralized Naming Service, Base Naming Service";
+export const SITE_KEYWORDS =
+  "BaseTree, Blockchain Domains, Decentralized Naming Service, Base Naming Service";
 export const SITE_FULL_DESCRIPTION =
   "BaseTree is a ENS-Based domain naming system for Base Blockchain which provides users and dapps the ability to assign human-readable names to Base addresses";
 export const SITE_MANAGE_URL = "https://basetree.xyz/names/";
@@ -21,16 +23,16 @@ export const SITE_MANAGE_SINGLE_URL = "https://basetree.xyz/name/";
 export const METADATA_URL = "https://metadata.basetree.xyz/";
 export const SITE_PROFILE_URL = "https://basetree.xyz/";
 export const ZEALY_URL = "https://zealy.io/c/basetree/";
-export const AVATAR_API_URL = "https://metadata.basetree.xyz/baseSepolia/avatar/";
+export const AVATAR_API_URL =
+  "https://metadata.basetree.xyz/baseSepolia/avatar/";
 export const AVATAR_PREVIEW_URL = "https://metadata.basetree.xyz/preview/";
 export const BTCSCAN_ADDRESS = "https://blockchair.com/bitcoin/";
 export const ETHERSCAN_ADDRESS = "https://sepolia.basescan.org/tx/";
-export const JSON_RPC_URL = 'https://cloudflare-eth.com'
+export const JSON_RPC_URL = "https://cloudflare-eth.com";
 export const MAX_NAME_LENGTH = 63;
 export const MIN_NAME_LENGTH = 2;
 export const MIN_FEE = 660000000;
-export const TWITTER_CALLBACK_URL =
-  "https://basetree.xyz/api/twitter/callback";
+export const TWITTER_CALLBACK_URL = "https://basetree.xyz/api/twitter/callback";
 //export const TWITTER_CALLBACK_URL = 'http://localhost:3000/api/twitter/callback';
 export const TWITTER_ME = "https://api.twitter.com/2/users/me";
 export const TWITTER_SCOPES = ["tweet.read", "users.read", "offline.access"];
@@ -38,6 +40,10 @@ export const TWITTER_FOLLOW_URL =
   "https://twitter.com/intent/user?screen_name=basetree_xyz";
 export const TWITTER_RETWEET_URL = "";
 export const ZEALY_USERS_API = "";
+export const TALENT_PASSPORTS_API = "https://api.talentprotocol.com/api/v2/passports";
+export const PASSPORT_CREDENTIALS_API = "https://api.talentprotocol.com/api/v2/passport_credentials";
+export const TALENT_PASSPORT_URL = "https://passport.talentprotocol.com/";
+export const TALENT_PROTOCOL_URL = "https://talentprotocol.com/";
 export const IPFS_IO_URL = "https://ipfs.io/ipfs/";
 
 export const SOCIAL_TWITTER = "basetree_xyz";
@@ -110,7 +116,6 @@ export const DONATE_VALUES: any = {
   paypal: ["1 USD", "10 USD", "50 USD"],
 };
 
-
 export const LINK_VALIDATION_REGEX =
   "^(https?:\\/\\/)?" + // protocol
   "([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)" + // subdomain and domain name
@@ -128,7 +133,6 @@ export const SOUNDCLOUD_LINK_REGEX =
 
 export const TWITTER_STATUS_REGEX =
   /^https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(?:es)?\/(\d+)$/;
-
 
 export const AVAILABLE_LINKS: LinkType[] = [
   { type: "heading", av: true, reg: "" },
@@ -220,7 +224,7 @@ export const EXAMPLE_WALLETS: any = {
 
 export const SOCIALS = [
   { key: "Twitter", value: "com.twitter", color: "#000000" },
-  { key: "Farcaster", value: "com.farcaster", color: "#000000" },
+  { key: "Farcaster", value: "xyz.farcaster", color: "#000000" },
   { key: "Discord", value: "com.discord", color: "#5865F2" },
   { key: "Medium", value: "com.medium", color: "#000000" },
   { key: "Opensea", value: "com.opensea", color: "#2081E2" },
@@ -260,7 +264,9 @@ export const SOCIALS = [
 
 // Function to get the color of a social media platform by name
 export function getSocialMediaColor(name: string): string {
-  const social = SOCIALS.find((s) => s.key.toLowerCase() === name.toLowerCase());
+  const social = SOCIALS.find(
+    (s) => s.key.toLowerCase() === name.toLowerCase()
+  );
   return social ? social.color : "#000000"; // Default to black if not found
 }
 
@@ -296,7 +302,7 @@ export const WALLETS = [
 
 export const BG_COLORS = [
   {
-    color: "linear-gradient(0deg, #000000 10%, #232323 90%)",
+    color: "linear-gradient(0deg, #3d444d 0%, #000000 100%)",
     lightMode: false,
   }, // darkGradient
   { color: "#161618", lightMode: false }, // dark
@@ -345,6 +351,7 @@ export const BG_COLORS = [
 
 export const BG_COLORS_SAMPLE = [
   "#161618",
+  "#1B262C",
   "#FF6900",
   "#FCB900",
   "#7BDCB5",
@@ -357,7 +364,13 @@ export const BG_COLORS_SAMPLE = [
   "#F78DA7",
   "#ba68c8",
   "#9900EF",
-  "linear-gradient(0deg, #000000 10%, #232323 90%)",
+  "linear-gradient(180deg, #8E44AD 0%, #2C3E50 100%)",
+  "linear-gradient(180deg, #1ABC9C 0%, #16A085 100%)",
+  "linear-gradient(180deg, #141E30 0%, #243B55 100%)",
+  "linear-gradient(180deg, #2ECC71 0%, #27AE60 100%)",
+  "linear-gradient(180deg, #0F2027 0%, #203A43 50%, #2C5364 100%)",
+  "linear-gradient(180deg, #FF7E5F 0%, #FEB47B 100%)",
+  "linear-gradient(0deg, #000000 10%, #232323 100%)",
   "linear-gradient(0deg, rgb(0, 0, 0) 0%, #acacac 100%)",
   "linear-gradient(0deg, rgb(255, 177, 153) 0%, rgb(255, 8, 68) 100%)",
   "linear-gradient(270deg, rgb(251, 171, 126) 8.00%, rgb(247, 206, 104) 92.00%)",
@@ -393,13 +406,30 @@ export const BG_IMAGES: BgImageItem[] = [
   { bg: "var(--bg9Gradient)", lightMode: false },
 ];
 
-
 export function isLink(value: string): boolean {
   const _isLink = AVAILABLE_LINKS.filter((item) =>
     value.toLowerCase().includes(item.type.toLowerCase().replace(" ", "."))
   );
   return _isLink.length > 0;
 }
+
+export const DEFAULT_RECORDS = ["display", "avatar", "location", "description"];
+
+export const DEFAULT_BASETREE_RECORDS = [
+  "keywords",
+  "notice",
+  "xyz.basetree.styles",
+  "xyz.basetree.links",
+];
+
+export const DEFAULT_SOCIAL_RECORDS = [
+  "com.twitter",
+  "com.github",
+  "xyz.farcaster",
+  "url",
+  "url2",
+  "url3",
+];
 
 export const BUTTON_BG_COLORS = [
   "dark",
@@ -414,6 +444,36 @@ export const BUTTON_BG_COLORS = [
   "cyan",
   "purple",
   "pink",
+];
+
+export const SKILLS = [
+  "Solidity",
+  "Rust",
+  "Security",
+  "Javascript",
+  "Typescript",
+  "Go",
+  "Game development",
+  "Data",
+  "UI/UX",
+  "Prototyping",
+  "Research",
+  "Music",
+  "Illustration",
+  "Writing",
+  "Video",
+  "Graphic design",
+  "Animation",
+  "Visual design",
+  "Design",
+  "Digital art",
+  "Photography",
+  "Community",
+  "Product management",
+  "Strategy",
+  "Business development",
+  "Legal",
+  "Marketing",
 ];
 
 export const BUTTON_ROUNDS = ["none", "md", "full"];

@@ -76,6 +76,13 @@ import {
   linksAtom,
   avatarSizeAtom,
   headerColorAtom,
+  chainAtom,
+  skillsAtom,
+  noticeAtom,
+  passportAtom,
+  showSkillsAtom,
+  showScoreAtom,
+  scoreTypeAtom,
 } from "core/atoms";
 import {
   SITE_DESCRIPTION,
@@ -93,6 +100,12 @@ import {
   TLD,
   SITE_URL,
   SITE_URL_SHORT,
+  MAIN_TLD,
+  DEFAULT_RECORDS,
+  DEFAULT_SOCIAL_RECORDS,
+  DEFAULT_BASETREE_RECORDS,
+  TALENT_PASSPORTS_API,
+  PASSPORT_CREDENTIALS_API,
 } from "core/utils/constants";
 
 import NextLink from "next/link";
@@ -100,6 +113,7 @@ import NextLink from "next/link";
 import {
   client,
   ConnectWalletButton,
+  mainViemClient,
   viemClient,
 } from "components/walletConnect";
 
@@ -112,29 +126,41 @@ import ManageSidebar from "components/manage/ManageSidebar";
 import { LinkIcon } from "components/logos";
 import StyleDrawer from "components/manage/StyleDrawer";
 import ManageHeader from "components/manage/ManageHeader";
-import { CustomLink } from "types";
+import { CustomLink, TalentPassport } from "types";
 import { getNamesForAddress } from "@base-tree/js/subgraph";
 import { generateRecordCallArray, namehash } from "@base-tree/js/utils";
-import { multicallWithNodeCheck } from "contracts/421614/0x7016f6bafd4ae35a30dd264ce8eeca16ab417fad";
+import { multicallWithNodeCheck } from "@/contracts/8453/Resolver";
 import { Resolver } from "core/utils/contracts";
-import { sendTransaction, waitForReceipt } from "thirdweb";
+import { getContract, sendTransaction, waitForReceipt } from "thirdweb";
 import { useActiveAccount } from "thirdweb/react";
 import ManageSubnames from "components/manage/ManageSubnames";
 import { DeviceFrameset } from "react-device-frameset";
-import { baseSepolia } from "thirdweb/chains";
+import { base, baseSepolia } from "thirdweb/chains";
 import AccordionWrapper from "@/components/manage/AccordionWrapper";
+import ManageStylesBox from "@/components/manage/ManageStylesBox";
+import ManageLayoutBox from "@/components/manage/ManageLayoutBox";
+import { main_addresses, test_addresses } from "@/core/utils/contractAddresses";
+import { normalize, getEnsText } from "viem/ens";
+import { createPublicClient } from "viem";
+import useUploadJsonFile from "@/core/lib/hooks/use-upload";
+import ManageSkills from "@/components/manage/ManageSkills";
+import ManageVerify from "@/components/manage/ManageVerify";
 
 const ManagePage: NextPage = () => {
   const { t } = useTranslate();
   const [name, setName] = useAtom(nameAtom);
   const [bio, setBio] = useAtom(bioAtom);
+  const [skills, setSkills] = useAtom(skillsAtom);
+  const [notice, setNotice] = useAtom(noticeAtom);
   const [avatar, setAvatar] = useAtom(avatarAtom);
   const [lightMode, setLightMode] = useAtom(lightModeAtom);
   const [ipfsGateway, setIpfsGateway] = useAtom(ipfsGatewayAtom);
   const [retries, setRetries] = useState<number>(0);
+  const [passport, setPassport] = useAtom(passportAtom);
   const isConnected = useAtomValue(isConnectedAtom);
   const network = useAtomValue(networkAtom);
   const connectedAccount = useAtomValue(connectedAccountAtom);
+  const [chain, setChain] = useAtom(chainAtom);
   const linksArray = useAtomValue(linksArrayAtom);
   const links = useAtomValue(linksAtom);
   const socials = useAtomValue(socialsArrayAtom);
@@ -152,10 +178,15 @@ const ManagePage: NextPage = () => {
   const [avatarSize, setAvatarSize] = useAtom(avatarSizeAtom);
   const [socialIcons, setSocialIcons] = useAtom(horizontalSocialAtom);
   const [showDomain, setShowDomain] = useAtom(showDomainAtom);
+  const [showSkills, setShowSkills] = useAtom(showSkillsAtom);
+  const [showScore, setShowScore] = useAtom(showScoreAtom);
+  const [showSocialProfiles, setShowSocialProfiles] = useAtom(showScoreAtom);
+  const [scoreType, setScoreType] = useAtom(scoreTypeAtom);
   const [headerMode, setHeaderMode] = useAtom(headerModeAtom);
   const [headerColor, setHeaderColor] = useAtom(headerColorAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
   const [walletButtons, setWalletButtons] = useAtom(walletButtonsAtom);
+  const [socialRecords, setSocialRecords] = useState('');
   const [title, setTitle] = useAtom(titleAtom);
   const [subtitle, setSubtitle] = useAtom(subtitleAtom);
   const [json, setJson] = useAtom(jsonAtom);
@@ -166,40 +197,33 @@ const ManagePage: NextPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const router = useRouter();
-  const domainName = String(router.query.name).includes(`.${TLD}`) ? String(router.query.name) : String(router.query.name) + `.${TLD}`;
+  const domainName =
+    String(router.query.name).includes(`.${TLD}`) ||
+    String(router.query.name).includes(`.${MAIN_TLD}`)
+      ? normalize(String(router.query.name))
+      : String(router.query.name) + `.${TLD}`;
+
+  const isMainnet = chain === base && domainName.includes(MAIN_TLD);
+  const addresses = isMainnet ? main_addresses : test_addresses;
   const [nftContract, setNftContract] = useAtom(nftContractAtom);
   const { colorMode } = useColorMode();
   const [mobileView, setMobileView] = useAtom(mobileViewAtom);
   const [lastChange, setLastChange] = useState(0);
   const toast = useToast();
   const account = useActiveAccount();
-  const { onCopy, hasCopied } = useClipboard(String(SITE_URL + name.replace(".bst","")));
+  const { onCopy, hasCopied } = useClipboard(
+    String(SITE_URL + name.replace(".bst", ""))
+  );
+
+  const {
+    isLoading: isUploading,
+    data,
+    hasError,
+    uploadJsonFile,
+  } = useUploadJsonFile({ client: client });
 
   //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
 
-  useEffect(() => {
-    //setLastChange(Date.now());
-    //console.log(Date.now());
-    //console.log(socials);
-  }, [
-    title,
-    subtitle,
-    links,
-    socials,
-    wallets,
-    lightMode,
-    avatarShape,
-    avatarSize,
-    bgColor,
-    buttonBgColor,
-    variant,
-    font,
-    avatar,
-    socialButtons,
-    walletButtons,
-    socialIcons,
-    lineIcons,
-  ]);
 
   const getJson = () => {
     let socialsObj: any = {};
@@ -223,6 +247,9 @@ const ManagePage: NextPage = () => {
       socialButtons: socialButtons,
       buttonBgColor: buttonBgColor,
       showDomain: showDomain,
+      showSkills: showSkills,
+      showScore: showScore,
+      scoreType: scoreType,
       headerMode: headerMode,
       headerColor: headerColor,
       round: round,
@@ -237,6 +264,7 @@ const ManagePage: NextPage = () => {
       avatar: avatar,
       bio: bio,
       links: links,
+      skills: skills,
       wallets: walletsObj,
       socials: socialsObj,
       styles: styles,
@@ -256,7 +284,7 @@ const ManagePage: NextPage = () => {
     });
 
     const newProfileData = getJson(); // Get updated profile data
-    console.log(newProfileData)
+    console.log(newProfileData);
     const currentProfileData = json; // Existing profile data from `getProfileJson`
 
     // Compare old and new profile data for changes and deletions
@@ -275,7 +303,9 @@ const ManagePage: NextPage = () => {
       changedRecords.length === 0 &&
       deletedRecords.length === 0 &&
       changedCoins.length === 0 &&
-      deletedCoins.length === 0
+      deletedCoins.length === 0 &&
+      JSON.stringify(currentProfileData.links) ===
+        JSON.stringify(newProfileData.links)
     ) {
       toast.closeAll();
       toast({
@@ -294,6 +324,52 @@ const ManagePage: NextPage = () => {
     changedRecords.map((record) =>
       _texts.push({ key: record.key, value: record.value })
     );
+
+    if (
+      JSON.stringify(currentProfileData.links) !==
+      JSON.stringify(newProfileData.links)
+    ) {
+      let __links = JSON.stringify(newProfileData.links);
+      if (__links.length > 300) {
+        toast({
+          title: "Uploading to IPFS",
+          description: "Uploading link content to IPFS to reduce gas costs",
+          status: "loading",
+          duration: 5000,
+          isClosable: false,
+        });
+        __links = await uploadJsonFile(
+          JSON.stringify(newProfileData.links),
+          `links.${domainName}`
+        );
+        if (hasError) {
+          toast.closeAll();
+          toast({
+            title: "Error on Uploading to IPFS",
+            description:
+              "Can not upload to IPFS, please check your network. If the problem presists, please contact support at info@basetree.xyz",
+            status: "warning",
+            isClosable: true,
+          });
+          return;
+        } else {
+          //toast.closeAll();
+        }
+        console.log("Links too big", __links);
+      }
+
+      _texts.push({ key: "xyz.basetree.links", value: __links });
+    }
+
+    let _socials: string[] = [];
+
+    Object.keys(newProfileData.socials).forEach((key) => {
+      _socials.push(key);
+    });
+
+    if(_socials.join(',') !== socialRecords){
+      _texts.push({ key: "xyz.basetree.socials", value: _socials.join(',') });
+    }
 
     // Handle deleted records
     if (deletedRecords.length > 0) {
@@ -318,6 +394,8 @@ const ManagePage: NextPage = () => {
       clearRecords: false, // Do not clear all records, only update the changes
     };
 
+    console.log(options)
+
     const hash = namehash(domainName);
 
     let data = generateRecordCallArray({
@@ -328,7 +406,32 @@ const ManagePage: NextPage = () => {
     if (data.length === 0) data = [];
 
     const tx = multicallWithNodeCheck({
-      contract: Resolver,
+      contract: getContract({
+        client: client,
+        address: addresses.PublicResolver,
+        chain: isMainnet ? chain : baseSepolia ,
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: "bytes[]",
+                name: "data",
+                type: "bytes[]",
+              },
+            ],
+            name: "multicall",
+            outputs: [
+              {
+                internalType: "bytes[]",
+                name: "results",
+                type: "bytes[]",
+              },
+            ],
+            stateMutability: "nonpayable",
+            type: "function",
+          },
+        ],
+      }),
       nodehash: hash,
       data: data,
     });
@@ -358,7 +461,7 @@ const ManagePage: NextPage = () => {
 
       const receipt = await waitForReceipt({
         client: client,
-        chain: baseSepolia,
+        chain: isMainnet ? chain : baseSepolia,
         transactionHash: transactionHash,
       });
 
@@ -414,21 +517,72 @@ const ManagePage: NextPage = () => {
           }
 
           setIsLoading(true);
+          let subgraphRecords: any;
+          let textRecords: any = [];
+          let coinRecords: any = [];
           // console.log('getting nft0');
-          const subgraphRecords: any = await viemClient.getSubgraphRecords({
-            name: domainName,
-          });
+          if (isMainnet) {
+            const _subgraphRecords = await mainViemClient.getEnsText({
+              name: domainName,
+              key: "xyz.basetree.socials",
+              universalResolverAddress:
+                addresses.PublicResolver as `0x${string}`,
+            });
+
+            if (_subgraphRecords) {
+              subgraphRecords = { texts: [...DEFAULT_RECORDS,...DEFAULT_BASETREE_RECORDS,..._subgraphRecords.split(',')], coins: [] };
+              setSocialRecords(_subgraphRecords.toString());
+            } else {
+              subgraphRecords = {
+                coins: [],
+                texts: [
+                  ...DEFAULT_RECORDS,
+                  ,...DEFAULT_BASETREE_RECORDS,
+                  ...DEFAULT_SOCIAL_RECORDS
+                ],
+              };
+            }
+
+            textRecords = await Promise.all(
+              subgraphRecords.texts.map(async (textKey: string) => {
+                const textValue = await mainViemClient.getEnsText({
+                  name: domainName,
+                  key: textKey,
+                  universalResolverAddress:
+                    addresses.PublicResolver as `0x${string}`,
+                });
+                return { key: textKey, value: textValue };
+              })
+            );
+          } else {
+            subgraphRecords = await viemClient.getSubgraphRecords({
+              name: domainName,
+            });
+
+            textRecords = await Promise.all(
+              subgraphRecords.texts.map(async (textKey: string) => {
+                const textValue = await viemClient.getTextRecord({
+                  name: domainName,
+                  key: textKey,
+                });
+                return { key: textKey, value: textValue };
+              })
+            );
+
+            coinRecords = await Promise.all(
+              subgraphRecords.coins.map(async (coinKey: string) => {
+                const coinValue = await viemClient.getAddressRecord({
+                  name: domainName,
+                  coin: coinKey,
+                });
+                return { key: coinKey, value: coinValue };
+              })
+            );
+          }
+
           console.log(subgraphRecords);
+          console.log(textRecords);
           // console.log('getting nft');
-          const textRecords = await Promise.all(
-            subgraphRecords.texts.map(async (textKey: string) => {
-              const textValue = await viemClient.getTextRecord({
-                name: domainName,
-                key: textKey,
-              });
-              return { key: textKey, value: textValue };
-            })
-          );
 
           const _wallets: { [key: string]: string } = {};
           const _socials: { [key: string]: string } = {};
@@ -436,7 +590,10 @@ const ManagePage: NextPage = () => {
           let _title: string = "";
           let _subtitle: string = "";
           let _bio: string = "";
+          let _skills: string = "";
+          let _notice: string = "";
           let _avatar: string = "";
+          let _passport: TalentPassport | any = {};
           let _styles: any = {
             lineIcons: lineIcons,
             lightMode: lightMode,
@@ -448,6 +605,9 @@ const ManagePage: NextPage = () => {
             socialButtons: socialButtons,
             buttonBgColor: buttonBgColor,
             showDomain: showDomain,
+            showSkills: showSkills,
+            showScore: showScore,
+            scoreType: scoreType,
             headerMode: headerMode,
             headerColor: headerColor,
             round: round,
@@ -455,28 +615,39 @@ const ManagePage: NextPage = () => {
             font: font,
           };
 
-          const coinRecords = await Promise.all(
-            subgraphRecords.coins.map(async (coinKey: string) => {
-              const coinValue = await viemClient.getAddressRecord({
-                name: domainName,
-                coin: coinKey,
-              });
-              return { key: coinKey, value: coinValue };
-            })
-          );
-
-          coinRecords.map((coin) => {
+          coinRecords.map((coin: any) => {
             _wallets[coin.value.name] = coin.value.value;
           });
 
-          textRecords.map((text) => {
+          textRecords.map(async (text: any) => {
+            if(!text) return;
+            if(!text.value) return ;
             if (getSocialTitle(text.key) !== undefined) {
               _socials[text.key] = text.value;
             }
 
-            if (isLink(text.key)) {
-              _links.push(JSON.parse(text.value));
+            if (text.key === "xyz.basetree.links") {
+              if (text.value.includes("ipfs://")) {
+                const links_result = await axios.get(
+                  IPFS_URLS[0] + text.value?.slice(7)
+                );
+                if (links_result.status === 200) {
+                  let __links: CustomLink[] = links_result.data;
+                  __links.map((lnk) => {
+                    _links.push(lnk);
+                  });
+                }
+              } else {
+                let __links: CustomLink[] = JSON.parse(text.value);
+                __links.map((lnk) => {
+                  _links.push(lnk);
+                });
+              }
             }
+
+            // if(String(text.key).indexOf("url") === 0){
+            //   _links.push({title: 'Website', url: text.value, type: 'simple link', image:'',content:'',styles:{size:'md'}});
+            // }
 
             if (text.key === "avatar") {
               _avatar = text.value;
@@ -494,31 +665,74 @@ const ManagePage: NextPage = () => {
               _bio = text.value;
             }
 
-            if (text.key === "styles") {
+            if (text.key === "keywords") {
+              _skills = text.value;
+            }
+
+            if (text.key === "notice") {
+              _notice = text.value;
+            }
+
+            if (text.key === "xyz.basetree.styles") {
               _styles = JSON.parse(text.value);
             }
           });
 
-          // @ts-ignore: Unreachable code error
-          const nfts = await getNamesForAddress(viemClient, {
-            address: connectedAccount! as `0x${string}`,
-            filter: {
-              searchString: domainName.slice(0, domainName.indexOf(".bst")),
-            },
-          });
+          const talent_passport_options = {
+            "X-API-KEY" : process.env.NEXT_PUBLIC_TALENT_API
+          }
 
-          if (nfts.length === 0) {
-            setError(
-              `${domainName} doesn't exist, yet! If you have registered this domain, please reload in a few minutes.`
+          const talent_passport_results = await axios.get(
+            `${TALENT_PASSPORTS_API}/${connectedAccount}`,{ headers : talent_passport_options}
+          );
+
+          
+
+          if (talent_passport_results.status === 200) {
+            _passport = talent_passport_results.data.passport;
+            const passport_credentials_results = await axios.get(
+              `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,{ headers : talent_passport_options}
             );
-            setIsLoading(false);
-            return;
+            console.log(passport_credentials_results)
+            if(passport_credentials_results.status === 200){
+              _passport.credentials = passport_credentials_results.data.passport_credentials
+            } else {
+              _passport.credentials = [];
+            }
+          }
+
+          let _owner: string | null = "";
+
+          if (isMainnet) {
+            _owner = await mainViemClient.getEnsAddress({
+              name: domainName,
+              universalResolverAddress:
+                addresses.PublicResolver as `0x${string}`,
+            });
+          } else {
+            // @ts-ignore: Unreachable code error
+            const nfts = await getNamesForAddress(viemClient, {
+              address: connectedAccount! as `0x${string}`,
+              filter: {
+                searchString: domainName.slice(0, domainName.indexOf(".bst")),
+              },
+            });
+
+            _owner = nfts[0].wrappedOwner;
+
+            if (nfts.length === 0) {
+              setError(
+                `${domainName} doesn't exist, yet! If you have registered this domain, please reload in a few minutes.`
+              );
+              setIsLoading(false);
+              return;
+            }
           }
 
           const nftJson: any = {
             info: {
-              owner: nfts[0].wrappedOwner,
-              manager: nfts[0].wrappedOwner,
+              owner: _owner,
+              manager: _owner,
             },
             name: domainName,
           };
@@ -549,18 +763,26 @@ const ManagePage: NextPage = () => {
             avatar: _avatar,
             bio: _bio,
             links: _links,
+            skills: _skills,
+            passport: _passport,
             wallets: _wallets,
             socials: _socials,
             styles: _styles,
           });
+
+          //if(_passport.main_wallet.toLowerCase() === nftJson.info.owner.toLowerCase()){
+            setPassport(_passport);
+          //}
+
           setName(domainName);
           setTitle(_title);
           setSubtitle(_subtitle);
           setBio(_bio);
-
           //setBtc(res.data.btcAddress);
           //setEth(res.data.ethAddress);
           setAvatar(_avatar);
+          setSkills(_skills);
+          setNotice(_notice);
           setAvatarShape(_styles.avatarShape ?? "round");
           setAvatarSize(_styles.avatarSize ?? "md");
           setSocialIcons(_styles.socialIcons ?? true);
@@ -570,7 +792,11 @@ const ManagePage: NextPage = () => {
           setLineIcons(_styles.lineIcons ?? false);
           setLightMode(_styles.lightMode ?? BG_COLORS[0].lightMode);
           setButtonBgColor(_styles.buttonBgColor ?? BUTTON_BG_COLORS[1]);
-          setShowDomain(_styles.showDomain);
+          setShowDomain(_styles.showDomain ?? true);
+          setShowSkills(_styles.showSkills ?? true);
+          setShowScore(_styles.showScore ?? true);
+          setScoreType(_styles.scoreType ?? 'direct');
+          setShowSocialProfiles(_styles.socialProfiles ?? true);
           setHeaderMode(_styles.headerMode);
           setHeaderColor(_styles.headerColor ?? "#ffffff11");
           setRound(_styles.round ?? BUTTON_ROUNDS[1]);
@@ -653,7 +879,7 @@ const ManagePage: NextPage = () => {
       </Head>
 
       {isConnected ? (
-        <Box width="100%">
+        <Box width="100%" bg={colorMode === "dark" ? "var(--dark)" : "white"}>
           <Container
             as="main"
             maxW="full"
@@ -663,7 +889,7 @@ const ManagePage: NextPage = () => {
               "center",
               "center",
               "center",
-              "start",
+              "center",
               "start",
               "start",
             ]}
@@ -676,55 +902,49 @@ const ManagePage: NextPage = () => {
                 <ConnectWalletButton />
               </Center>
             ) : (
-              <>
+              <Flex w={"100%"}>
                 {!isLoading && json ? (
-                  <Flex gap={[4, 4, 4, 4, 6]} justify={"center"}>
-                    {notMobile && desktop && (
-                      <Flex
-                        display={["none", "none", "none", "none", "flex"]}
-                        flexDir={"column"}
-                      >
-                        <ManageSidebar onSave={saveProfile} />
-                      </Flex>
-                    )}
+                  <Flex
+                    gap={[4, 4, 4, 4, 6]}
+                    justify={"space-between"}
+                    w={"100%"}
+                  >
+                    <Flex
+                      my={4}
+                      direction={"column"}
+                      gap={2}
+                      borderRadius={12}
+                      width={[
+                        "100vw",
+                        "100vw",
+                        "xl",
+                        "2xl",
+                        mobileView ? "2xl" : "xl",
+                        "3xl",
+                      ]}
+                      backgroundColor={
+                        colorMode === "light" ? "white" : "blackAlpha.600"
+                      }
+                      justify={"space-between"}
+                      h={notMobileH ? "96vh" : "96vh"}
+                      p={3}
+                    >
+                      <Stack>
+                        <ManageHeader />
+                        <Flex
+                          direction={"column"}
+                          maxHeight={notMobileH ? "77vh" : "72vh"}
+                          overflow={"auto"}
+                          w={"100%"}
+                          className="noscroll"
+                          gap={4}
+                          rounded={"lg"}
+                        >
+                          {/* <ProfileCompletion /> */}
 
-                    <Flex display={"flex"} flexDir={"column"}>
-                      <Flex
-                        my={4}
-                        direction={"column"}
-                        gap={2}
-                        borderRadius={12}
-                        width={[
-                          "100%",
-                          "md",
-                          "lg",
-                          mobileView ? "md" : "sm",
-                          mobileView ? "md" : "sm",
-                          mobileView ? "xl" : "lg",
-                        ]}
-                        backgroundColor={
-                          colorMode === "light" ? "white" : "blackAlpha.600"
-                        }
-                        justify={"space-between"}
-                        h={notMobileH ? "96vh" : "96vh"}
-                        p={3}
-                      >
-                        <Stack>
-                          <ManageHeader />
-                          <Flex
-                            direction={"column"}
-                            maxHeight={notMobileH ? "77vh" : "72vh"}
-                            overflow={"auto"}
-                            w={"100%"}
-                            className="noscroll"
-                            gap={4}
-                            rounded={"lg"}
-                          >
-                            {/* <ProfileCompletion /> */}
-
-                            {/* <BtcAddressInput />
+                          {/* <BtcAddressInput />
                         <EthAddressInput /> */}
-                            {/* {account && json && <div>
+                          {/* {account && json && <div>
                               <ChatUIProvider theme={darkChatTheme}>
                                 <ChatView
                                   chatId="0xBFd210db795A9Ac48D0C3be2a74232BE44144E84"
@@ -736,69 +956,76 @@ const ManagePage: NextPage = () => {
                                 />
                               </ChatUIProvider>
                             </div>} */}
-                            <AccordionWrapper
-                              title="Profile Info"
-                              icon="RiProfileLine"
-                            >
-                              <>
-                                <TitleInput />
-                                <EditAvatar />
-                                <CropAvatar />
-                                <BioTextInput />
-                              </>
-                            </AccordionWrapper>
-
-                            {/* <ManageSubnames /> */}
-                            <ManageWallets json={json} />
-                            <ManageLinks json={json} />
-                            <ManageSocials json={json} />
-                          </Flex>
-                        </Stack>
-                        <Flex gap={2} justify={"stretch"}>
-                          <AddModal type={"square"} />
-                          {!isLoading && json && (
-                            <PreviewModal
-                              json={getJson()}
-                              onSave={saveProfile}
-                              key={lastChange}
-                            />
-                          )}
-
-                          <Flex
-                            display={["none", "none", "none", "flex", "none"]} w={'100%'}
+                          <AccordionWrapper
+                            title="Profile Info"
+                            icon="RiProfileLine"
                           >
-                            <StyleDrawer onSave={saveProfile} />
-                          </Flex>
-                          <DarkMode>
-                            <Button
-                              gap={2}
-                              borderRadius={12}
-                              colorScheme="gray"
-                              flexDirection={"column"}
-                              w={"100%"}
-                              className="save"
-                              height="72px"
-                              isLoading={isSaving || isConfirming}
-                              isDisabled={isLoading || isSaving || isConfirming}
-                              loadingText={
-                                isSaving
-                                  ? "Saving..."
-                                  : isConfirming
-                                  ? "Confirming..."
-                                  : ""
-                              }
-                              onClick={saveProfile}
-                            >
-                              <LinkIcon type="RiSave2Line" />
-                              Save
-                            </Button>
-                            
-                          </DarkMode>
+                            <>
+                              <TitleInput />
+                              <EditAvatar />
+                              <CropAvatar />
+                              <BioTextInput />
+                              <ManageSkills />
+
+                            </>
+                          </AccordionWrapper>
+
+                          {/* <ManageSubnames /> */}
+                          {/* <ManageWallets json={json} /> */}
+                          <ManageLinks json={json} />
+                          <ManageSocials json={json} />
+                          <AccordionWrapper title="Styles" icon="RiPaletteLine">
+                            <ManageStylesBox />
+                          </AccordionWrapper>
+
+                          <AccordionWrapper title="Layout" icon="RiLayoutLine">
+                            <ManageLayoutBox />
+                          </AccordionWrapper>
+
+                          <ManageVerify />
+
+
+                          
                         </Flex>
+                      </Stack>
+                      <Flex gap={2} justify={"stretch"}>
+                        <AddModal type={"square"} />
+                        {!isLoading && json && (
+                          <PreviewModal
+                            json={getJson()}
+                            onSave={saveProfile}
+                            key={lastChange}
+                          />
+                        )}
+
+                        <DarkMode>
+                          <Button
+                            gap={2}
+                            borderRadius={12}
+                            colorScheme="gray"
+                            flexDirection={"column"}
+                            w={"100%"}
+                            className="save"
+                            height="72px"
+                            isLoading={isSaving || isConfirming}
+                            isDisabled={isLoading || isSaving || isConfirming}
+                            loadingText={
+                              isSaving
+                                ? "Saving..."
+                                : isConfirming
+                                ? "Confirming..."
+                                : ""
+                            }
+                            onClick={saveProfile}
+                          >
+                            <LinkIcon type="RiSave2Line" />
+                            Save
+                          </Button>
+                        </DarkMode>
                       </Flex>
                     </Flex>
-                    {isLoaded && json && notMobile && (
-                      <Flex my={4} position={"fixed"} top={0} right={4}>
+                    {isLoaded && json && desktop && (
+                      <Flex my={4} position={"fixed"} top={0} right={8}>
                         <Center
                           rounded={"2xl"}
                           w={"90%"}
@@ -848,7 +1075,7 @@ const ManagePage: NextPage = () => {
                             </Tooltip>
                             <Button
                               as={NextLink}
-                              href={`${SITE_URL}${name.replace('.bst','')}`}
+                              href={`${SITE_URL}${name.replace(".bst", "")}`}
                               target="_blank"
                               bgColor={"dark.600"}
                               roundedLeft={0}
@@ -862,7 +1089,7 @@ const ManagePage: NextPage = () => {
                           </ButtonGroup>
                           <ShareButton
                             name={name}
-                            url={SITE_URL + name.replace(".bst","")}
+                            url={SITE_URL + name.replace(".bst", "")}
                           />
                           <Tooltip
                             borderRadius={4}
@@ -893,15 +1120,11 @@ const ManagePage: NextPage = () => {
                         <DeviceFrameset
                           device={"iPhone 5s"}
                           color={colorMode === "dark" ? "black" : "silver"}
-                          width={mobileView ? 410 : 540}
+                          width={mobileView ? 410 : 620}
                           // @ts-ignore: Unreachable code error
                           height={"84vh"}
                         >
-                          <Preview
-                            json={getJson()}
-                            key={lastChange}
-                            
-                          />
+                          <Preview json={getJson()} key={lastChange} />
                         </DeviceFrameset>
                       </Flex>
                     )}
@@ -911,7 +1134,7 @@ const ManagePage: NextPage = () => {
                     <Spinner size="lg" />
                   </Center>
                 )}
-              </>
+              </Flex>
             )}
           </Container>
         </Box>

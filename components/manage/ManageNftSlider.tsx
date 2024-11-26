@@ -126,6 +126,8 @@ export default function ManageNftSlider({
             value={String(styles?.navColor)}
             setValue={(e: any) => setStyles({ ...styles, navColor: e })}
             title="Navigation Color"
+            top
+            bottom
           />
         )}
 
@@ -147,13 +149,15 @@ export default function ManageNftSlider({
         <SelectColor
           value={String(styles?.bg)}
           setValue={(e: any) => setStyles({ ...styles, bg: e })}
-          title={`${capFirstLetter(type)} BG Color`}
+          title={`${capFirstLetter(type)} BG Color`} top
+          bottom
         />
 
         <SelectColor
           value={String(styles?.color)}
           setValue={(e: any) => setStyles({ ...styles, color: e })}
-          title={`${capFirstLetter(type)} Item Color`}
+          title={`${capFirstLetter(type)} Item Color`} top
+          bottom
         />
       </>
       {preview && (

@@ -139,7 +139,7 @@ export default function FeaturesSection() {
               justify={"center"}
               align={"center"}
               h={"100vh"}
-              bg={"whitwAlpha.200"}
+              bg={"whitwAlpha.400"}
               w={"100vw"}
             >
               <Center rounded={"2xl"} p={[4, 4, 12]} flexDir={"column"}>
@@ -357,8 +357,7 @@ export default function FeaturesSection() {
                 </AnimateOnScroll>
                 <AnimateOnScroll delay={0.5}>
                   <Text fontSize={["xl", "xl", "2xl"]} textAlign={"center"} maxW={['xs','sm','100%']}>
-                    Join the growing community and start building your
-                    profile.
+                    Join the growing community and stay tuned for future developments.
                   </Text>
                 </AnimateOnScroll>
                 <Center gap={6} flexDir={["column", "column", "column"]}>

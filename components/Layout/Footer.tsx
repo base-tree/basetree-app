@@ -40,7 +40,7 @@ export default function Footer() {
             socials: {
               //'com.discord': DISCORD_URL,
               "com.twitter": TWITTER_URL + SOCIAL_TWITTER,
-              "com.farcaster": FARCASTER_URL,
+              "xyz.farcaster": FARCASTER_URL,
               'email': EMAIL_URL,
               //'org.telegram': TELEGRAM_URL,
               //ylide: YLIDE_URL,

@@ -10,10 +10,11 @@ import SelectColor from "./SelectColor";
 import { useAtom, useSetAtom } from "jotai";
 import { bgColorAtom, headerColorAtom, lightModeAtom } from "@/core/atoms";
 import { checkGradientBrightness } from "@/core/utils";
+import SettingsButton from "./SettingButton";
 
 export default function ManageStylesBox() {
   const [bgColor, setBgColor] = useAtom(bgColorAtom);
-  const setLightMode = useSetAtom(lightModeAtom);
+  const [lightMode, setLightMode] = useAtom(lightModeAtom);
   const [headerColor, setHeaderColor] = useAtom(headerColorAtom);
 
   const setBg = (color: string) => {
@@ -40,6 +41,11 @@ export default function ManageStylesBox() {
         withTitle
         value={headerColor}
         setValue={setHeaderColor}
+      />
+      <SettingsButton
+        title="Light Mode"
+        value={lightMode}
+        setValue={setLightMode}
       />
       {/* <NftBgPicker /> */}
       <ButtonColorPicker />

@@ -33,7 +33,11 @@ import {
   lightModeAtom,
   mobileViewAtom,
   nameAtom,
+  passportAtom,
   showDomainAtom,
+  showScoreAtom,
+  showSkillsAtom,
+  skillsAtom,
   socialButtonsAtom,
   socialsArrayAtom,
   subtitleAtom,
@@ -51,6 +55,9 @@ import { useRouter } from "next/router";
 import { EmbedSDK } from "@pushprotocol/uiembed";
 import { useActiveAccount, useActiveWallet } from "thirdweb/react";
 import ProfileInfo from "./ProfileInfo";
+import Skills from "./Skills";
+import BuilderScore from "./BuilderScore";
+import AnimateOnScroll from "../animate/AnimateOnScroll";
 
 interface Attribute {
   trait_type: string;
@@ -66,8 +73,6 @@ interface Props {
 const Preview = ({ json, w, isStatic }: Props) => {
   const { t } = useTranslate();
   const [notMobile] = useMediaQuery("(min-width: 800px)");
-  const { colorMode, toggleColorMode } = useColorMode();
-  const [useLineIcons, setUseLineIcons] = useAtom(useLineIconsAtom);
   const [horizontalSocial, setHorizontalSocial] = useAtom(horizontalSocialAtom);
   //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
@@ -75,24 +80,17 @@ const Preview = ({ json, w, isStatic }: Props) => {
     ? json.styles.walletButtons
     : useAtomValue(walletButtonsAtom);
   const bgColor = isStatic ? json.styles.bgColor : useAtomValue(bgColorAtom);
-  const setIsStyled = useSetAtom(isStyledAtom);
-  const wallet = useActiveWallet();
-  const avatarShape = useAtomValue(avatarShapeAtom);
   const socials = useAtomValue(socialsArrayAtom);
   const font = useAtomValue(fontAtom);
-  const avatar = useAtomValue(avatarAtom);
-  const title = useAtomValue(titleAtom);
-  const name = useAtomValue(nameAtom);
+  const showScore = useAtomValue(showScoreAtom);
+  const passport = useAtomValue(passportAtom);
+  const showSkills = useAtomValue(showSkillsAtom);
+  const skills = useAtomValue(skillsAtom);
   const bio = isStatic ? json.bio : useAtomValue(bioAtom);
-  const subtitle = useAtomValue(subtitleAtom);
   const lightMode = isStatic
     ? json.styles.lightMode
     : useAtomValue(lightModeAtom);
-  const showDomain = useAtomValue(showDomainAtom);
-  const headerMode = useAtomValue(headerModeAtom);
-  const [colorM, setColorM] = useAtom(colorModeAtom);
   const mobileView = useAtomValue(mobileViewAtom);
-  const { pathname } = useRouter();
   //console.log(json);
 
   // useEffect(() => {
@@ -128,7 +126,15 @@ const Preview = ({ json, w, isStatic }: Props) => {
         <Flex my={0}>
           <>
             <Container
-              width={isStatic ? ['90vw','sm','md','lg'] : w ? w : mobileView ? "sm" : "lg"}
+              width={
+                isStatic
+                  ? ["90vw", "sm", "md", "lg"]
+                  : w
+                  ? w
+                  : mobileView
+                  ? "sm"
+                  : "lg"
+              }
               key={`basetree-preview-main-${lightMode}`}
               display="flex"
               flexDir={"column"}
@@ -156,16 +162,33 @@ const Preview = ({ json, w, isStatic }: Props) => {
                       _styles={isStatic ? json.styles : undefined}
                     />
 
+                    {!isStatic && skills.length > 0 && showSkills && (
+                      <Skills data={skills.split(",")} />
+                    )}
+
                     {horizontalSocial && (
                       <Socials
                         json={json}
                         onlyIcons
-                        color={isStatic ? !lightMode ? '#f5f5f5' : '#121212' : undefined}
+                        color={
+                          isStatic
+                            ? !lightMode
+                              ? "#f5f5f5"
+                              : "#121212"
+                            : undefined
+                        }
                         key={`social-icons-${socials.length}`}
                       />
                     )}
 
-                    {walletButtons && (
+                    {!isStatic && passport && showScore && (
+                       <AnimateOnScroll delay={1.5} styles={{ width: "100%", overflow: 'visible' }}>
+
+                      <BuilderScore passport={passport} />
+                      </AnimateOnScroll>
+                    )}
+
+                    {/* {walletButtons && (
                       <Wallets
                         json={json}
                         color={
@@ -176,9 +199,10 @@ const Preview = ({ json, w, isStatic }: Props) => {
                         key={`social-icons-${json.name}`}
 
                       />
-                    )}
+                    )} */}
 
                     {bio && bio.length > 0 && (
+                       <AnimateOnScroll delay={1.7} styles={{ width: "100%" }}>
                       <Text
                         fontWeight="normal"
                         fontSize={notMobile ? "xl" : "lg"}
@@ -186,6 +210,7 @@ const Preview = ({ json, w, isStatic }: Props) => {
                       >
                         {bio}
                       </Text>
+                      </AnimateOnScroll>
                     )}
 
                     <Stack width={"100%"} gap={3}>
@@ -204,7 +229,6 @@ const Preview = ({ json, w, isStatic }: Props) => {
                         }
                         title={isStatic ? "preview links" : undefined}
                         key={`preview-links-${json.title}`}
-
                       />
 
                       {socialButtons && (

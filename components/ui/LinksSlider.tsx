@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { Flex, Text, keyframes } from "@chakra-ui/react";
-import { Autoplay, EffectCoverflow } from "swiper/modules";
+import { Flex } from "@chakra-ui/react";
+import { Autoplay} from "swiper/modules";
 import { SwiperSlide, Swiper } from "swiper/react";
 import { Link } from "components/Profile";
 import { LinkIcon } from "components/logos";
@@ -13,18 +13,10 @@ export const LinksSlider = () => {
         style={{ height: "340px", width: "100%" }}
         loop
         grabCursor
-        effect={"coverflow"}
-        autoplay={{ delay: 3000 }}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
+        effect={"slide"}
+        autoplay={{ delay: 4000 }}
         direction={"vertical"}
-        modules={[EffectCoverflow, Autoplay]}
-        centeredSlides
+        modules={[Autoplay]}
         spaceBetween={"20px"}
         slidesPerView={3}
       >

@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex, Wrap, WrapItem } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { LinkIcon } from 'components/logos';
@@ -36,12 +36,13 @@ export default function Socials({ json, color, onlyIcons, title }: Props) {
 
   return (
     <>
-      <Flex flexDirection={_onlyIcons ? 'row' : 'column'} gap={3} key={`social-${title}-links-${_onlyIcons ? 'icons' : 'buttons'}-box`}>
+      <Box as={_onlyIcons ? Wrap : Flex} flexDirection={_onlyIcons ? 'row' : 'column'} gap={3} key={`social-${title}-links-${_onlyIcons ? 'icons' : 'buttons'}-box`} align={'center'} justify={'center'}>
         {(title ? json.socials : socialsArray).map(
           //@ts-ignore
           (item,ind) =>
             item.key && (
-              <AnimateScale delay={(ind * 0.2) + 1}>
+              <WrapItem key={`social-box-${ind}-${item.key}`} as={_onlyIcons ? WrapItem : Box} w={_onlyIcons ? 'auto' : '100%'}>
+              <AnimateScale delay={(ind * 0.2) + 1} key={`animate-box-${ind}-${item.key}`}>
               <SocialLink
                 key={`item-${item.key}-${title}-${ind}`}
                 title={title ? item.key : String(getSocialTitle(item.key))}
@@ -50,9 +51,10 @@ export default function Socials({ json, color, onlyIcons, title }: Props) {
                 url={String(item.value)}
               />
               </AnimateScale>
+              </WrapItem>
             )
         )}
-      </Flex>
+      </Box>
     </>
   );
 }

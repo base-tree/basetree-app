@@ -67,7 +67,7 @@ export default function ManageLinks({ json }: Props) {
       } else {
         toast.closeAll();
       }
-      console.log("Link too bug",__content);
+      //console.log("Link too bug",__content);
     }
 
     let _newLinksArray = linksArray.map((item, ind) =>
@@ -176,6 +176,7 @@ export default function ManageLinks({ json }: Props) {
           <AccordionButton
             minWidth={'100%'}
             as={Button}
+            height={'68px'}
             size="lg"
             _expanded={{ bgColor: 'blackAlpha.50' }}>
             <Flex gap={2} alignItems={'center'} textAlign="left" width={'100%'}>

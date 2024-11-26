@@ -30,7 +30,7 @@ export default function SelectSlider({
 }: Props) {
   const [showTooltip, setShowTooltip] = useState(false);
   return (
-    <Stack w={"100%"} gap={3} mb={4}>
+    <Stack w={"100%"} gap={3} mb={4} py={3}>
       <Text fontWeight={"bold"}>{title}</Text>
       <Slider
         id="slider"

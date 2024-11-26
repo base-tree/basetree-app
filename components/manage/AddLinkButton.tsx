@@ -159,7 +159,7 @@ export default function AddLinkButton() {
       } else {
         toast.closeAll();
       }
-      console.log("Link too bug", __content);
+      //console.log("Link too bug", __content);
     }
     let _newLinksArray = [
       {

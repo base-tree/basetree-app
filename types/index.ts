@@ -179,3 +179,67 @@ export type LinktreeData = {
   links: CustomLink[];
   socials: ObjectItem[]; // Add socials array
 };
+
+export interface PassportProfile {
+  bio: string;
+  data_sources: {
+    bio: string;
+    tags: string;
+    location: string;
+    image_url: string;
+    profile_bio: string;
+    display_name: string;
+    profile_name: string;
+    profile_image_url: string;
+    profile_display_name: string;
+  };
+  display_name: string;
+  image_url: string;
+  location: string;
+  name: string;
+  tags: string[];
+}
+
+export interface PassportSocial {
+  disconnected: boolean;
+  follower_count: number | null;
+  following_count: number | null;
+  location: string | null;
+  profile_bio: string;
+  profile_display_name: string;
+  profile_image_url: string | null;
+  profile_name: string;
+  profile_url: string;
+  source: string;
+}
+
+export interface User {
+  admin: boolean;
+  email: string | null;
+  id: string;
+  name: string | null;
+  profile_picture_url: string;
+}
+
+export interface TalentPassport {
+  activity_score: number;
+  calculating_score: boolean;
+  created_at: string;
+  human_checkmark: boolean;
+  identity_score: number;
+  last_calculated_at: string;
+  main_wallet: string;
+  main_wallet_changed_at: string;
+  merged: boolean;
+  nominations_received_count: number;
+  passport_id: number;
+  passport_profile: PassportProfile;
+  passport_socials: PassportSocial[];
+  pending_kyc: boolean;
+  score: number;
+  skills_score: number;
+  socials_calculated_at: string;
+  user: User;
+  verified: boolean;
+  verified_wallets: string[];
+}

@@ -13,7 +13,10 @@ import {
   CustomLink,
   ObjectItem,
   Styles,
+  TalentPassport,
 } from 'types';
+import { Chain } from 'thirdweb';
+import { base } from 'thirdweb/chains';
 
 export const accountAtom = atom<any>({});
 export const primaryNameAtom = atom<string>('');
@@ -22,9 +25,13 @@ export const jsonAtom = atom<any>(undefined);
 export const nftJsonAtom = atom<any>(undefined);
 export const networkIdAtom = atom<number>(1);
 export const nameAtom = atom('');
+export const chainAtom = atom<Chain>(base);
 export const claimingNameAtom = atom('');
 export const pathAtom = atom('');
 export const titleAtom = atom('');
+export const skillsAtom = atom('');
+export const passportAtom = atom<any>(undefined);
+export const noticeAtom = atom('');
 export const subtitleAtom = atom('');
 export const btcAtom = atom('');
 export const ethAtom = atom('');
@@ -67,6 +74,10 @@ export const useLineIconsAtom = atom<boolean>(false);
 export const showDomainAtom = atom<boolean>(true);
 export const headerModeAtom = atom<boolean>(false);
 export const horizontalSocialAtom = atom<boolean>(true);
+export const showSkillsAtom = atom<boolean>(true);
+export const showScoreAtom = atom<boolean>(true);
+export const showSocialProfilesAtom = atom<boolean>(true);
+export const scoreTypeAtom = atom<string>('pop up');
 export const horizontalWalletsAtom = atom<boolean>(false);
 export const socialButtonsAtom = atom<boolean>(false);
 export const walletButtonsAtom = atom<boolean>(true);

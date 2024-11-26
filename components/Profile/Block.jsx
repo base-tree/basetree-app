@@ -15,10 +15,11 @@ export default function Block({ title, content, style }) {
   const round = style?.round ? style?.round : useAtomValue(roundAtom);
   return (
     <>
-      <Box w={'100%'} rounded={round} p={3} bg={bg}>
+      <Box w={'100%'} rounded={round} p={3} bg={bg} key={`block-box-${bg}-${content ? content.length : 'empty'}`}>
         <BlockNoteView
           data-block-view
           editor={editor}
+          key={`block-box-${bg}-${content ? content.length : 'empty'}`}
           editable={false}
           theme={'dark'}
         />

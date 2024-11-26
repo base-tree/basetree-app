@@ -69,8 +69,8 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({
   }, [symbols, width, height, colorTheme, changeMode, backgroundColor]);
 
   return (
-    <div className="tradingview-widget-container" ref={container}>
-      <div className="tradingview-widget-container__widget"></div>
+    <div className={`tradingview-widget-container ${symbols.toString().replaceAll(":","-")}`} ref={container}>
+      <div className={`tradingview-widget-container__widget ${symbols.toString().replaceAll(":","-")}`}></div>
       
     </div>
   );

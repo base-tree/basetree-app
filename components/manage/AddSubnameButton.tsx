@@ -120,7 +120,7 @@ import {
           variant={"pop"}
           isDisabled
           rounded={"xl"}
-          height={'60px'}
+          height={'68px'}
         >
           Add Subname (Soon)
           

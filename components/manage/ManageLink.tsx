@@ -199,6 +199,7 @@ export default function ManageLink({
                     (type.includes("simple link") ||
                       type.includes("video") ||
                       type.includes("tweet") ||
+                      type.includes("farcaster cast") ||
                       type.includes("twitter") ||
                       type.includes("soundcloud")) && (
                       <ManageSimpleLink
@@ -225,6 +226,7 @@ export default function ManageLink({
                   {isExpanded &&
                     (type.includes("youtube") ||
                       type.includes("tweet") ||
+                      type.includes("farcaster cast") ||
                       type.includes("twitter") ||
                       type.includes("soundcloud")) &&
                     RegExp(reg).test(_url) && (

@@ -32,7 +32,7 @@ import {
 import { getColor, getColorSchemeName, withHttps } from "core/utils";
 import { AVAILABLE_LINKS } from "core/utils/constants";
 import { useAtomValue } from "jotai";
-import { Styles } from "types";
+import { Styles, TalentPassport } from "types";
 import AnimateOnScroll from "../animate/AnimateOnScroll";
 import Avatar from "./Avatar";
 import { LinkIcon } from "../logos";
@@ -78,7 +78,7 @@ export default function ProfileInfo({
   const title = _title ?? useAtomValue(titleAtom);
   const subtitle = _subtitle ?? useAtomValue(subtitleAtom);
   const username = _username ?? useAtomValue(nameAtom);
-  const passport = _passport ?? useAtomValue(passportAtom);
+  const passport: TalentPassport = _passport ?? useAtomValue(passportAtom);
   const showDomain =
     _showDomain ?? _styles ? _styles?.showDomain : useAtomValue(showDomainAtom);
   const avatarShape =
@@ -122,7 +122,7 @@ export default function ProfileInfo({
           }
         >
           <Avatar
-            url={avatar}
+            url={avatar !== '' ? avatar : passport ? passport.passport_profile.image_url : ''}
             key={`avatar-${avatar.slice(-20)}`}
             maxH={
               avatarSize === "sm"
@@ -157,7 +157,7 @@ export default function ProfileInfo({
               fontSize={headerMode ? "2xl" : "3xl"}
               fontFamily={font}
             >
-              {title}
+              {title !== '' ? title : passport ? passport.passport_profile.display_name : ''}
             </Heading>
             {title.length > 0 && passport && (
               <Tooltip
@@ -198,7 +198,7 @@ export default function ProfileInfo({
           styles={{ overflow: "visible", width: "100%" }}
         >
           <Heading fontWeight="normal" fontSize="xl" fontFamily={font} my={1}>
-            {subtitle}
+            {subtitle !== '' ? subtitle : passport ? passport.passport_profile.location : ''}
           </Heading>
         </AnimateOnScroll>
         {showDomain && (

@@ -24,7 +24,12 @@ import {
   DarkMode,
 } from "@chakra-ui/react";
 import { useTranslate } from "core/lib/hooks/use-translate";
-import { detectCoinChanges, detectTextChanges, truncAddress } from "core/utils";
+import {
+  beautifyUrl,
+  detectCoinChanges,
+  detectTextChanges,
+  truncAddress,
+} from "core/utils";
 import axios from "axios";
 import {
   ManageSocials,
@@ -106,6 +111,8 @@ import {
   DEFAULT_BASETREE_RECORDS,
   TALENT_PASSPORTS_API,
   PASSPORT_CREDENTIALS_API,
+  updateSocialsFromPassport,
+  DEFAULT_STYLES,
 } from "core/utils/constants";
 
 import NextLink from "next/link";
@@ -186,7 +193,7 @@ const ManagePage: NextPage = () => {
   const [headerColor, setHeaderColor] = useAtom(headerColorAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
   const [walletButtons, setWalletButtons] = useAtom(walletButtonsAtom);
-  const [socialRecords, setSocialRecords] = useState('');
+  const [socialRecords, setSocialRecords] = useState("");
   const [title, setTitle] = useAtom(titleAtom);
   const [subtitle, setSubtitle] = useAtom(subtitleAtom);
   const [json, setJson] = useAtom(jsonAtom);
@@ -208,7 +215,6 @@ const ManagePage: NextPage = () => {
   const [nftContract, setNftContract] = useAtom(nftContractAtom);
   const { colorMode } = useColorMode();
   const [mobileView, setMobileView] = useAtom(mobileViewAtom);
-  const [lastChange, setLastChange] = useState(0);
   const toast = useToast();
   const account = useActiveAccount();
   const { onCopy, hasCopied } = useClipboard(
@@ -223,7 +229,6 @@ const ManagePage: NextPage = () => {
   } = useUploadJsonFile({ client: client });
 
   //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
-
 
   const getJson = () => {
     let socialsObj: any = {};
@@ -250,6 +255,7 @@ const ManagePage: NextPage = () => {
       showSkills: showSkills,
       showScore: showScore,
       scoreType: scoreType,
+      socialProfiles: showSocialProfiles,
       headerMode: headerMode,
       headerColor: headerColor,
       round: round,
@@ -259,6 +265,7 @@ const ManagePage: NextPage = () => {
 
     const data = {
       name: name,
+      owner: connectedAccount,
       title: title,
       subtitle: subtitle,
       avatar: avatar,
@@ -367,8 +374,8 @@ const ManagePage: NextPage = () => {
       _socials.push(key);
     });
 
-    if(_socials.join(',') !== socialRecords){
-      _texts.push({ key: "xyz.basetree.socials", value: _socials.join(',') });
+    if (_socials.join(",") !== socialRecords) {
+      _texts.push({ key: "xyz.basetree.socials", value: _socials.join(",") });
     }
 
     // Handle deleted records
@@ -394,7 +401,7 @@ const ManagePage: NextPage = () => {
       clearRecords: false, // Do not clear all records, only update the changes
     };
 
-    console.log(options)
+    console.log(options);
 
     const hash = namehash(domainName);
 
@@ -409,7 +416,7 @@ const ManagePage: NextPage = () => {
       contract: getContract({
         client: client,
         address: addresses.PublicResolver,
-        chain: isMainnet ? chain : baseSepolia ,
+        chain: isMainnet ? chain : baseSepolia,
         abi: [
           {
             inputs: [
@@ -530,15 +537,23 @@ const ManagePage: NextPage = () => {
             });
 
             if (_subgraphRecords) {
-              subgraphRecords = { texts: [...DEFAULT_RECORDS,...DEFAULT_BASETREE_RECORDS,..._subgraphRecords.split(',')], coins: [] };
+              subgraphRecords = {
+                texts: [
+                  ...DEFAULT_RECORDS,
+                  ...DEFAULT_BASETREE_RECORDS,
+                  ..._subgraphRecords.split(","),
+                ],
+                coins: [],
+              };
               setSocialRecords(_subgraphRecords.toString());
             } else {
               subgraphRecords = {
                 coins: [],
                 texts: [
                   ...DEFAULT_RECORDS,
-                  ,...DEFAULT_BASETREE_RECORDS,
-                  ...DEFAULT_SOCIAL_RECORDS
+                  ,
+                  ...DEFAULT_BASETREE_RECORDS,
+                  ...DEFAULT_SOCIAL_RECORDS,
                 ],
               };
             }
@@ -585,7 +600,7 @@ const ManagePage: NextPage = () => {
           // console.log('getting nft');
 
           const _wallets: { [key: string]: string } = {};
-          const _socials: { [key: string]: string } = {};
+          let _socials: { [key: string]: string } = {};
           const _links: CustomLink[] = [];
           let _title: string = "";
           let _subtitle: string = "";
@@ -593,7 +608,7 @@ const ManagePage: NextPage = () => {
           let _skills: string = "";
           let _notice: string = "";
           let _avatar: string = "";
-          let _passport: TalentPassport | any = {};
+          let _passport: TalentPassport | any = undefined;
           let _styles: any = {
             lineIcons: lineIcons,
             lightMode: lightMode,
@@ -620,8 +635,8 @@ const ManagePage: NextPage = () => {
           });
 
           textRecords.map(async (text: any) => {
-            if(!text) return;
-            if(!text.value) return ;
+            if (!text) return;
+            if (!text.value) return;
             if (getSocialTitle(text.key) !== undefined) {
               _socials[text.key] = text.value;
             }
@@ -643,7 +658,34 @@ const ManagePage: NextPage = () => {
                   _links.push(lnk);
                 });
               }
+            } else {
+              if (
+                text.key === "url" ||
+                text.key === "url2" ||
+                text.key === "url3"
+              ) {
+                _links.push({
+                  type: "simple link",
+                  url: text.value,
+                  content: "",
+                  title: beautifyUrl(text.value),
+                  image: "",
+                });
+              }
             }
+
+            // if (text.key === "frames") {
+            //   text.value.split("|").map((frameUrl: string, ind: number) => {
+            //     _links.push({
+            //       type: "farcaster frame",
+            //       url: frameUrl,
+            //       content: "",
+            //       title: `Frame ${ind + 1}`,
+            //       image: "",
+            //     });
+            //   });
+            // }
+
 
             // if(String(text.key).indexOf("url") === 0){
             //   _links.push({title: 'Website', url: text.value, type: 'simple link', image:'',content:'',styles:{size:'md'}});
@@ -674,28 +716,29 @@ const ManagePage: NextPage = () => {
             }
 
             if (text.key === "xyz.basetree.styles") {
-              _styles = JSON.parse(text.value);
+              _styles = {...DEFAULT_STYLES,...JSON.parse(text.value)};
             }
           });
 
           const talent_passport_options = {
-            "X-API-KEY" : process.env.NEXT_PUBLIC_TALENT_API
-          }
+            "X-API-KEY": process.env.NEXT_PUBLIC_TALENT_API,
+          };
 
           const talent_passport_results = await axios.get(
-            `${TALENT_PASSPORTS_API}/${connectedAccount}`,{ headers : talent_passport_options}
+            `${TALENT_PASSPORTS_API}/${connectedAccount}`,
+            { headers: talent_passport_options }
           );
-
-          
 
           if (talent_passport_results.status === 200) {
             _passport = talent_passport_results.data.passport;
             const passport_credentials_results = await axios.get(
-              `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,{ headers : talent_passport_options}
+              `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,
+              { headers: talent_passport_options }
             );
-            console.log(passport_credentials_results)
-            if(passport_credentials_results.status === 200){
-              _passport.credentials = passport_credentials_results.data.passport_credentials
+            console.log(passport_credentials_results);
+            if (passport_credentials_results.status === 200) {
+              _passport.credentials =
+                passport_credentials_results.data.passport_credentials;
             } else {
               _passport.credentials = [];
             }
@@ -770,9 +813,19 @@ const ManagePage: NextPage = () => {
             styles: _styles,
           });
 
-          //if(_passport.main_wallet.toLowerCase() === nftJson.info.owner.toLowerCase()){
+          if(_skills === ''){
+            if(_passport && _passport.passport_profile && _passport.passport_profile.tags){
+              _skills = String(_passport.passport_profile.tags);
+            }
+          }
+      
+          if(_passport && _passport.passport_socials){
+            _socials = updateSocialsFromPassport(_socials,_passport.passport_socials)
+          }
+
+          if(_passport && _passport.main_wallet && _passport.main_wallet.toLowerCase() === nftJson.info.owner.toLowerCase()){
             setPassport(_passport);
-          //}
+          }
 
           setName(domainName);
           setTitle(_title);
@@ -795,7 +848,7 @@ const ManagePage: NextPage = () => {
           setShowDomain(_styles.showDomain ?? true);
           setShowSkills(_styles.showSkills ?? true);
           setShowScore(_styles.showScore ?? true);
-          setScoreType(_styles.scoreType ?? 'direct');
+          setScoreType(_styles.scoreType ?? "direct");
           setShowSocialProfiles(_styles.socialProfiles ?? true);
           setHeaderMode(_styles.headerMode);
           setHeaderColor(_styles.headerColor ?? "#ffffff11");
@@ -966,7 +1019,6 @@ const ManagePage: NextPage = () => {
                               <CropAvatar />
                               <BioTextInput />
                               <ManageSkills />
-
                             </>
                           </AccordionWrapper>
 
@@ -983,9 +1035,6 @@ const ManagePage: NextPage = () => {
                           </AccordionWrapper>
 
                           <ManageVerify />
-
-
-                          
                         </Flex>
                       </Stack>
                       <Flex gap={2} justify={"stretch"}>
@@ -994,7 +1043,6 @@ const ManagePage: NextPage = () => {
                           <PreviewModal
                             json={getJson()}
                             onSave={saveProfile}
-                            key={lastChange}
                           />
                         )}
 
@@ -1124,7 +1172,7 @@ const ManagePage: NextPage = () => {
                           // @ts-ignore: Unreachable code error
                           height={"84vh"}
                         >
-                          <Preview json={getJson()} key={lastChange} />
+                          <Preview json={getJson()} />
                         </DeviceFrameset>
                       </Flex>
                     )}

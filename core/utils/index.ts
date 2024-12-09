@@ -796,6 +796,35 @@ function sortGames(
   });
 }
 
+function beautifyUrl(url: string): string {
+  try {
+    // Use the URL constructor to parse the input URL
+    const parsedUrl = new URL(url);
+
+    // Remove the protocol and www if present
+    let hostname = parsedUrl.hostname.replace(/^www\./, "");
+
+    return hostname;
+  } catch (error) {
+    // Return the original string if it is not a valid URL
+    return url;
+  }
+}
+
+function formatNumberCount(followers: number | null): string {
+  if(followers === null) return '0';
+  if (followers < 1000) {
+    return followers.toString(); // Return the number as it is if it's less than 1000
+  } else if (followers >= 1000 && followers < 1000000) {
+    return (followers / 1000).toFixed(followers >= 10000 ? 0 : 1) + 'K';
+  } else if (followers >= 1000000 && followers < 1000000000) {
+    return (followers / 1000000).toFixed(followers >= 10000000 ? 0 : 1) + 'M';
+  } else if (followers >= 1000000000) {
+    return (followers / 1000000000).toFixed(followers >= 10000000000 ? 0 : 1) + 'B';
+  } 
+  return followers.toString();
+}
+
 export {
   sortGames,
   setOrderInCustomLinks,
@@ -817,12 +846,14 @@ export {
   isValidEmail,
   capFirstLetter,
   getUrl,
+  formatNumberCount,
   arrayRemove,
   arrayRemoveDuplicates,
   isValidUsername,
   invalidUsernameMessage,
   getColor,
   getIconColor,
+  beautifyUrl,
   getIconInButtonColor,
   getRandomNumber,
   isValidSignHash,

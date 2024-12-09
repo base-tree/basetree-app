@@ -112,6 +112,7 @@ import Soneium from "./Soneium";
 import Linktree from "./Linktree";
 import Farcaster from "./Farcaster";
 import Talent from "./Talent";
+import Basenames from "./Basenames";
 
 interface LinkIconProps {
   type: string;
@@ -498,6 +499,9 @@ const LinkIcon = ({
 
     case "base":
       return <Base color={color ? color : undefined} size={size} />;
+    case "basename":
+    case "basenames":
+      return <Basenames color={color ? color : undefined} size={size} />;
     case "monad":
       return <Monad color={color ? color : undefined} size={size} />;
     case "talent":
@@ -571,6 +575,12 @@ const LinkIcon = ({
     case "linktree":
       return <Linktree color={color ? color : undefined} size={size} />;
     case "farcaster":
+    case "farcaster frame":
+    case "farcaster conversation":
+    case "farcaster feed":
+    case "farcaster cast":
+    case "cast":
+    case "farcaster profile":
       return <Farcaster color={color ? color : undefined} size={size} />;
     default:
       //// console.log('here : ', type);

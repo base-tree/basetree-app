@@ -41,6 +41,7 @@ import {
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useTranslate } from "core/lib/hooks/use-translate";
 import {
+  MAIN_TLD,
   MINT_DATE,
   MINT_MESSAGE,
   MIN_NAME_LENGTH,
@@ -400,9 +401,8 @@ const ClaimSection = () => {
                           <Stack gap={0}>
                             <Text fontSize={["xl", "2xl"]} fontWeight={"bold"}>
                               {
-                                path
-                                //+ "." + TLD}
-                              }
+                                `${path}` }{isMainnet ? `.${MAIN_TLD}` : ''}
+                              
                             </Text>
                             <Text
                               fontSize={"xl"}
@@ -469,8 +469,8 @@ const ClaimSection = () => {
                               }
                             >
                               {
-                                path //+ "." + TLD}
-                              }
+                                `${path}` }{isMainnet ? `.${MAIN_TLD}` : ''}
+                              
                             </Text>
                             <Text
                               fontSize={"xl"}

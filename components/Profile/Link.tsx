@@ -47,8 +47,10 @@ import TweetLink from "./TweetLink";
 import TwitterTimelineLink from "./TwitterTimelineLink";
 import SwapModal from "./SwapModal";
 import TokenChartModal from "./TokenChartModal";
+import Cast from "./Cast";
 
 const Block = dynamic(() => import("./Block"), { ssr: false });
+const FarcasterFrame = dynamic(() => import("./FarcasterFrame"), { ssr: false });
 
 interface Props {
   type: string;
@@ -141,6 +143,16 @@ export default function Link({
             />
           )}
         </>
+      )}
+
+      {type === "farcaster frame" && (
+        <FarcasterFrame
+          title={title}
+          styles={styles}
+          url={url}
+          icon={icon}
+          type={type}
+        />
       )}
 
       {(type === "simple text" || type === "text paragraph") && (
@@ -345,6 +357,7 @@ export default function Link({
       {type === "nft slider" && <NftSlider title={title} styles={styles} />}
 
       {type === "tweet" && <TweetLink url={url} styles={styles} type={type} />}
+      {type === "farcaster cast" && <Cast url={url} styles={styles} type={type} />}
 
       {type === "twitter timeline" && (
         <TwitterTimelineLink url={url} styles={styles} />

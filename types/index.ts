@@ -73,10 +73,17 @@ export interface CustomLink {
   styles?: Styles;
 }
 
+export interface LinkCategory {
+  name: string;
+  icon: string;
+  id: number;
+}
+
 export interface LinkType {
   type: string;
   av: boolean;
   reg: string | RegExp;
+  categoryId?: number;
 }
 
 export interface BgColorItem {

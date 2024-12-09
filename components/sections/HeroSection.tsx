@@ -100,16 +100,16 @@ export default function HeroSection() {
                   fontWeight={"bolder"}
                   textAlign={"center"}
                 >
-                  Unlock Your Web3 Profile with Basetree
+                  Elevate Your Basename
                 </Heading>
               </AnimateOnScroll>
               <AnimateOnScroll delay={0.3}>
                 <Text
                   pointerEvents={"none"}
-                  fontSize={["lg", "2xl"]}
+                  fontSize={["xl", "2xl"]}
                   textAlign={"center"}
                 >
-                  create, customize, and showcase your Web3 presence!
+                  Transform your Base domain into a Personalized Profile
                 </Text>
               </AnimateOnScroll>
             </Center>
@@ -118,7 +118,7 @@ export default function HeroSection() {
                 <Button
                   size={"lg"}
                   colorScheme="light"
-                  w={["100%", "xs"]}
+                  w={["80vw", "xs"]}
                   as={NextLink}
                   href={isMainnet ? "/names" : "/app"}
                   passHref
@@ -127,12 +127,12 @@ export default function HeroSection() {
                 </Button>
                 <Button
                   as={NextLink}
-                  href="#features"
+                  href="/explore"
                   size={"lg"}
-                  w={["100%", "xs"]}
+                  w={["80vw", "xs"]}
                   passHref
                 >
-                  Explore Features
+                  Explore Builders
                 </Button>
               </Center>
             </AnimateOnScroll>

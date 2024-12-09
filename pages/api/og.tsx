@@ -9,7 +9,6 @@ export const config = {
 const OgImageHandler = async (req:NextRequest) => {
   const { searchParams } = new URL(req.url);
   const title = searchParams.get('title') || 'BaseTree';
-  const w = searchParams.get('w') || '36';
   const image = searchParams.get('image') || 'BaseTree';
   const subtitle = searchParams.get('subtitle') || 'Empower Your Digital Presence with a Single Link';
   const fontData = await fetch(
@@ -62,8 +61,8 @@ const OgImageHandler = async (req:NextRequest) => {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt={title}
-          width={`${w}%`}
-          height={'50%'}
+          width={`200px`}
+          height={'200px'}
           src={image}
           style={{ margin: '0 25px' }}
         />

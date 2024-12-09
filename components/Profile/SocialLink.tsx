@@ -1,4 +1,4 @@
-import { PassportSocial } from "@/types";
+import { PassportSocial, TalentPassport } from "@/types";
 import {
   Button,
   Tooltip,
@@ -26,6 +26,7 @@ import {
 } from "core/atoms";
 import {
   areUrlsEquivalent,
+  formatNumberCount,
   getColor,
   getIconColor,
   getIconInButtonColor,
@@ -39,9 +40,10 @@ interface Props {
   url: string;
   onlyIcon: boolean;
   color?: string;
+  passport?: TalentPassport;
 }
 
-export default function SocialLink({ title, url, onlyIcon, color }: Props) {
+export default function SocialLink({ title, url, onlyIcon, color, passport }: Props) {
   const lightMode = useAtomValue(lightModeAtom);
   const lineMode = useAtomValue(useLineIconsAtom);
   const [notMobile] = useMediaQuery("(min-width: 800px)");
@@ -50,16 +52,16 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
   const variant = useAtomValue(variantAtom);
   const buttonBg = useAtomValue(buttonBgColorAtom);
   const font = useAtomValue(fontAtom);
-  const passport = useAtomValue(passportAtom);
+  const _passport = passport ? passport : useAtomValue(passportAtom);
   const [hover, setHover] = useState(false);
   const [verified, setVerified] = useState<boolean>();
   const [profile, setProfile] = useState<PassportSocial>();
   const finalUrl = getUrl(title.toLowerCase(), url);
 
   useEffect(() => {
-    if (!passport) return;
-    passport.passport_socials &&
-      passport.passport_socials.map((pass_social: any) => {
+    if (!_passport) return;
+    _passport.passport_socials &&
+    _passport.passport_socials.map((pass_social: any) => {
         if (pass_social.source === title.toLowerCase()) {
           if (
             areUrlsEquivalent(
@@ -74,7 +76,7 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
           }
         }
       });
-  }, [passport]);
+  }, [_passport]);
 
   const getTooltip = () => {
     if (profile && showSocialProfiles && profile.follower_count) {
@@ -89,11 +91,11 @@ export default function SocialLink({ title, url, onlyIcon, color }: Props) {
           </Flex>
           <Center gap={6}>
           <Stack>
-            <Text fontSize={'2xl'} fontWeight={'bold'}>{profile.follower_count}</Text>
+            <Text fontSize={'2xl'} fontWeight={'bold'}>{formatNumberCount(profile.follower_count)}</Text>
             <Text>Followers</Text>
           </Stack>
           <Stack>
-            <Text fontSize={'2xl'} fontWeight={'bold'}>{profile.following_count}</Text>
+            <Text fontSize={'2xl'} fontWeight={'bold'}>{formatNumberCount(profile.following_count)}</Text>
             <Text>Followings</Text>
           </Stack>
           </Center>

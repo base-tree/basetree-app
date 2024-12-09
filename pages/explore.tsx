@@ -1,12 +1,12 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import ManageSection from 'components/sections/ManageSection';
 import { SITE_DESCRIPTION, SITE_URL, SITE_TITLE } from 'core/utils/constants';
 import { Seo } from 'components/Layout/Seo';
+import ExploreSection from '@/components/sections/ExploreSection';
 
 const Manage: NextPage = () => {
-  const title = "My Pages";
-  const des = "Manage BaseTree";
+  const title = "Explore Builders";
+  const des = "Talent Passport Builders";
   return (
     <>
     <Seo title={title} description={des} />
@@ -28,7 +28,7 @@ const Manage: NextPage = () => {
       </Head>
       
       {/* <ClaimSection /> */}
-      <ManageSection />
+      <ExploreSection />
     </>
   );
 };

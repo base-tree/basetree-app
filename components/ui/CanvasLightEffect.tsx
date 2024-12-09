@@ -1,8 +1,10 @@
+import { Box } from "@chakra-ui/react";
 import React, { useEffect, useRef } from "react";
 
 interface CanvasLightEffectProps {
   bgColor?: string[]; // Array of two colors for the light gradient
   children: React.ReactNode; // Allow children to be passed into the container
+  styles?: any; 
 }
 
 // Light interface
@@ -14,6 +16,7 @@ interface Light {
 const CanvasLightEffect: React.FC<CanvasLightEffectProps> = ({
   bgColor = ["#6343bb", "#31225e"], // Default gradient colors for the light
   children,
+  styles
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lightRef = useRef<Light>({ x: 140, y: 270 });
@@ -98,7 +101,7 @@ const CanvasLightEffect: React.FC<CanvasLightEffectProps> = ({
   }, [bgColor]);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
+    <Box style={{ position: "relative", width: "100%", minHeight: "100vh", overflow: "hidden" , ...styles}}>
       <canvas
         ref={canvasRef}
         id="canvas"
@@ -115,7 +118,7 @@ const CanvasLightEffect: React.FC<CanvasLightEffectProps> = ({
       <div style={{ position: "relative", zIndex: 1 }}>
         {children}
       </div>
-    </div>
+    </Box>
   );
 };
 

@@ -25,19 +25,21 @@ export const BlocksSlider = () => {
         loop
         style={{
           height: "380px",
-          width: notMobile ? "100%" : "300px",
+          width: notMobile ? "620px" : "300px",
           borderRadius: "12px",
           //@ts-ignore
           "--swiper-pagination-color": "#ffffff",
         }}
         grabCursor
+        
         pagination={{
           clickable: true,
+          dynamicBullets: true,
           renderBullet: function (index, className) {
             return '<span class="' + className + '">' + (index + 1) + "</span>";
           },
         }}
-        modules={[EffectCoverflow, Autoplay, Pagination]}
+        modules={[ Autoplay, Pagination, EffectCoverflow]}
         effect={"coverflow"}
         coverflowEffect={{
           rotate: 50,
@@ -47,25 +49,29 @@ export const BlocksSlider = () => {
           modifier: 1,
           slideShadows: true,
         }}
-        spaceBetween={"24px"}
+        slidesPerView={1}
+        centeredSlides
+        spaceBetween={"48px"}
         autoplay={{ delay: 5000, disableOnInteraction: true }}
       >
-        <SwiperSlide
-          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}
-        >
-          <Link
-            title="Featured Links"
-            type="image link"
-            styles={{ height: "32", bg: "#393087" }}
-            url="https://zora.co"
-            image="https://ipfs.io/ipfs/bafkreib3qy7f7fa7ipcl3rtvyxpczfow4yh4b5mvxih6kmb3hs6xsfuo2y"
-          />
-        </SwiperSlide>
-        <SwiperSlide style={{ height: "340px", width: "100%" }}>
+        <SwiperSlide style={{ height: "340px", width: "440px" }}>
           <LinksSlider />
         </SwiperSlide>
+        
         <SwiperSlide
-          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}>
+          style={{ height: "340px", width: notMobile ? "440px" : "300px" }}
+        >
+          <Link
+            title="cast"
+            type="farcaster cast"
+            styles={{ bg: "#ffffff", height: '32' }}
+            url="https://warpcast.com/basetree/0x98949333"
+            image=""
+          />
+        </SwiperSlide>
+        
+        <SwiperSlide
+          style={{ height: "340px", width: notMobile ? "440px" : "300px" }}>
           <Link
             title="chart"
             type="token chart"
@@ -76,7 +82,18 @@ export const BlocksSlider = () => {
             url=""
           />
         </SwiperSlide>
-        <SwiperSlide style={{ height: "340px", width: "100%" }}>
+        <SwiperSlide
+          style={{ height: "340px", width: notMobile ? "440px" : "300px" }}
+        >
+          <Link
+            title="Featured Links"
+            type="image link"
+            styles={{ height: "32", bg: "#393087" }}
+            url="https://zora.co"
+            image="https://ipfs.io/ipfs/bafkreib3qy7f7fa7ipcl3rtvyxpczfow4yh4b5mvxih6kmb3hs6xsfuo2y"
+          />
+        </SwiperSlide>
+        <SwiperSlide style={{ height: "340px", width: notMobile ? "440px" : "300px" }}>
           <Link
             title="block"
             type="block"
@@ -86,7 +103,39 @@ export const BlocksSlider = () => {
           />
         </SwiperSlide>
         <SwiperSlide
-          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}
+          style={{
+            height: "340px",
+            width: notMobile ? "440px" : "300px",
+            borderRadius: "16px",
+            placeContent: "center",
+            backgroundColor: "#232323ee",
+          }}
+        >
+          <Link
+            type="nft gallery"
+            title=""
+            url=""
+            styles={{
+              effect: "cards",
+              mode: "slider",
+              color: "#ffffff77",
+              nav: true,
+              navColor: "#ffffff",
+              size: notMobile ? "md" : "sm",
+              height: notMobile ? "28" : "16",
+              position: "cover",
+              type: "collection",
+              eth: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
+              slides: 2,
+              centered: true,
+              auto: true,
+              network: "ethereum",
+            }}
+            color={"dark"}
+          />
+        </SwiperSlide>
+        <SwiperSlide
+          style={{ height: "340px", width: notMobile ? "440px" : "300px" }}
         >
           <Link
             title="tweet"
@@ -96,13 +145,13 @@ export const BlocksSlider = () => {
           />
         </SwiperSlide>
         <SwiperSlide
-          style={{ height: "340px", width: notMobile ? "100%" : "300px" }}
+          style={{ height: "340px", width: notMobile ? "440px" : "300px" }}
         >
           <Link
             title="youtube"
             type="youtube video"
             styles={{ height: "32" }}
-            url="https://youtu.be/khZrWdAOirw?si=QY7RefMq8CWDRe68"
+            url="https://www.youtube.com/watch?v=uGjaytbMaas&t=8s"
           />
         </SwiperSlide>
         {/* <SwiperSlide style={{ height: "340px", width: "100%" }}>
@@ -544,38 +593,6 @@ export const BlocksSlider = () => {
             </div>
           </Center>
         </SwiperSlide> */}
-        <SwiperSlide
-          style={{
-            height: "340px",
-            width: "100%",
-            borderRadius: "16px",
-            placeContent: "center",
-            backgroundColor: "#232323ee",
-          }}
-        >
-          <Link
-            type="nft gallery"
-            title=""
-            url=""
-            styles={{
-              effect: "cards",
-              mode: "slider",
-              color: "#ffffff77",
-              nav: true,
-              navColor: "#ffffff",
-              size: notMobile ? "md" : "sm",
-              height: notMobile ? "28" : "16",
-              position: "cover",
-              type: "collection",
-              eth: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
-              slides: 2,
-              centered: true,
-              auto: true,
-              network: "ethereum",
-            }}
-            color={"dark"}
-          />
-        </SwiperSlide>
       </Swiper>
     </Flex>
   );

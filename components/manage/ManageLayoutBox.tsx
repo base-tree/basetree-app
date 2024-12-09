@@ -8,7 +8,9 @@ import {
   headerModeAtom,
   horizontalSocialAtom,
   lightModeAtom,
+  onchainScoreTypeAtom,
   showDomainAtom,
+  showOnChainScoreAtom,
   showScoreAtom,
   showSkillsAtom,
   socialButtonsAtom,
@@ -29,6 +31,8 @@ export default function ManageLayoutBox() {
   const [lightMode, setLightMode] = useAtom(lightModeAtom);
   const [avatarShape, setAvatarShape] = useAtom(avatarShapeAtom);
   const [avatarSize, setAvatarSize] = useAtom(avatarSizeAtom);
+  const [showOnChainScore, setShowOnChainScore] = useAtom(showOnChainScoreAtom);
+  const [onChainScoreType, setOnChainScoreType] = useAtom(onchainScoreTypeAtom);
 
   return (
     <Box gap={2}>
@@ -41,6 +45,12 @@ export default function ManageLayoutBox() {
         top
         value={showDomain}
         setValue={setShowDomain}
+      />
+
+      <SettingsButton
+        title="Show OnChain Score"
+        value={showOnChainScore}
+        setValue={setShowOnChainScore}
       />
 
       <SettingsButton
@@ -79,7 +89,7 @@ export default function ManageLayoutBox() {
         bottom
       />
 
-      <Heading fontSize={"xl"} py={4} pt={8}>
+      <Heading fontSize={"xl"} py={8}>
         Avatar Layout
       </Heading>
       <Stack gap={4} px={2}>
@@ -100,6 +110,19 @@ export default function ManageLayoutBox() {
           setValue={(e: any) => setAvatarShape(e)}
           title="Shape"
           size="md"
+        />
+      </Stack>
+
+      <Heading fontSize={"xl"} py={8}>
+        OnChain Score
+      </Heading>
+
+      <Stack gap={4} px={2}>
+        <SelectOptionButton
+          options={["modal", "direct"]}
+          title="Layout"
+          value={onChainScoreType}
+          setValue={setOnChainScoreType}
         />
       </Stack>
     </Box>

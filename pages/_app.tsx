@@ -12,8 +12,6 @@ import { motion } from 'framer-motion';
 import { ThirdwebProvider } from "thirdweb/react";
 import { useColorMode } from '@chakra-ui/react';
 
-
-
 function MyApp({ Component, pageProps }: AppProps) {
   useDirectionSetter();
   const lightMode = useColorMode().colorMode === 'light';
@@ -21,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider>
         <ThirdwebProvider>
-          
+          {/* <NeynarContextProvider settings={{clientId : ''}}> */}
           <Layout>
             <motion.div
               initial={{ opacity: 0 }}
@@ -31,6 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </motion.div>
             <GoogleAnalytics gaId={String(process.env.NEXT_PUBLIC_GA_ID)} />
           </Layout>
+          {/* </NeynarContextProvider> */}
         </ThirdwebProvider>
     </ThemeProvider>
   );

@@ -72,9 +72,10 @@ interface Props {
   isStatic?: boolean;
   w?: any;
   h?: any;
+  styles?: any;
 }
 
-const Preview = ({ json, w, h, isStatic }: Props) => {
+const Basetree = ({ json, w, h, isStatic, styles }: Props) => {
   const { t } = useTranslate();
   const [notMobile] = useMediaQuery("(min-width: 800px)");
   const [horizontalSocial, setHorizontalSocial] = useAtom(horizontalSocialAtom);
@@ -86,16 +87,25 @@ const Preview = ({ json, w, h, isStatic }: Props) => {
   const bgColor = isStatic ? json.styles.bgColor : useAtomValue(bgColorAtom);
   const socials = useAtomValue(socialsArrayAtom);
   const font = isStatic ? json.styles.font : useAtomValue(fontAtom);
-  const showScore = isStatic ? json.styles.showScore : useAtomValue(showScoreAtom);
-  const showOnChainScore = isStatic ? json.styles.showOnChainScore : useAtomValue(showOnChainScoreAtom);
+  const showScore = isStatic
+    ? json.styles.showScore
+    : useAtomValue(showScoreAtom);
+  const showOnChainScore = isStatic
+    ? json.styles.showOnChainScore
+    : useAtomValue(showOnChainScoreAtom);
   const passport = isStatic ? json.passport : useAtomValue(passportAtom);
-  const showSkills = isStatic ? json.styles.showSkills : useAtomValue(showSkillsAtom);
+  const showSkills = isStatic
+    ? json.styles.showSkills
+    : useAtomValue(showSkillsAtom);
   const skills = isStatic ? json.skills : useAtomValue(skillsAtom);
-  const bio = isStatic ? json.bio : useAtomValue(bioAtom);
+  const _bio = isStatic ? json.bio : useAtomValue(bioAtom);
+  const bio =
+    _bio !== "" ? _bio : passport ? passport.passport_profile.bio : "";
   const lightMode = isStatic
     ? json.styles.lightMode
     : useAtomValue(lightModeAtom);
   const mobileView = useAtomValue(mobileViewAtom);
+
   //console.log(json);
 
   // useEffect(() => {
@@ -125,22 +135,15 @@ const Preview = ({ json, w, h, isStatic }: Props) => {
         rounded={isStatic ? "2xl" : "none"}
         bgPosition={"center"}
         justify={"center"}
-        align={isStatic ? 'center' : 'auto'}
-        minH={isStatic ? h ? h : "auto" : "100vh"}
+        align={isStatic ? "center" : "auto"}
+        minH={isStatic ? (h ? h : "auto") : "100vh"}
         color={lightMode ? "var(--dark1)" : "white"}
+        style={styles}
       >
         <Flex my={0}>
           <>
             <Container
-              width={
-                isStatic
-                  ? ["90vw", "sm", "md", "lg"]
-                  : w
-                  ? w
-                  : mobileView
-                  ? "sm"
-                  : "lg"
-              }
+              width={w}
               key={`preview-main-${lightMode}`}
               display="flex"
               flexDir={"column"}
@@ -197,6 +200,14 @@ const Preview = ({ json, w, h, isStatic }: Props) => {
                       </AnimateOnScroll>
                     )}
 
+                     {showOnChainScore && <AnimateOnScroll
+                        delay={1.6}
+                        styles={{ width: "100%", overflow: "visible" }}
+                      >
+                        <ProfileOnChainScore profileAddress={json.owner} />
+                      </AnimateOnScroll>}
+                    
+
                     {/* {walletButtons && (
                       <Wallets
                         json={json}
@@ -210,12 +221,7 @@ const Preview = ({ json, w, h, isStatic }: Props) => {
                       />
                     )} */}
 
-                    {!isStatic && showOnChainScore && <AnimateOnScroll
-                        delay={1.6}
-                        styles={{ width: "100%", overflow: "visible" }}
-                      ><ProfileOnChainScore profileAddress={json.owner} /></AnimateOnScroll>}
                     <BioWithLinks bio={bio} />
-
 
                     <Stack width={"100%"} gap={3}>
                       {/* <ChatUIProvider>
@@ -254,4 +260,4 @@ const Preview = ({ json, w, h, isStatic }: Props) => {
   );
 };
 
-export default Preview;
+export default Basetree;

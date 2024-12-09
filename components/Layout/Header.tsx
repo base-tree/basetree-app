@@ -94,25 +94,23 @@ export default function Header() {
               )}
             </HStack> */}
 
-            <HStack dir="ltr" gap={[0, 1, 2]}>
+            <HStack dir="ltr" gap={[1, 1, 2]}>
              
 
-              {/* {isConnected && (
-                <NextLink href="/names" passHref>
+                {notMobile && <NextLink href="/explore" passHref>
                   <Button
                     variant="ghost"
                     size={'lg'}
                     fontSize={'medium'}
-                    isActive={dashboard}
+                    isActive={pathname === '/explore'}
+                    aria-label="explore-builders-icon"
                     rounded={'full'}
                     gap={2}
                   >
-                    <LinkIcon type="RiApps2Line" size={24} />
-                    {notMobile && <Text>{t("My Pages")}</Text>}
+                    <LinkIcon type="RiUserSearchFill" size={24} />
+                    {notMobile && <Text>{t("Explore")}</Text>}
                   </Button>
-                </NextLink>
-              )} */}
-
+                </NextLink>}
               <Drawer onClose={onClose} isOpen={isOpen} size={'sm'}>
                 <DrawerOverlay />
                   <DrawerContent
@@ -156,6 +154,19 @@ export default function Header() {
                             justifyContent="left"
                           >
                             {t("Intro")}
+                          </Button>
+                        </NextLink>
+                        <NextLink href={"/explore"} passHref>
+                          <Button
+                            onClick={onClose}
+                            variant="ghost"
+                            isActive={
+                              pathname === "/explore"
+                            }
+                            width="100%"
+                            justifyContent="left"
+                          >
+                            {t("Explore Builders")}
                           </Button>
                         </NextLink>
                         <NextLink href={"/app"} passHref>
@@ -258,7 +269,7 @@ export default function Header() {
                 </NextLink>
               )} */}
               <IconButton
-                aria-label="basetree-mobile-menu"
+                aria-label="mobile-menu"
                 variant="ghost"
                 onClick={onOpen}
                 mx={0}

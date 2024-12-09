@@ -44,9 +44,9 @@ export default function SimpleLink({ title, icon, url, styles, type, onClick }: 
         minHeight={
           styles?.size === "lg"
             ? "80px"
-            : styles?.size === "md"
-            ? "64px"
-            : "44px"
+            : styles?.size === "sm"
+            ? "44px"
+            : "64px"
         }
         paddingY={4} // Adds some padding to the button height for long text
         rounded={round}

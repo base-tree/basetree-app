@@ -67,10 +67,10 @@ export default function TitleInput() {
               value={title}
               onChange={(e) => setTitle(e.currentTarget.value)}
             />
-            <Text>Subtitle</Text>
+            <Text>Location</Text>
             <Input
               variant={"filled"}
-              placeholder={"Enter Subtitle"}
+              placeholder={"Enter Location"}
               size={'lg'}
               value={subtitle}
               onChange={(e) => setSubtitle(e.currentTarget.value)}

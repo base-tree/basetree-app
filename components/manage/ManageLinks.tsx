@@ -11,20 +11,21 @@ import {
   useMediaQuery,
   useColorMode,
   useToast,
-} from '@chakra-ui/react';
-import React, { useEffect, ReactNode, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
-import { linksArrayAtom, linksAtom, useLineIconsAtom } from 'core/atoms';
-import { LinkIcon } from 'components/logos';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
-import AddLinkButton from './AddLinkButton';
-import ManageLink from './ManageLink';
-import { capFirstLetter, arrayRemove, setOrderInCustomLinks } from 'core/utils';
-import { CustomLink, SortableItemProps, SortableConProps, Styles } from 'types';
-import { IPFS_IMAGE_URI } from 'core/utils/constants';
-import useUploadJsonFile from 'core/lib/hooks/use-upload';
-import { client } from 'components/walletConnect';
+} from "@chakra-ui/react";
+import React, { useEffect, ReactNode, useState } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { linksArrayAtom, linksAtom, useLineIconsAtom } from "core/atoms";
+import { LinkIcon } from "components/logos";
+import { SortableContainer, SortableElement } from "react-sortable-hoc";
+import { arrayMoveImmutable } from "array-move";
+import AddLinkButton from "./AddLinkButton";
+import ManageLink from "./ManageLink";
+import { capFirstLetter, arrayRemove, setOrderInCustomLinks } from "core/utils";
+import { CustomLink, SortableItemProps, SortableConProps, Styles } from "types";
+import { EMAIL_URL, IPFS_IMAGE_URI } from "core/utils/constants";
+import useUploadJsonFile from "core/lib/hooks/use-upload";
+import { client } from "components/walletConnect";
+import AccordionWrapper from "./AccordionWrapper";
 
 interface Props {
   json: any;
@@ -34,7 +35,7 @@ export default function ManageLinks({ json }: Props) {
   const useLineIcons = useAtomValue(useLineIconsAtom);
   const [linksArray, setLinksArray] = useAtom(linksArrayAtom);
   const [links, setLinks] = useAtom(linksAtom);
-  const [notMobile] = useMediaQuery('(min-width: 800px)');
+  const [notMobile] = useMediaQuery("(min-width: 800px)");
   const { colorMode } = useColorMode();
   const toast = useToast();
   const SortableCon = SortableContainer<SortableConProps>(
@@ -42,27 +43,42 @@ export default function ManageLinks({ json }: Props) {
       return <ul>{children}</ul>;
     }
   );
-  const { isLoading, data, hasError, uploadJsonFile } = useUploadJsonFile({client: client});
+  const { isLoading, data, hasError, uploadJsonFile } = useUploadJsonFile({
+    client: client,
+  });
 
-  const setEditedLinks = async (index: number, title: string, url: string, image: string, content: string, styles: Styles) => {
+  const setEditedLinks = async (
+    index: number,
+    title: string,
+    url: string,
+    image: string,
+    content: string,
+    styles: Styles
+  ) => {
     let __content = content;
-    if(content.length > 300){
+    if (content.length > 300) {
       toast({
-        title: 'Uploading to IPFS',
-        description:'Uploading link content to IPFS to reduce gas costs',
-        status: 'loading',
+        title: "Uploading to IPFS",
+        description: "Uploading link content to IPFS to reduce gas costs",
+        status: "loading",
         duration: null,
-        isClosable : false
-      })
-      __content = await uploadJsonFile(JSON.stringify(content),title.replaceAll(' ','-'));
-      if(hasError){
+        isClosable: false,
+      });
+      __content = await uploadJsonFile(
+        JSON.stringify(content),
+        title.replaceAll(" ", "-")
+      );
+      if (hasError) {
         toast.closeAll();
         toast({
-          title: 'Error on Uploading to IPFS',
-          description:'Can not upload to IPFS, please check your network. If the problem presists, please contact support at info@basetree.xyz',
-          status: 'warning',
-          isClosable : true
-        })
+          title: "Error on Uploading to IPFS",
+          description: `Can not upload to IPFS, please check your network. If the problem presists, please contact ${EMAIL_URL.replace(
+            "mailto:",
+            ""
+          )}`,
+          status: "warning",
+          isClosable: true,
+        });
         return;
       } else {
         toast.closeAll();
@@ -90,23 +106,25 @@ export default function ManageLinks({ json }: Props) {
           }
     );
     setLinksArray(_newLinksArray);
-    const _links = setOrderInCustomLinks(_newLinksArray)
+    const _links = setOrderInCustomLinks(_newLinksArray);
     setLinks(_links);
   };
 
   const removeLink = (index: number) => {
     // Remove the link at the given index
     const _newLinksArray = arrayRemove(linksArray, index);
-  
+
     // Update the styles.order property for the remaining items
-    const updatedLinksArray = _newLinksArray.map((link: CustomLink, idx : number) => ({
-      ...link,
-      styles: {
-        ...(link.styles || {}),
-        order: idx, // Set the new order based on the updated index
-      },
-    }));
-  
+    const updatedLinksArray = _newLinksArray.map(
+      (link: CustomLink, idx: number) => ({
+        ...link,
+        styles: {
+          ...(link.styles || {}),
+          order: idx, // Set the new order based on the updated index
+        },
+      })
+    );
+
     // Set the updated links array
     setLinksArray(updatedLinksArray);
     setLinks(updatedLinksArray);
@@ -115,7 +133,15 @@ export default function ManageLinks({ json }: Props) {
   // @ts-ignore: Unreachable code error
   const SortableItem = SortableElement<SortableItemProps>(
     ({ children }: { children: ReactNode }) => (
-      <li style={{ listStyleType: 'none', padding: '0px 0px', margin: '12px 0px' }}>{children}</li>
+      <li
+        style={{
+          listStyleType: "none",
+          padding: "0px 0px",
+          margin: "12px 0px",
+        }}
+      >
+        {children}
+      </li>
     )
   );
 
@@ -134,10 +160,10 @@ export default function ManageLinks({ json }: Props) {
       });
     }
 
-    if(_links.length > 0){
-    // @ts-ignore: Unreachable code error
-    setLinksArray(setOrderInCustomLinks(_links));
-    setLinks(setOrderInCustomLinks(_links));
+    if (_links.length > 0) {
+      // @ts-ignore: Unreachable code error
+      setLinksArray(setOrderInCustomLinks(_links));
+      setLinks(setOrderInCustomLinks(_links));
     }
   }, [json.links]);
 
@@ -145,7 +171,7 @@ export default function ManageLinks({ json }: Props) {
   const onSortEnd = ({ oldIndex, newIndex }) => {
     // Reorder the array using arrayMoveImmutable
     const newLinksArray = arrayMoveImmutable(links, oldIndex, newIndex);
-  
+
     // Update the styles.order property to reflect the new order
     const updatedLinksArray = newLinksArray.map((link, index) => ({
       ...link,
@@ -154,7 +180,7 @@ export default function ManageLinks({ json }: Props) {
         order: index, // Set the new order based on the index
       },
     }));
-  
+
     // Set the reordered and updated links array
     setLinksArray(updatedLinksArray);
     setLinks(updatedLinksArray);
@@ -162,71 +188,49 @@ export default function ManageLinks({ json }: Props) {
 
   return (
     <>
-      {links && <Accordion
-        allowToggle
-        allowMultiple={false}
-        borderRadius={10}
-        minWidth={'100%'}
-        size="lg"
-        key={'links-box-'+links.length}
-        backgroundColor={colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100'}
-        display={'flex'}
-        className="links">
-        <AccordionItem border={0} borderRadius={10} width={'100%'}>
-          <AccordionButton
-            minWidth={'100%'}
-            as={Button}
-            height={'68px'}
-            size="lg"
-            _expanded={{ bgColor: 'blackAlpha.50' }}>
-            <Flex gap={2} alignItems={'center'} textAlign="left" width={'100%'}>
-            <LinkIcon type='RiAppsLine' size={22} />
+      {links && (
+        <AccordionWrapper icon="RiAppsLine" title={"Links & Content"}>
+          <Stack gap={2}>
+            <AddLinkButton />
 
-              <Text fontWeight={'bold'} display={'flex'} flex={1} fontSize={'xl'}>
-                Links & Content
-              </Text>
-              <AccordionIcon />
-            </Flex>
-          </AccordionButton>
-
-          <AccordionPanel pb={4} minWidth="100%">
-            <Stack gap={2}>
-              <AddLinkButton />
-
-              <SortableCon onSortEnd={onSortEnd} useDragHandle>
-                <>
-                  {links.map((item, index) => (
-                    <SortableItem key={`item-${item.title}-${index}`} index={index}>
-                      <>
-                        <ManageLink
-                          icon={
-                            <LinkIcon
-                              type={item.styles?.icon ?? item.type}
-                              line={useLineIcons}
-                              size={
-                                String(item.styles?.icon).includes(IPFS_IMAGE_URI) ? 'md' : '28px'
-                              }
-                            />
-                          }
-                          title={item.title}
-                          image={item.image}
-                          url={item.url}
-                          type={item.type}
-                          content={item.content}
-                          styles={item.styles}
-                          ind={index}
-                          setUrl={setEditedLinks}
-                          removeUrl={removeLink}
-                        />
-                      </>
-                    </SortableItem>
-                  ))}
-                </>
-              </SortableCon>
-            </Stack>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>}
+            <SortableCon onSortEnd={onSortEnd} useDragHandle>
+              <>
+                {links.map((item, index) => (
+                  <SortableItem
+                    key={`item-${item.title}-${index}`}
+                    index={index}
+                  >
+                    <>
+                      <ManageLink
+                        icon={
+                          <LinkIcon
+                            type={item.styles?.icon ?? item.type}
+                            line={useLineIcons}
+                            size={
+                              String(item.styles?.icon).includes(IPFS_IMAGE_URI)
+                                ? "md"
+                                : "28px"
+                            }
+                          />
+                        }
+                        title={item.title}
+                        image={item.image}
+                        url={item.url}
+                        type={item.type}
+                        content={item.content}
+                        styles={item.styles}
+                        ind={index}
+                        setUrl={setEditedLinks}
+                        removeUrl={removeLink}
+                      />
+                    </>
+                  </SortableItem>
+                ))}
+              </>
+            </SortableCon>
+          </Stack>
+        </AccordionWrapper>
+      )}
     </>
   );
 }

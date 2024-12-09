@@ -38,7 +38,6 @@ export const LinksSlider = () => {
             styles={{
               size: "lg",
               variant: "solid",
-              bg: "yellow",
               font: "Lato",
               popup: true,
               type: 'modal'
@@ -70,7 +69,6 @@ export const LinksSlider = () => {
             styles={{
               size: "lg",
               variant: "solid",
-              bg: "purple",
               font: "DM Sans",
             }}
             icon={<LinkIcon type={"discord"} size={"40px"} />}
@@ -86,7 +84,6 @@ export const LinksSlider = () => {
               variant: "solid",
               popup: true,
               type: 'modal',
-              bg: "orange",
               font: "Space Mono",
             }}
             icon={<LinkIcon type={"RiBox3Line"} size={"40px"} />}
@@ -100,7 +97,6 @@ export const LinksSlider = () => {
             styles={{
               size: "lg",
               variant: "solid",
-              bg: "dark",
               font: "Playfair Display",
             }}
             icon={<LinkIcon type={"medium"} size={"40px"} />}
@@ -117,7 +113,6 @@ export const LinksSlider = () => {
               variant: "solid",
               eth: "0x046fC1185e45224325f3191140fd236462574C07",
               btc: "tb1qshvfpzfa0p46gztp00jwccf0c4kdfac72lmuz7",
-              bg: "red",
               font: "Space Mono",
             }}
             icon={<LinkIcon type={"RiCupFill"} size={"40px"} />}
@@ -134,7 +129,6 @@ export const LinksSlider = () => {
               size: "lg",
               variant: "solid",
               type: 'modal',
-              bg: "green",
               font: "Lato",
             }}
             icon={<LinkIcon type={"RiChatCheckLine"} size={"40px"} />}
@@ -148,7 +142,6 @@ export const LinksSlider = () => {
             styles={{
               size: "lg",
               variant: "solid",
-              bg: "blue",
               font: "Pixelify Sans",
             }}
             icon={<LinkIcon type={"opensea"} size={"40px"} />}

@@ -64,6 +64,7 @@ import { ImageLink, Link } from "components/Profile";
 import AddNFTAvatar from "./AddNFTAvatar";
 import {
   AVAILABLE_LINKS,
+  EMAIL_URL,
   EXAMPLE_LINK_URLS,
   IPFS_IMAGE_URI,
   OPENSEA_URL,
@@ -151,7 +152,7 @@ export default function AddLinkButton() {
         toast({
           title: "Error on Uploading to IPFS",
           description:
-            "Can not upload to IPFS, please check your network. If the problem presists, please contact support at info@basetree.xyz",
+            `Can not upload to IPFS, please check your network. If the problem presists, please contact ${EMAIL_URL.replace("mailto:","")}`,
           status: "warning",
           isClosable: true,
         });
@@ -312,6 +313,7 @@ export default function AddLinkButton() {
                 {(type.includes("simple link") ||
                   type.includes("video") ||
                   type.includes("tweet") ||
+                  type.includes("farcaster cast") ||
                   type.includes("twitter timeline") ||
                   type.includes("soundcloud")) && (
                   <ManageSimpleLink
@@ -364,6 +366,7 @@ export default function AddLinkButton() {
                 {(type.includes("youtube") ||
                   type.includes("twitter timeline") ||
                   type.includes("tweet") ||
+                  type.includes("farcaster cast") ||
                   type.includes("soundcloud")) &&
                   RegExp(reg, "i").test(url) && (
                     <Link

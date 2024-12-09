@@ -16,6 +16,7 @@ import { LinkIcon } from "components/logos";
 import IconPicker from "./IconPicker";
 import SelectSlider from "./SelectSlider";
 import SettingsButton from "./SettingButton";
+import SelectColor from "./SelectColor";
 
 interface Props {
   type: string;
@@ -82,13 +83,21 @@ export default function ManageSimpleLink({
         />
       )}
 
+      {type.includes("cast") && <SelectColor
+        value={String(styles?.bg)}
+        setValue={(e: any) => setStyles({ ...styles, bg: e })}
+        title={`${capFirstLetter(type)} BG Color`}
+        defaultMode="solid"
+        options={{gradient : false}}
+        top
+        bottom
+      />}
+
       {(type.includes("soundcloud") ||
         type.includes("simple link") ||
         type.includes("image link") ||
         type.includes("embed") ||
-        type.includes("token chart") ||
-        type.includes("tweet") ||
-        type.includes("twitter")) &&
+        type.includes("token chart")) &&
         RegExp(reg, "i").test(url) && (
           <SelectOptionButton
             options={["sm", "md", "lg"]}

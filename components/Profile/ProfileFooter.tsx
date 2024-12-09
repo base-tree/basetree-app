@@ -11,7 +11,7 @@ export default function ProfileFooter() {
   return (
     <Box
       as="footer"
-      width={['100%', '100%', 'md', 'lg', 'xl']}
+      width={['100%', '100%', 'md', 'lg', 'xl','2xl']}
       py={4}
       color={lightMode ? 'var(--dark)' : 'var(--light)'}
       backgroundColor={lightMode ? 'whiteAlpha.300' : 'blackAlpha.300'}
@@ -19,13 +19,13 @@ export default function ProfileFooter() {
       rounded={round}>
       <Container
         gap={1}
-        maxW="container.md"
+        maxW="100%"
         display="flex"
         justifyContent="center"
         alignItems={'center'}>
         <Text>Powered By</Text>
         <Logo />
-        <Link id="basetree-app-footer" href={SITE_URL}>
+        <Link id="app-footer" href={SITE_URL}>
           BaseTree
         </Link>
       </Container>

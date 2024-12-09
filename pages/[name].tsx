@@ -66,6 +66,8 @@ import {
   showSkillsAtom,
   showScoreAtom,
   scoreTypeAtom,
+  showOnChainScoreAtom,
+  onchainScoreTypeAtom,
 } from "core/atoms";
 import {
   BUTTON_BG_COLORS,
@@ -85,6 +87,11 @@ import {
   DEFAULT_SOCIAL_RECORDS,
   TALENT_PASSPORTS_API,
   PASSPORT_CREDENTIALS_API,
+  DEFAULT_STYLES,
+  DEFAULT_RECORDS_SERVER,
+  OTHER_RECORDS_SERVER,
+  SITE_LOGO_URL_PNG,
+  updateSocialsFromPassport,
 } from "core/utils/constants";
 import {
   client,
@@ -109,9 +116,11 @@ import AnimateOnScroll from "components/animate/AnimateOnScroll";
 import ProfileInfo from "@/components/Profile/ProfileInfo";
 import { main_addresses, test_addresses } from "@/core/utils/contractAddresses";
 import axios from "axios";
-import { ipfsCheckedUrl } from "@/core/utils";
+import { beautifyUrl, ipfsCheckedUrl } from "@/core/utils";
 import Skills from "@/components/Profile/Skills";
 import BuilderScore from "@/components/Profile/BuilderScore";
+import BioWithLinks from "@/components/Profile/Bio";
+import ProfileOnChainScore from "@/components/Profile/ProfileOnChainScore";
 
 interface LinkPageProps {
   name: string;
@@ -120,6 +129,7 @@ interface LinkPageProps {
   description: string;
   avatar: string;
   ogTitle: string;
+  subtitle: string;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -136,34 +146,40 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let subgraphRecords: any;
   let textRecords: any = [];
   let coinRecords: any = [];
-  let _address: string = '';
+  let _address: string = "";
   // console.log('getting nft0');
   if (isMainnet) {
-    const _subgraphRecords = await mainViemClient.getEnsText({
-      name: name,
-      key: "xyz.basetree.socials",
-      universalResolverAddress:
-        addresses.PublicResolver as `0x${string}`,
-    });
+    _address = String(
+      await mainViemClient.getEnsAddress({
+        name: name,
+        universalResolverAddress: addresses.PublicResolver as `0x${string}`,
+      })
+    );
 
-    _address = String(await mainViemClient.getEnsAddress({
-      name: name,
-      universalResolverAddress:
-        addresses.PublicResolver as `0x${string}`,
-    }));
-
-    if (_subgraphRecords) {
-      subgraphRecords = { texts: [...DEFAULT_RECORDS,...DEFAULT_BASETREE_RECORDS,..._subgraphRecords.split(',')], coins: [] };
-    } else {
-      subgraphRecords = {
-        coins: [],
-        texts: [
-          ...DEFAULT_RECORDS,
-          ,...DEFAULT_BASETREE_RECORDS,
-          ...DEFAULT_SOCIAL_RECORDS
-        ],
+    if (_address === "") {
+      const nftJson = {
+        name: "",
+        status: "error",
+        styles: { lightMode: false },
+      };
+      const title = "name not found";
+      const description = "name not found";
+      const avatar = "name not found";
+      return {
+        props: {
+          name,
+          nftJson,
+          title,
+          description,
+          avatar,
+        },
       };
     }
+
+    subgraphRecords = {
+      texts: DEFAULT_RECORDS_SERVER,
+      coins: [],
+    };
 
     textRecords = await Promise.all(
       subgraphRecords.texts.map(async (textKey: string) => {
@@ -201,74 +217,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     );
   }
 
-  if (!subgraphRecords) {
-    const nftJson = { name: "", status: "error", styles: { lightMode: false } };
-    const title = "name not found";
-    const description = "name not found";
-    const avatar = "name not found";
-    return {
-      props: {
-        name,
-        nftJson,
-        title,
-        description,
-        avatar,
-      },
-    };
-  }
-
-  //console.log(textRecords);
-
-  const _wallets: { [key: string]: string } = {};
-  const _socials: { [key: string]: string } = {};
-  let _links: string = "";
-  let _skills: string = "";
   let _title: string = "";
   let _ogTitle: string = "";
   let _subtitle: string = "";
   let _description: string = "";
   let _bio: string = "";
   let _avatar: string = "";
-  let _styles: any = {
-    lineIcons: false,
-    lightMode: BG_COLORS[0].lightMode,
-    bgColor: BG_COLORS[0].color,
-    avatarShape: "circle",
-    avatarSize: "md",
-    headerColor: "#ffffff11",
-    socialIcons: true,
-    walletButtons: true,
-    socialButtons: false,
-    buttonBgColor: BUTTON_BG_COLORS[0],
-    showDomain: true,
-    showSkills: true,
-    showScore: true,
-    headerMode: false,
-    round: "md",
-    variant: "solid",
-    font: FONTS[0],
-  };
-
-  coinRecords.map((coin: any) => {
-    _wallets[coin.value.name] = coin.value.value;
-  });
+  let _styles: any = { ...DEFAULT_STYLES };
 
   //console.log(textRecords);
 
   textRecords.map(async (text: any) => {
     if (!text) return;
     if (!text.value) return;
-    if (getSocialTitle(text.key) !== undefined) {
-      _socials[text.key] = text.value;
-    }
-
-    if (text.key === "xyz.basetree.links") {
-      _links = text.value;
-    }
-
-    // if(String(text.key).indexOf("url") === 0){
-    //   _links.push({title: 'Website', url: text.value, type: 'simple link', image:'',content:'',styles:{size:'md'}});
-    // }
+    if (text.value === '') return;
 
     if (text.key === "avatar") {
       _avatar = text.value;
@@ -283,37 +245,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       _subtitle = text.value;
     }
 
-    if (text.key === "keywords") {
-      _skills = text.value;
-    }
-
     if (text.key === "description") {
       _bio = text.value;
     }
 
     if (text.key === "xyz.basetree.styles") {
-      _styles = JSON.parse(text.value);
+      //console.log(text.value)
+      _styles = {...DEFAULT_STYLES,...JSON.parse(text.value)};
     }
   });
 
   const nftJson = {
     name: name,
-    owner:_address,
+    owner: _address,
     title: _title,
     ogTitle: _ogTitle,
     subtitle: _subtitle,
     avatar: ipfsCheckedUrl(_avatar),
     bio: _bio,
-    links: _links,
-    skills: _skills,
-    wallets: _wallets,
-    socials: _socials,
     styles: _styles,
   };
 
   if (nftJson.title && nftJson.title.length > 2) {
     _title = nftJson.title;
-    _ogTitle = nftJson.ogTitle;
   }
 
   if (nftJson.subtitle && nftJson.subtitle.length > 1) {
@@ -338,9 +292,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // _title += ' | ' + SITE_TITLE;
 
   const title = _title;
+  const subtitle = _subtitle;
   const description = _description;
   const avatar = _avatar;
   const ogTitle = _ogTitle;
+  //console.log(nftJson);
 
   return {
     props: {
@@ -350,6 +306,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       description,
       avatar,
       ogTitle,
+      subtitle,
     },
   };
 }
@@ -361,6 +318,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
   description,
   avatar,
   ogTitle,
+  subtitle,
 }: LinkPageProps) => {
   const { t } = useTranslate();
   const [_name, setName] = useAtom(nameAtom);
@@ -370,7 +328,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
   const [header, setHeader] = useAtom(headerAtom);
   const [containerColor, setContainerColor] = useAtom(containerColorAtom);
   const [lightMode, setLightMode] = useAtom(lightModeAtom);
-  const [links,setLinks] = useAtom(linksArrayAtom);
+  const [links, setLinks] = useAtom(linksArrayAtom);
   const socials = useAtomValue(socialsArrayAtom);
   const wallets = useAtomValue(walletsArrayAtom);
   const [lineIcons, setLineIcons] = useAtom(useLineIconsAtom);
@@ -389,14 +347,17 @@ const DomainPage: NextPage<LinkPageProps> = ({
   const [showDomain, setShowDomain] = useAtom(showDomainAtom);
   const [showSkills, setShowSkills] = useAtom(showSkillsAtom);
   const [showScore, setShowScore] = useAtom(showScoreAtom);
+  const [showOnChainScore, setShowOnChainScore] = useAtom(showOnChainScoreAtom);
+  const [showSocialProfiles, setShowSocialProfiles] = useAtom(showScoreAtom);
   const [scoreType, setScoreType] = useAtom(scoreTypeAtom);
+  const [onChainScoreType, setOnChainScoreType] = useAtom(onchainScoreTypeAtom);
   const [headerMode, setHeaderMode] = useAtom(headerModeAtom);
   const [headerColor, setHeaderColor] = useAtom(headerColorAtom);
   const [socialButtons, setSocialButtons] = useAtom(socialButtonsAtom);
   const [walletButtons, setWalletButtons] = useAtom(walletButtonsAtom);
   const { toggleColorMode } = useColorMode();
   const [_title, setTitle] = useAtom(titleAtom);
-  const [subtitle, setSubtitle] = useAtom(subtitleAtom);
+  const [_subtitle, setSubtitle] = useAtom(subtitleAtom);
   const [json, setJson] = useAtom(jsonAtom);
   const [_nftJson, setNftJson] = useAtom(nftJsonAtom);
   const [error, setError] = useState("");
@@ -408,65 +369,9 @@ const DomainPage: NextPage<LinkPageProps> = ({
   const domainName = String(router.query.name);
   const [nftContract, setNftContract] = useAtom(nftContractAtom);
   const { colorMode } = useColorMode();
-  const [mobileView, setMobileView] = useAtom(mobileViewAtom);
-  const [lastChange, setLastChange] = useState(0);
   const toast = useToast();
   const [nameDontExist, setNameDontExist] = useState(false);
   const account = useActiveAccount();
-  //const [horizontalWallet, setHorizontalWallet] = useAtom(horizontalWalletsAtom);
-  useEffect(() => {
-
-    async function checkPassport(){
-      let _passport: TalentPassport | any = {};
-      const talent_passport_options = {
-        "X-API-KEY" : process.env.NEXT_PUBLIC_TALENT_API
-      }
-
-      const talent_passport_results = await axios.get(
-        `${TALENT_PASSPORTS_API}/${nftJson.owner}`,{ headers : talent_passport_options}
-      );
-
-      if (talent_passport_results.status === 200) {
-        _passport = talent_passport_results.data.passport;
-        const passport_credentials_results = await axios.get(
-          `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,{ headers : talent_passport_options}
-        );
-        console.log(passport_credentials_results)
-        if(passport_credentials_results.status === 200){
-          _passport.credentials = passport_credentials_results.data.passport_credentials
-        } else {
-          _passport.credentials = [];
-        }
-      }
-      //if(_passport.main_wallet.toLowerCase() === nftJson.owner.toLowerCase()){
-        setPassport(_passport);
-      //}
-      
-    }
-
-    async function getLinks(){
-      const result = await axios.get(IPFS_URLS[0] + nftJson.links?.slice(7));
-      console.log("getting links... ",IPFS_URLS[0] + nftJson.links?.slice(7))
-      if (result.status === 200) {
-        let __links: CustomLink[] = result.data;
-        setLinks(__links);
-      } else {
-        console.log('error getting links',nftJson.links);
-      }
-    }
-
-    if(String(nftJson.links).length > 20){
-      if(String(nftJson.links).includes('ipfs://')){
-        getLinks();
-      } else {
-        let __links: CustomLink[] = JSON.parse(nftJson.links);
-        setLinks(__links);    
-      }
-    }
-
-    checkPassport();
-
-  }, [nftJson]);
 
   useEffect(() => {
     async function initUI() {
@@ -477,15 +382,13 @@ const DomainPage: NextPage<LinkPageProps> = ({
         setNameDontExist(true);
         return;
       }
-      console.log(nftJson);
+      //console.log(nftJson);
       setIsLoading(true);
-      setJson(nftJson);
-      setName(nftJson.name);
-      setSkills(nftJson.skills);
-      setTitle(nftJson.title);
-      setSubtitle(nftJson.subtitle);
+      setTitle(ogTitle);
+      setName(domainName);
+      setSubtitle(subtitle);
       setBio(nftJson.bio);
-      setAvatar(nftJson.avatar);
+      setAvatar(avatar);
       setAvatarShape(nftJson.styles.avatarShape ?? "round");
       setAvatarSize(nftJson.styles.avatarSize ?? "md");
       setSocialIcons(nftJson.styles.socialIcons ?? true);
@@ -494,6 +397,10 @@ const DomainPage: NextPage<LinkPageProps> = ({
       setShowDomain(nftJson.styles.showDomain ?? true);
       setShowSkills(nftJson.styles.showSkills ?? true);
       setShowScore(nftJson.styles.showScore ?? true);
+      setShowOnChainScore(nftJson.styles.showOnChainScore ?? true);
+      setScoreType(nftJson.styles.scoreType ?? "modal");
+      setOnChainScoreType(nftJson.styles.onChainScoreType ?? "modal");
+      setShowSocialProfiles(nftJson.styles.socialProfiles ?? true);
       setSocialButtons(nftJson.styles.socialButtons ?? true);
       setWalletButtons(nftJson.styles.walletButtons ?? true);
       setBgColor(nftJson.styles.bgColor ?? BG_COLORS[0].color);
@@ -503,6 +410,184 @@ const DomainPage: NextPage<LinkPageProps> = ({
       setRound(nftJson.styles.round ?? BUTTON_ROUNDS[1]);
       setVariant(nftJson.styles.variant ?? BUTTON_VARIANTS[3]);
       setFont(nftJson.styles.font ?? FONTS[0]);
+
+      let subgraphRecords: any;
+      let textRecords: any = [];
+      let coinRecords: any = [];
+
+      const _subgraphRecords = await mainViemClient.getEnsText({
+        name: domainName,
+        key: "xyz.basetree.socials",
+        universalResolverAddress:
+          main_addresses.PublicResolver as `0x${string}`,
+      });
+
+      if (_subgraphRecords) {
+        subgraphRecords = {
+          texts: [...OTHER_RECORDS_SERVER, ..._subgraphRecords.split(",")],
+          coins: [],
+        };
+      } else {
+        subgraphRecords = {
+          coins: [],
+          texts: [...OTHER_RECORDS_SERVER, ...DEFAULT_SOCIAL_RECORDS],
+        };
+      }
+
+      textRecords = await Promise.all(
+        subgraphRecords.texts.map(async (textKey: string) => {
+          const textValue = await mainViemClient.getEnsText({
+            name: domainName,
+            key: textKey,
+            universalResolverAddress:
+              main_addresses.PublicResolver as `0x${string}`,
+          });
+          return { key: textKey, value: textValue };
+        })
+      );
+
+      //console.log(subgraphRecords);
+      //console.log(textRecords);
+      // console.log('getting nft');
+
+      const _wallets: { [key: string]: string } = {};
+      let _socials: { [key: string]: string } = {};
+      const _links: CustomLink[] = [];
+      let _skills: string = "";
+      let _notice: string = "";
+      let _passport: TalentPassport | any = undefined;
+
+      coinRecords.map((coin: any) => {
+        _wallets[coin.value.name] = coin.value.value;
+      });
+
+      textRecords.map(async (text: any) => {
+        if (!text) return;
+        if (!text.value) return;
+        if (getSocialTitle(text.key) !== undefined) {
+          _socials[text.key] = text.value;
+        }
+
+        if (text.key === "xyz.basetree.links") {
+          if (text.value.includes("ipfs://")) {
+            const links_result = await axios.get(
+              IPFS_URLS[0] + text.value?.slice(7)
+            );
+            if (links_result.status === 200) {
+              let __links: CustomLink[] = links_result.data;
+              __links.map((lnk) => {
+                _links.push(lnk);
+              });
+            }
+          } else {
+            let __links: CustomLink[] = JSON.parse(text.value);
+            __links.map((lnk) => {
+              _links.push(lnk);
+            });
+          }
+        } else {
+          if (
+            text.key === "url" ||
+            text.key === "url2" ||
+            text.key === "url3"
+          ) {
+            _links.push({
+              type: "simple link",
+              url: text.value,
+              content: "",
+              title: beautifyUrl(text.value),
+              image: "",
+            });
+          }
+        }
+
+        // if (text.key === "frames") {
+        //   text.value.split("|").map((frameUrl: string, ind: number) => {
+        //     _links.push({
+        //       type: "farcaster frame",
+        //       url: frameUrl,
+        //       content: "",
+        //       title: `Frame ${ind + 1}`,
+        //       image: "",
+        //     });
+        //   });
+        // }
+        // if(String(text.key).indexOf("url") === 0){
+        //   _links.push({title: 'Website', url: text.value, type: 'simple link', image:'',content:'',styles:{size:'md'}});
+        // }
+
+        if (text.key === "keywords") {
+          _skills = text.value;
+        }
+
+        if (text.key === "notice") {
+          _notice = text.value;
+        }
+      });
+
+      const talent_passport_options = {
+        "X-API-KEY": process.env.NEXT_PUBLIC_TALENT_API,
+      };
+
+      const talent_passport_results = await axios.get(
+        `${TALENT_PASSPORTS_API}/${nftJson.owner}`,
+        { headers: talent_passport_options }
+      );
+
+      if (talent_passport_results.status === 200) {
+        _passport = talent_passport_results.data.passport;
+        const passport_credentials_results = await axios.get(
+          `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,
+          { headers: talent_passport_options }
+        );
+       //console.log(passport_credentials_results);
+        if (passport_credentials_results.status === 200) {
+          _passport.credentials =
+            passport_credentials_results.data.passport_credentials;
+        } else {
+          _passport.credentials = [];
+        }
+      }
+
+      let _owner: string | null = "";
+
+      _owner = await mainViemClient.getEnsAddress({
+        name: domainName,
+        universalResolverAddress:
+          main_addresses.PublicResolver as `0x${string}`,
+      });
+
+      if(_skills === ''){
+        if(_passport && _passport.passport_profile && _passport.passport_profile.tags){
+          _skills = String(_passport.passport_profile.tags);
+        }
+      }
+  
+      if(_passport && _passport.passport_socials){
+        _socials = updateSocialsFromPassport(_socials,_passport.passport_socials)
+      }
+
+      setJson({
+        name: domainName,
+        owner: _owner,
+        title: ogTitle,
+        subtitle: subtitle,
+        avatar: avatar,
+        bio: nftJson.bio,
+        links: _links,
+        skills: _skills,
+        passport: _passport,
+        wallets: _wallets,
+        socials: _socials,
+        styles: nftJson.styles,
+      });
+
+      
+
+      setPassport(_passport);
+      setSkills(_skills);
+
+      setLinks(_links);
       setIsLoading(false);
     }
 
@@ -543,11 +628,13 @@ const DomainPage: NextPage<LinkPageProps> = ({
           property="og:image"
           content={`https://basetree.xyz/api/pog?title=${encodeURIComponent(
             ogTitle
-          )}&subtitle=${encodeURIComponent(
-            subtitle
-          )}&lightmode=${nftJson.styles.lightMode}${
+          )}&subtitle=${encodeURIComponent(subtitle)}&lightmode=${
+            nftJson.styles.lightMode
+          }${
             avatar ? "&avatar=" + avatar : ""
-          }&name=${domainName}&font=${encodeURIComponent(nftJson.styles.font)}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
+          }&name=${domainName}&font=${encodeURIComponent(
+            nftJson.styles.font
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
         />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -558,17 +645,16 @@ const DomainPage: NextPage<LinkPageProps> = ({
           property="twitter:image"
           content={`https://basetree.xyz/api/pog?title=${encodeURIComponent(
             ogTitle
-          )}&subtitle=${encodeURIComponent(
-            subtitle
-          )}&lightmode=${nftJson.styles.lightMode}${
+          )}&subtitle=${encodeURIComponent(subtitle)}&lightmode=${
+            nftJson.styles.lightMode
+          }${
             avatar ? "&avatar=" + avatar : ""
-          }&name=${domainName}&font=${encodeURIComponent(nftJson.styles.font)}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
+          }&name=${domainName}&font=${encodeURIComponent(
+            nftJson.styles.font
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
         />
-        {/* <link rel="icon" type="image/png" href="/logos/vidicon.png" /> */}
-        <link
-          rel="icon"
-          href={json && !isLoading && avatar ? avatar : "/logo.svg"}
-        />
+        {/* <link rel="icon" type="image/png" href="/logos/logo.png" /> */}
+        <link rel="icon" href={avatar ? avatar : "/logo.svg"} />
       </Head>
 
       <Flex
@@ -610,32 +696,36 @@ const DomainPage: NextPage<LinkPageProps> = ({
                 width="100%"
               >
                 <ProfileInfo />
-                {json.skills && json.skills.length > 0 && showSkills && <Skills data={json.skills.split(',')} />}
+                {json.skills && json.skills.length > 0 && showSkills && (
+                  <Skills data={json.skills.split(",")} />
+                )}
                 {socialIcons && <Socials json={json} onlyIcons />}
 
                 {passport && showScore && (
-                   <AnimateOnScroll delay={1.2} styles={{ width: "100%", overflow: "visible" }}>
-                      <BuilderScore passport={passport} />
-                      </AnimateOnScroll>
-                    )}
-
-                {walletButtons && <Wallets json={json} />}
-
-                {json.bio && json.bio.length > 0 && (
-                  <AnimateOnScroll delay={1.7} styles={{ width: "100%" }}>
-                    <Text
-                      fontWeight="normal"
-                      fontSize={notMobile ? "xl" : "lg"}
-                      textAlign={"center"}
-                    >
-                      {json.bio}
-                    </Text>
+                  <AnimateOnScroll
+                    delay={1.2}
+                    styles={{ width: "100%", overflow: "visible" }}
+                  >
+                    <BuilderScore passport={passport} />
                   </AnimateOnScroll>
                 )}
 
+                {showOnChainScore && (
+                  <AnimateOnScroll
+                    delay={1.2}
+                    styles={{ width: "100%", overflow: "visible" }}
+                  >
+                    <ProfileOnChainScore profileAddress={json.owner} />
+                  </AnimateOnScroll>
+                )}
+
+                {walletButtons && <Wallets json={json} />}
+
+                <BioWithLinks bio={json.bio} />
+
                 <Stack width={"100%"} gap={3}>
                   <Links
-                    json={{links : []}}
+                    json={{ links: [] }}
                     color={
                       !lightMode
                         ? "var(--chakra-colors-gray-100)"
@@ -656,14 +746,14 @@ const DomainPage: NextPage<LinkPageProps> = ({
         )}
 
         {isLoading && (
-          <Container width={["100%", "100%", "md", "lg", "xl"]} p={4}>
-            <ProfileSkeleton notMobile={notMobile} />
-          </Container>
+          <Center width={["100%", "100%", "md", "lg", "xl"]} p={4} h={"78vh"}>
+            <Spinner size={"lg"} />
+          </Center>
         )}
 
         {nameDontExist && (
           <Center width={"100%"} height={"70vh"} flexDir={"column"} gap={4}>
-            Basetree {name} Does Not Exist, Yet!
+            Basetree/Basename {name} Does Not Exist, Yet!
             <Button as={Link} href={SITE_URL + "app"}>
               Claim {name} Now
             </Button>

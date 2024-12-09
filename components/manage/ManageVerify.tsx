@@ -32,6 +32,7 @@ import {
   SOCIAL_URLS,
   TALENT_PASSPORT_URL,
   TALENT_PASSPORTS_API,
+  TALENT_PROTOCOL_URL,
 } from "@/core/utils/constants";
 import { ObjectItem } from "@/types";
 
@@ -98,8 +99,15 @@ export default function ManageVerify() {
             <Text>Builder Score : {passport.score}</Text>
           </Center>
         ) : (
-          "No Passport Found"
+          <Flex gap={4} py={8} flexDir={"column"}>
+            <Text fontWeight={'bold'}>No Talent Passport Found</Text>
+            <Text>It looks like your wallet address is not linked to a Talent Passport yet. </Text>
+            <Text>To create or link your Talent Passport, please visit the Talent Protocol website</Text>
+            <Button as={Link} href={TALENT_PROTOCOL_URL} target="_blank"><LinkIcon type="talent" /> Talent Protocol Website</Button>
+          </Flex>
         )}
+
+        {passport && <>
 
         <SettingsButton
           title="Show Builder Score"
@@ -125,6 +133,7 @@ export default function ManageVerify() {
             setValue={setScoreType}
           />
         </Box>
+        </>}
 
         {/* <Button onClick={importSocialLinks}>
           Import Verified Social Media Links

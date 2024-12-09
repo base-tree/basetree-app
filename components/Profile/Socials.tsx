@@ -49,6 +49,7 @@ export default function Socials({ json, color, onlyIcons, title }: Props) {
                 onlyIcon={_onlyIcons}
                 color={color ? color : undefined}
                 url={String(item.value)}
+                passport={json.passport}
               />
               </AnimateScale>
               </WrapItem>

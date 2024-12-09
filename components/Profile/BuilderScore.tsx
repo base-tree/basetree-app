@@ -21,6 +21,7 @@ import {
 import {
   getColor,
   getColorSchemeName,
+  getIconColor,
   getTierByScore,
   sortCredentialsByScore,
   withHttps,
@@ -42,6 +43,8 @@ interface Props {
 export default function BuilderScore({ passport, styles }: Props) {
   const { colorMode } = useColorMode();
   const type = styles?.type ?? useAtomValue(scoreTypeAtom);
+  const variant = styles?.variant ?? useAtomValue(variantAtom);
+  const buttonBg = styles?.bg ?? useAtomValue(buttonBgColorAtom);
   const lightMode = useAtomValue(lightModeAtom);
   
   const identityCredentials = sortCredentialsByScore(
@@ -60,8 +63,6 @@ export default function BuilderScore({ passport, styles }: Props) {
     )
   );
 
-  console.log(identityCredentials)
-
   //console.log("skills creds : ", skillsCredentials);
 
   return (
@@ -74,13 +75,13 @@ export default function BuilderScore({ passport, styles }: Props) {
       styles={{ size: "lg" }}
       tooltip={
         <Center gap={3} as={Link} href={TALENT_PROTOCOL_URL} target="_blank" p={3}>
-          <LinkIcon type="talent" size={'22px'}/>
+          <LinkIcon type="talent" size={'22px'} color={type === "modal" ? "#ffffff": getIconColor(lightMode)}/>
           Powered by Talent Protocol
         </Center>
       }
     >
       <Stack gap={4}>
-        {skillsCredentials.length > 0 && <AccordionWrapper
+        {skillsCredentials.length > 0 && <AccordionWrapper defaultOpen isProfile
           title={
             <Flex w={"100%"} justify={"space-between"}>
               <Text>Skills </Text>
@@ -111,7 +112,7 @@ export default function BuilderScore({ passport, styles }: Props) {
             })}
           </Stack>
         </AccordionWrapper>}
-        {activityCredentials.length > 0 && <AccordionWrapper
+        {activityCredentials.length > 0 && <AccordionWrapper isProfile
           title={
             <Flex w={"100%"} justify={"space-between"}>
               <Text>Activity </Text>
@@ -141,7 +142,7 @@ export default function BuilderScore({ passport, styles }: Props) {
           </Stack>
         </AccordionWrapper>}
         {identityCredentials.length > 0 && 
-        <AccordionWrapper
+        <AccordionWrapper isProfile
           title={
             <Flex w={"100%"} justify={"space-between"}>
               <Text>Identity </Text>

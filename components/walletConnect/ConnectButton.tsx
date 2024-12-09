@@ -195,9 +195,11 @@ export default function ConnectWalletButton({
 
   const logout = async () => {
     wallet && disconnect(wallet);
+
     setConnectedAccount("");
     setIsConnected(false);
     setPrimary("");
+
   };
 
   const switchNetwork = async (chain: Chain) => {
@@ -440,6 +442,18 @@ export default function ConnectWalletButton({
                     </Button>
                   </LinkBox>
 
+                  <Box px={5}>
+                    <Button
+                      onClick={logout}
+                      borderColor={"gray.800"}
+                      gap={2}
+                      width={"100%"}
+                    >
+                      <LinkIcon type="RiLogoutBoxRLine" size={22} />
+                      Disconnect
+                    </Button>
+                  </Box> 
+
                   {/* <Box px={5}>
                     <Button
                       onClick={()=> switchNetwork(isMainnet ? baseSepolia : base)}
@@ -466,7 +480,7 @@ export default function ConnectWalletButton({
             width={
               title !== "Connect"
                 ? ["100%", "100%", "fit-content"]
-                : ["168px", "192px"]
+                : ["144px"]
             }
             {...style}
           >

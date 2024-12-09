@@ -1,4 +1,4 @@
-import { BgColorItem, LinkType, BgImageItem } from "types";
+import { BgColorItem, LinkType, BgImageItem, LinkCategory } from "types";
 import { capFirstLetter } from ".";
 
 export const MINT_OPEN = true;
@@ -10,14 +10,15 @@ export const MINT_DATE = "";
 export const MINT_MESSAGE = "Soon on Base Testnet";
 export const SITE_URL = "https://basetree.xyz/";
 export const SITE_LOGO_URL = "https://basetree.xyz/logo.svg";
+export const SITE_LOGO_URL_PNG = "https://basetree.xyz/logos/logo.png";
 export const SITE_OGS_URL = "https://basetree.xyz/ogs/";
 export const SITE_URL_SHORT = "basetree.xyz";
-export const SITE_TITLE = "BaseTree";
+export const SITE_TITLE = "Basetree";
 export const SITE_DESCRIPTION = "Decentralized Link In Bio Tools";
 export const SITE_KEYWORDS =
   "BaseTree, Blockchain Domains, Decentralized Naming Service, Base Naming Service";
 export const SITE_FULL_DESCRIPTION =
-  "BaseTree is a ENS-Based domain naming system for Base Blockchain which provides users and dapps the ability to assign human-readable names to Base addresses";
+  "Create and customize your decentralized profile with Basetree. Elevate your Basenames, showcase verified social identities, and unlock new possibilities for creators and builders in the Web3 space.";
 export const SITE_MANAGE_URL = "https://basetree.xyz/names/";
 export const SITE_MANAGE_SINGLE_URL = "https://basetree.xyz/name/";
 export const METADATA_URL = "https://metadata.basetree.xyz/";
@@ -44,6 +45,7 @@ export const TALENT_PASSPORTS_API = "https://api.talentprotocol.com/api/v2/passp
 export const PASSPORT_CREDENTIALS_API = "https://api.talentprotocol.com/api/v2/passport_credentials";
 export const TALENT_PASSPORT_URL = "https://passport.talentprotocol.com/";
 export const TALENT_PROTOCOL_URL = "https://talentprotocol.com/";
+export const BASENAMES_URL = "https://base.org/names";
 export const IPFS_IO_URL = "https://ipfs.io/ipfs/";
 
 export const SOCIAL_TWITTER = "basetree_xyz";
@@ -134,10 +136,16 @@ export const SOUNDCLOUD_LINK_REGEX =
 export const TWITTER_STATUS_REGEX =
   /^https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(?:es)?\/(\d+)$/;
 
+export const LINK_CATEGORIES : LinkCategory[] = [{name : 'Content', icon : 'heading', id: 1}];
+
 export const AVAILABLE_LINKS: LinkType[] = [
   { type: "heading", av: true, reg: "" },
   { type: "text paragraph", av: true, reg: "" },
   { type: "block", av: true, reg: "" },
+  { type: "farcaster cast", av: true, reg: "" },
+  // { type: "farcaster profile", av: true, reg: "" },
+  // { type: "farcaster conversation", av: true, reg: "" },
+  // { type: "farcaster feed", av: true, reg: "" },
   { type: "nft link", av: true, reg: "" },
   { type: "simple link", av: true, reg: LINK_VALIDATION_REGEX },
   //{ type: "psn profile", av: true, reg: "" },
@@ -205,6 +213,7 @@ export const EXAMPLE_LINK_URLS: any = {
   youtubevideo: "https://youtu.be/khZrWdAOirw?si=QY7RefMq8CWDRe68",
   soundcloudtrack: "https://soundcloud.com/symbolico/im-free",
   tweet: "https://x.com/base/status/1844838910918025302",
+  farcastercast: "https://warpcast.com/0xsamy/0x7de62a98",
   twittertimeline: "https://x.com/base",
 };
 
@@ -282,6 +291,31 @@ export function getSocialTitle(value: string): string | undefined {
     (item) => item.value.toLowerCase() === value.toLowerCase()
   );
   return socialItem ? socialItem.key : undefined;
+}
+
+export function updateSocialsFromPassport(_socials: Record<string, string>, newData: any): Record<string, string> {
+  // Create a map from SOCIALS for easy lookup
+  const socialKeyMap: Record<string, string> = SOCIALS.reduce((acc, social) => {
+    acc[social.key.toLowerCase()] = social.value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  // Loop through new data and add it to _socials if it doesn't exist
+  newData.forEach(({ profile_url, source }: any) => {
+    const formattedSource = source.toLowerCase();
+    const socialKey = socialKeyMap[formattedSource];
+
+    if (socialKey && !_socials.hasOwnProperty(socialKey)) {
+      const baseUrl = SOCIAL_URLS[formattedSource];
+
+      if (baseUrl) {
+        // Remove the base URL from the profile_url to extract only the username
+        const username = profile_url.replace(new RegExp(`^https?://(www\\.)?${baseUrl}`, 'i'), '').replace(/\/$/, '');
+        _socials[socialKey] = username;
+      }
+    }
+  });
+  return _socials;
 }
 
 // export function getWalletName(platform: string): string | undefined {
@@ -413,7 +447,10 @@ export function isLink(value: string): boolean {
   return _isLink.length > 0;
 }
 
-export const DEFAULT_RECORDS = ["display", "avatar", "location", "description"];
+export const DEFAULT_RECORDS_SERVER = ["display","avatar","location","description","xyz.basetree.styles"];
+export const OTHER_RECORDS_SERVER = ["frames","casts","keywords","notice","xyz.basetree.links"];
+
+export const DEFAULT_RECORDS = ["display", "avatar", "location", "description","frames","casts"];
 
 export const DEFAULT_BASETREE_RECORDS = [
   "keywords",
@@ -497,6 +534,29 @@ export const FONTS = [
   "Audiowide",
   "Black Ops One",
 ];
+
+export const DEFAULT_STYLES = {
+  lineIcons: false,
+  lightMode: BG_COLORS[0].lightMode,
+  bgColor: BG_COLORS[0].color,
+  avatarShape: "circle",
+  avatarSize: "md",
+  headerColor: "#ffffff11",
+  socialIcons: true,
+  walletButtons: true,
+  socialButtons: false,
+  buttonBgColor: BUTTON_BG_COLORS[2],
+  showDomain: true,
+  showSkills: true,
+  showScore: true,
+  scoreType: 'modal',
+  showOnChainScore: true,
+  onChainScoreType: 'modal',
+  headerMode: false,
+  round: "md",
+  variant: "solid",
+  font: FONTS[0],
+};
 
 export const TOUR_STEPS = [
   {

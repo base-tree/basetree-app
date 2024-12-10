@@ -300,13 +300,13 @@ export default function ProfileOnChainScore({ profileAddress, styles }: Props) {
             `https://api.etherscan.io/api?address=${addrs}&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}&module=account&action=txlist`
           ).catch(() => []),
           fetchTransactions(
-            `https://api-sepolia.basescan.org/api?address=${addrs}&apikey=${process.env.NEXT_PUBLIC_BASESCAN_API_KEY}&module=account&action=txlistinternal`
-          ).catch(() => []),
-          fetchTransactions(
             `https://api.basescan.org/api?address=${addrs}&apikey=${process.env.NEXT_PUBLIC_BASESCAN_API_KEY}&module=account&action=txlist`
           ).catch(() => []),
           fetchTransactions(
             `https://api.basescan.org/api?address=${addrs}&apikey=${process.env.NEXT_PUBLIC_BASESCAN_API_KEY}&module=account&action=txlistinternal`
+          ).catch(() => []),
+          fetchTransactions(
+            `https://api-sepolia.basescan.org/api?address=${addrs}&apikey=${process.env.NEXT_PUBLIC_BASESCAN_API_KEY}&module=account&action=txlistinternal`
           ).catch(() => []),
         ]);
 
@@ -481,7 +481,7 @@ export default function ProfileOnChainScore({ profileAddress, styles }: Props) {
         > */}
         <Box
           width={[320, 400, 420, 440, 480]}
-          height={[250, 280, 280, 300, 320]}
+          height={[220, 250, 260, 270, 280]}
         >
           <ReactSpeedometer
             needleColor="#ffffff"

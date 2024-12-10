@@ -115,7 +115,7 @@ const OgImageHandler = async (req: NextRequest) => {
       </div>
     ),
     {
-      width: 1200,
+      width: 1146,
       height: 600,
       fonts: [
         {

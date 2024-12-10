@@ -1,4 +1,4 @@
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { GetServerSidePropsContext, Metadata, NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -230,7 +230,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   textRecords.map(async (text: any) => {
     if (!text) return;
     if (!text.value) return;
-    if (text.value === '') return;
+    if (text.value === "") return;
 
     if (text.key === "avatar") {
       _avatar = text.value;
@@ -251,7 +251,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     if (text.key === "xyz.basetree.styles") {
       //console.log(text.value)
-      _styles = {...DEFAULT_STYLES,...JSON.parse(text.value)};
+      _styles = { ...DEFAULT_STYLES, ...JSON.parse(text.value) };
     }
   });
 
@@ -540,7 +540,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
           `${PASSPORT_CREDENTIALS_API}?passport_id=${_passport.passport_id}`,
           { headers: talent_passport_options }
         );
-       //console.log(passport_credentials_results);
+        //console.log(passport_credentials_results);
         if (passport_credentials_results.status === 200) {
           _passport.credentials =
             passport_credentials_results.data.passport_credentials;
@@ -557,14 +557,21 @@ const DomainPage: NextPage<LinkPageProps> = ({
           main_addresses.PublicResolver as `0x${string}`,
       });
 
-      if(_skills === ''){
-        if(_passport && _passport.passport_profile && _passport.passport_profile.tags){
+      if (_skills === "") {
+        if (
+          _passport &&
+          _passport.passport_profile &&
+          _passport.passport_profile.tags
+        ) {
           _skills = String(_passport.passport_profile.tags);
         }
       }
-  
-      if(_passport && _passport.passport_socials){
-        _socials = updateSocialsFromPassport(_socials,_passport.passport_socials)
+
+      if (_passport && _passport.passport_socials) {
+        _socials = updateSocialsFromPassport(
+          _socials,
+          _passport.passport_socials
+        );
       }
 
       setJson({
@@ -582,9 +589,8 @@ const DomainPage: NextPage<LinkPageProps> = ({
         styles: nftJson.styles,
       });
 
-      
-
       setPassport(_passport);
+      console.log(_passport)
       setSkills(_skills);
 
       setLinks(_links);
@@ -626,7 +632,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
         <meta name="og:description" content={description} />
         <meta
           property="og:image"
-          content={`https://basetree.xyz/api/pog?title=${encodeURIComponent(
+          content={`${SITE_URL}api/pog?title=${encodeURIComponent(
             ogTitle
           )}&subtitle=${encodeURIComponent(subtitle)}&lightmode=${
             nftJson.styles.lightMode
@@ -643,7 +649,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
 
         <meta
           property="twitter:image"
-          content={`https://basetree.xyz/api/pog?title=${encodeURIComponent(
+          content={`${SITE_URL}api/pog?title=${encodeURIComponent(
             ogTitle
           )}&subtitle=${encodeURIComponent(subtitle)}&lightmode=${
             nftJson.styles.lightMode
@@ -653,8 +659,25 @@ const DomainPage: NextPage<LinkPageProps> = ({
             nftJson.styles.font
           )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
         />
-        {/* <link rel="icon" type="image/png" href="/logos/logo.png" /> */}
+
+        
         <link rel="icon" href={avatar ? avatar : "/logo.svg"} />
+
+        {/* farcaster frame */}
+
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content={`${SITE_URL}api/pog?title=${encodeURIComponent(
+            ogTitle
+          )}&subtitle=${encodeURIComponent(subtitle)}&lightmode=${
+            nftJson.styles.lightMode
+          }${
+            avatar ? "&avatar=" + avatar : ""
+          }&name=${domainName}&font=${encodeURIComponent(
+            nftJson.styles.font
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`} />
+        <meta name="fc:frame:button:1" content={`View ${ogTitle.length > 0 ? ogTitle + "'s " : ''}Basetree`} />
+        <meta name="fc:frame:button:1:action" content="link" />
+        <meta name="fc:frame:button:1:target" content={`${SITE_URL}${domainName}`} />
       </Head>
 
       <Flex

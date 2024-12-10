@@ -36,6 +36,14 @@ const Home: NextPage = () => {
         <meta name="application-name" content="BaseTree" />
         <meta name="msapplication-TileColor" content="#007bff" />
         <meta name="theme-color" content="#007bff" />
+
+        {/* farcaster frame */}
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content={`${SITE_URL}frames/home.png`} />
+        <meta name="fc:frame:button:1" content={`Check My Basetree`} />
+        <meta name="fc:frame:button:1:action" content="post" />
+        <meta name="fc:frame:button:1:target" content={`${SITE_URL}/api/frames`} />
+
       </Head>
       <Seo />
       <HeroSection />

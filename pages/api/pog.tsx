@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/core/utils/constants";
 import { ImageResponse } from "@vercel/og";
 // eslint-disable-next-line @next/next/no-server-import-in-page
 import { NextRequest } from "next/server";
@@ -17,9 +18,11 @@ const OgImageHandler = async (req: NextRequest) => {
   const avatar = searchParams.get("avatar");
   const subtitle = searchParams.get("subtitle");
   const font = searchParams.get("font") ?? "Poppins";
-
+  const avatarShape = searchParams.get("avatarShape") || "round";
   const bg = searchParams.get("bg");
   const lightMode = searchParams.get("lightmode") || false;
+  const builderScore = searchParams.get("bScore");
+  const avatarRadius = avatarShape === 'circle' ? '100%' : avatarShape === 'none' ? '0px' : '30px';
 
   async function loadGoogleFont (_font: string, text: string) {
     const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`
@@ -40,6 +43,7 @@ const OgImageHandler = async (req: NextRequest) => {
   // const blob = await response.blob();
   // const url = URL.createObjectURL(blob);
   //console.log(url)
+  
   return new ImageResponse(
     (
       <div
@@ -63,7 +67,10 @@ const OgImageHandler = async (req: NextRequest) => {
             width={300}
             height={300}
             src={avatar}
-            style={{ margin: "0 75px", borderRadius: "100%" }}
+            style={{
+              margin: "0 75px", 
+              borderRadius: avatarRadius,
+            }}
           />
         )}
         <div
@@ -77,9 +84,10 @@ const OgImageHandler = async (req: NextRequest) => {
               style={{
                 fontSize: 40,
                 fontFamily: "CustomFont",
-                lineHeight: 1.1,
+                lineHeight: 1,
                 maxWidth: 450,
                 color: lightMode === "true" ? "#161618" : "#f5f5f5",
+                textShadow: lightMode === 'true' ? 'none' : '0px 0px 8px #00000088',
                 textAlign: "left",
               }}
             >
@@ -90,8 +98,9 @@ const OgImageHandler = async (req: NextRequest) => {
             <p
               style={{
                 fontSize: 30,
-                lineHeight: 1.1,
+                lineHeight: 1,
                 color: lightMode === "true" ? "#000000ee" : "#ffffffee",
+                textShadow: lightMode === 'true' ? 'none' : '0px 0px 8px #00000077',
                 maxWidth: 450,
                 textAlign: "left",
               }}
@@ -103,14 +112,30 @@ const OgImageHandler = async (req: NextRequest) => {
           <p
             style={{
               fontSize: 30,
-              lineHeight: 1.1,
-              color: lightMode === "true" ? "#00000099" : "#ffffff99",
+              lineHeight: 1,
+              color: lightMode === "true" ? "#000000dd" : "#ffffffdd",
+              textShadow: lightMode === 'true' ? 'none' : '0px 0px 8px #00000066',
               maxWidth: 450,
               textAlign: "left",
             }}
           >
             {name}
           </p>
+
+          {builderScore && builderScore !== "0" && (
+            <p
+              style={{
+                fontSize: 30,
+                lineHeight: 1,
+                color: lightMode === "true" ? "#000000ee" : "#ffffffee",
+                maxWidth: 450,
+                textShadow: lightMode === 'true' ? 'none' : '0px 0px 8px #00000066',
+                textAlign: "left",
+              }}
+            >
+              Builder Score - {builderScore}
+            </p>
+          )}
         </div>
       </div>
     ),
@@ -125,7 +150,7 @@ const OgImageHandler = async (req: NextRequest) => {
         },
       ],
     }
-  );
+  )
 };
 
 export default OgImageHandler;

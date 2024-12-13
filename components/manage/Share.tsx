@@ -40,7 +40,7 @@ It’s now easier than ever to explore my links, projects, and more, all in one 
         break;
 
       case "farcaster":
-        href = `https://warpcast.com/~/compose??original_referer=${SITE_URL}&text=${text}&hashtags=${hashtags}&embeds[]=${url}`;
+        href = `https://warpcast.com/~/compose?original_referer=${SITE_URL}&text=${text}&hashtags=${hashtags}&embeds[]=${url}`;
         break;
 
       default:

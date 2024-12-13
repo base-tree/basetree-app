@@ -130,6 +130,7 @@ interface LinkPageProps {
   avatar: string;
   ogTitle: string;
   subtitle: string;
+  passport: TalentPassport | any;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -146,6 +147,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let subgraphRecords: any;
   let textRecords: any = [];
   let coinRecords: any = [];
+  let _passport: TalentPassport | any = undefined;
   let _address: string = "";
   // console.log('getting nft0');
   if (isMainnet) {
@@ -253,7 +255,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       //console.log(text.value)
       _styles = { ...DEFAULT_STYLES, ...JSON.parse(text.value) };
     }
-  });
+  });                   
 
   const nftJson = {
     name: name,
@@ -266,18 +268,38 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     styles: _styles,
   };
 
+  const talentHeaders = new Headers();
+  talentHeaders.append("X-API-KEY", process.env.NEXT_PUBLIC_TALENT_API || "");
+
+  const talent_passport_results = await fetch(
+    `${TALENT_PASSPORTS_API}/${nftJson.owner}`,
+    { headers : talentHeaders }
+  );
+
+  if(talent_passport_results.status === 200){
+    _passport = await talent_passport_results.json().then((pass)=> pass.passport);
+  }
+
   if (nftJson.title && nftJson.title.length > 2) {
     _title = nftJson.title;
+  } else {
+    if(_passport && _passport.passport_profile && _passport.passport_profile.display_name){
+      _title = _passport.passport_profile.display_name;
+    }
   }
 
   if (nftJson.subtitle && nftJson.subtitle.length > 1) {
     _title += " | " + nftJson.subtitle;
+  } else {
+    if(_passport && _passport.passport_profile && _passport.passport_profile.location && _passport.passport_profile.location.length > 0){
+      _title += " | " + _passport.passport_profile.location;
+    }
   }
 
   if (_title.indexOf("|") < 0 && nftJson.bio && nftJson.bio.length > 1) {
     //console.log('adding bio')
     _title += " | " + nftJson.bio;
-  }
+  };
 
   if (nftJson.bio && nftJson.bio.length > 1) {
     _description = nftJson.bio;
@@ -285,17 +307,30 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   if (nftJson.avatar && nftJson.avatar.length > 10) {
     _avatar = nftJson.avatar;
+  } else {
+    if(_passport && _passport.passport_profile && _passport.passport_profile.image_url){
+      _avatar = _passport.passport_profile.image_url;
+    }
   }
 
-  // }
+  if(_ogTitle === ''){
+    if(_passport && _passport.passport_profile && _passport.passport_profile.display_name){
+      _ogTitle = _passport.passport_profile.display_name;
+    }
+  }
 
-  // _title += ' | ' + SITE_TITLE;
+  if(_subtitle === ''){
+    if(_passport && _passport.passport_profile && _passport.passport_profile.location){
+      _subtitle = _passport.passport_profile.location;
+    }
+  }
 
   const title = _title;
   const subtitle = _subtitle;
   const description = _description;
   const avatar = _avatar;
   const ogTitle = _ogTitle;
+  const passport = _passport
   //console.log(nftJson);
 
   return {
@@ -307,6 +342,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       avatar,
       ogTitle,
       subtitle,
+      passport
     },
   };
 }
@@ -319,6 +355,7 @@ const DomainPage: NextPage<LinkPageProps> = ({
   avatar,
   ogTitle,
   subtitle,
+  passport : __passport
 }: LinkPageProps) => {
   const { t } = useTranslate();
   const [_name, setName] = useAtom(nameAtom);
@@ -640,7 +677,9 @@ const DomainPage: NextPage<LinkPageProps> = ({
             avatar ? "&avatar=" + avatar : ""
           }&name=${domainName}&font=${encodeURIComponent(
             nftJson.styles.font
-          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}${
+            __passport ? "&bScore=" + __passport.score : ""
+          }`}
         />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -657,7 +696,9 @@ const DomainPage: NextPage<LinkPageProps> = ({
             avatar ? "&avatar=" + avatar : ""
           }&name=${domainName}&font=${encodeURIComponent(
             nftJson.styles.font
-          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`}
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}${
+            __passport ? "&bScore=" + __passport.score : ""
+          }`}
         />
 
         
@@ -674,10 +715,17 @@ const DomainPage: NextPage<LinkPageProps> = ({
             avatar ? "&avatar=" + avatar : ""
           }&name=${domainName}&font=${encodeURIComponent(
             nftJson.styles.font
-          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}`} />
-        <meta name="fc:frame:button:1" content={`View ${ogTitle.length > 0 ? ogTitle + "'s " : ''}Basetree`} />
+          )}&bg=${encodeURIComponent(nftJson.styles.bgColor)}${
+            __passport ? "&bScore=" + __passport.score : ""
+          }`}/>
+        <meta name="fc:frame:button:1" content={`View Basetree`} />
         <meta name="fc:frame:button:1:action" content="link" />
         <meta name="fc:frame:button:1:target" content={`${SITE_URL}${domainName}`} />
+
+        <meta name="fc:frame:button:2" content="Check My Basetree"/>
+        <meta name="fc:frame:button:2:action" content="post" />
+        <meta name="fc:frame:button:2:target" content={`${SITE_URL}api/frames`} />
+
       </Head>
 
       <Flex

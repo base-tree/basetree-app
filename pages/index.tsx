@@ -40,9 +40,15 @@ const Home: NextPage = () => {
         {/* farcaster frame */}
         <meta property="fc:frame" content="vNext" />
         <meta property="fc:frame:image" content={`${SITE_URL}frames/home.png`} />
-        <meta name="fc:frame:button:1" content={`Check My Basetree`} />
-        <meta name="fc:frame:button:1:action" content="post" />
-        <meta name="fc:frame:button:1:target" content={`${SITE_URL}/api/frames`} />
+        <meta name="fc:frame:button:1" content={`What is Basetree?`} />
+        <meta name="fc:frame:button:1:action" content="link" />
+        <meta name="fc:frame:button:1:target" content={SITE_URL} />
+        <meta name="fc:frame:button:2" content={`Check My Basetree`} />
+        <meta name="fc:frame:button:2:action" content="post" />
+        <meta name="fc:frame:button:2:target" content={`${SITE_URL}api/frames`} />
+        <meta name="fc:frame:button:3" content={`Manage My Basetrees`} />
+        <meta name="fc:frame:button:3:action" content="link" />
+        <meta name="fc:frame:button:3:target" content={`${SITE_URL}names`} />
 
       </Head>
       <Seo />
